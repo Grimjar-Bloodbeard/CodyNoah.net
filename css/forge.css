@@ -112,6 +112,23 @@ h2.sec{font-size:clamp(1.7rem,5vw,2.6rem);margin-bottom:.4rem;
 [data-tip].tip-below:hover::after,[data-tip].tip-below:focus-visible::after{transform:translateX(-50%) translateY(0)}
 @media (hover:none){[data-tip]::after,[data-tip]::before{display:none}}
 
+/* ===== Share button (shared) ===== */
+/* Bottom-left so it never collides with Meepo (bottom-right). Native OS share
+   sheet on mobile via the Web Share API; clipboard-copy + toast on desktop. */
+.sharebtn{position:fixed;left:16px;bottom:16px;z-index:70;display:inline-flex;align-items:center;gap:.45rem;
+  padding:.62rem 1.05rem;border-radius:999px;background:var(--glass);border:1px solid var(--line);
+  color:var(--text);font-family:var(--ui);font-weight:700;font-size:.88rem;cursor:pointer;
+  backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);
+  box-shadow:0 6px 20px rgba(0,0,0,.35);transition:transform .15s,box-shadow .2s,border-color .2s}
+.sharebtn:hover,.sharebtn:focus-visible{transform:translateY(-2px);border-color:rgba(79,240,224,.5);box-shadow:0 10px 28px rgba(0,0,0,.45)}
+.sharebtn svg{width:16px;height:16px;flex:none;color:var(--teal)}
+.sharebtn .toast{position:absolute;left:0;bottom:calc(100% + 10px);white-space:nowrap;
+  background:#0c1120;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:.45rem .75rem;
+  font-size:.8rem;font-weight:600;opacity:0;transform:translateY(6px);pointer-events:none;
+  transition:opacity .2s,transform .2s;box-shadow:0 8px 22px rgba(0,0,0,.5)}
+.sharebtn .toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:480px){.sharebtn{left:12px;bottom:12px;padding:.55rem .9rem;font-size:.84rem}}
+
 /* ===== Meepo mascot (shared) ===== */
 /* Meepo hides at the bottom-right corner, peeking over the edge. He pops up on
    hover, and stays up (.up) while talking - on tap or the every-8-min hint. */

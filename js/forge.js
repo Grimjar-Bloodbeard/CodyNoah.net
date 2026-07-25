@@ -118,4 +118,42 @@
       }
     }
   }
+
+  /* Share button - native OS share sheet on mobile (Web Share API), clipboard
+     copy + toast fallback on desktop. Pre-filled text is written to be shared
+     as a flex, not just a neutral link. */
+  if (!document.querySelector('.sharebtn')) {
+    var sbtn = document.createElement('button');
+    sbtn.className = 'sharebtn';
+    sbtn.type = 'button';
+    sbtn.setAttribute('aria-label', 'Share this page');
+    sbtn.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>' +
+      '<line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg>' +
+      '<span>Share</span><span class="toast">Copied - go brag.</span>';
+    document.body.appendChild(sbtn);
+
+    var SHARE_LINES = [
+      "One guy built this whole thing - AI as the power tool, stubbornness as the fuel. See for yourself:",
+      "Real e-commerce, a real client site, a whole pixel world - one person, no team, no funding. Come argue with the results:",
+      "Bet your guy's website doesn't run like this. Solo-built, AI-driven, actually live:"
+    ];
+
+    sbtn.addEventListener('click', function () {
+      var text = SHARE_LINES[Math.floor(Math.random() * SHARE_LINES.length)];
+      var url = location.href;
+      if (navigator.share) {
+        navigator.share({ title: 'GrimForge Creations', text: text, url: url }).catch(function () {});
+        return;
+      }
+      var toast = sbtn.querySelector('.toast');
+      var flash = function () { toast.classList.add('show'); setTimeout(function () { toast.classList.remove('show'); }, 2200); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text + ' ' + url).then(flash).catch(function () { prompt('Copy this link:', url); });
+      } else {
+        prompt('Copy this link:', url);
+      }
+    });
+  }
 })();
