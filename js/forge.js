@@ -131,13 +131,13 @@
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
       '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>' +
       '<line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg>' +
-      '<span>Share</span><span class="toast">Copied - go brag.</span>';
+      '<span>Share</span><span class="toast">Link copied.</span>';
     document.body.appendChild(sbtn);
 
     var SHARE_LINES = [
-      "One guy built this whole thing - AI as the power tool, stubbornness as the fuel. See for yourself:",
-      "Real e-commerce, a real client site, a whole pixel world - one person, no team, no funding. Come argue with the results:",
-      "Bet your guy's website doesn't run like this. Solo-built, AI-driven, actually live:"
+      "One guy built this whole thing - AI as the power tool, stubbornness as the fuel. Take a look:",
+      "Real e-commerce, a real client site, a whole pixel world - one person, no team. Here's what that looks like:",
+      "A mountain workshop in Wilkes County, NC - real software, live and running. Worth a look:"
     ];
 
     sbtn.addEventListener('click', function () {
