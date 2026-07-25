@@ -3,3 +3,6 @@ __pycache__/
 graphify-out/
 .claude/settings.local.json
 Thumbs.db
+.env
+.env.*
+backend/*.log

@@ -286,8 +286,9 @@
       </div>
       <div><label for="rf-device">Device or subject</label><input id="rf-device" name="device" placeholder="e.g. PS5, gaming PC, a build I'm planning"></div>
       <div><label for="rf-details">Tell me more</label><textarea id="rf-details" name="details" placeholder="Symptoms, what you want out of it, budget or timeline if you've got one..."></textarea></div>
-      <button type="submit" class="btn" data-tip="Opens your email with everything filled in">Send it to Cody</button>
-      <p class="fine">This opens your email with everything filled in - just hit send. Rather just write me? <a href="mailto:cnoah538191@gmail.com">cnoah538191@gmail.com</a></p>
+      <input type="text" name="hp" id="rf-hp" autocomplete="off" tabindex="-1" style="position:absolute;left:-9999px" aria-hidden="true">
+      <button type="submit" class="btn" id="rf-submit" data-tip="Sends straight to Cody, no email app needed">Send it to Cody</button>
+      <p class="fine" id="rf-status">Sends straight to my inbox. Rather just write me? <a href="mailto:cnoah538191@gmail.com">cnoah538191@gmail.com</a></p>
     </form>
   </div>
 </section>
@@ -346,18 +347,41 @@
 
 <script src="js/forge.js"></script>
 <script>
-/* Repairs intake -> composes a pre-filled email. No backend, nothing to leak. */
+/* Repairs intake -> POSTs straight to the intake backend. Falls back to a
+   pre-filled mailto if the request fails, so a submission never gets lost. */
 (function () {
   var f = document.getElementById('reqform'); if (!f) return;
+  var status = document.getElementById('rf-status');
+  var submit = document.getElementById('rf-submit');
   f.addEventListener('submit', function (e) {
     e.preventDefault();
     var v = function (id) { return (document.getElementById(id).value || '').trim(); };
-    var type = v('rf-type'), dev = v('rf-device');
-    var subject = 'GrimForge - ' + type + (dev ? ' (' + dev + ')' : '');
-    var body = 'Name: ' + v('rf-name') + '\nEmail: ' + v('rf-email') + '\nNeed: ' + type
-      + '\nLocal or mail-in: ' + v('rf-how') + '\nDevice/subject: ' + dev
-      + '\n\nDetails:\n' + v('rf-details') + '\n';
-    window.location.href = 'mailto:cnoah538191@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    var payload = {
+      name: v('rf-name'), email: v('rf-email'), type: v('rf-type'),
+      how: v('rf-how'), device: v('rf-device'), details: v('rf-details'),
+      hp: v('rf-hp')
+    };
+    submit.disabled = true; submit.textContent = 'Sending...';
+    fetch('/api/repairs', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok && j.ok, j: j }; }); })
+      .then(function (res) {
+        if (res.ok) {
+          f.reset();
+          status.textContent = 'Sent! I\'ll follow up by email with a quote.';
+          submit.textContent = 'Sent ✓';
+        } else { throw new Error(res.j && res.j.error); }
+      })
+      .catch(function () {
+        // backend unreachable - fall back to mailto so nothing gets lost
+        var subject = 'GrimForge - ' + payload.type + (payload.device ? ' (' + payload.device + ')' : '');
+        var body = 'Name: ' + payload.name + '\nEmail: ' + payload.email + '\nNeed: ' + payload.type
+          + '\nLocal or mail-in: ' + payload.how + '\nDevice/subject: ' + payload.device
+          + '\n\nDetails:\n' + payload.details + '\n';
+        window.location.href = 'mailto:cnoah538191@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        submit.disabled = false; submit.textContent = 'Send it to Cody';
+        status.textContent = 'Couldn\'t reach the server - opening your email app instead.';
+      });
   });
 })();
 
