@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /.git/
+Disallow: /.claude/
+Disallow: /artgen/
+
+Sitemap: https://codynoah.net/sitemap.xml
