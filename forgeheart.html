@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forgeheart — The Perfect Workstation · Cody Noah</title>
+<meta name="description" content="Forgeheart: Cody Noah's self-hosted, voice-driven AI command center. The cockpit every project bolts into — a blueprint forged in rune-light.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+@property --a { syntax:'<angle>'; initial-value:0deg; inherits:false; }
+:root{--void:#070a12;--teal:#4ff0e0;--rune:#5fe0d6;--violet:#b06bff;--gold:#e8b24c;--gold2:#f6d785;
+  --text:#e4ebf7;--muted:#8b98b6;--glass:rgba(20,28,50,.5);--line:rgba(120,150,220,.18);
+  --ui:'Rajdhani',system-ui,sans-serif;--disp:'Cinzel',Georgia,serif;--mono:'JetBrains Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ui);background:var(--void);color:var(--text);font-size:18px;line-height:1.55;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{font-family:var(--disp);font-weight:700;line-height:1.1}
+
+/* ===== rune-lit background (shared with the site) ===== */
+.bg{position:fixed;inset:0;z-index:-3;overflow:hidden;background:var(--void)}
+.bg .aurora{position:absolute;inset:-25%;filter:blur(30px);
+  background:radial-gradient(38% 38% at 18% 24%,rgba(79,240,224,.16),transparent 60%),
+    radial-gradient(40% 40% at 82% 16%,rgba(176,107,255,.15),transparent 60%),
+    radial-gradient(46% 46% at 60% 92%,rgba(232,178,76,.13),transparent 60%);
+  animation:drift 22s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate3d(4%,-3%,0) scale(1.08)}}
+.bg .grid{position:absolute;inset:0;opacity:.05;
+  background-image:linear-gradient(rgba(95,224,214,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(95,224,214,.6) 1px,transparent 1px);
+  background-size:48px 48px;-webkit-mask:radial-gradient(circle at 50% 30%,#000 20%,transparent 70%);mask:radial-gradient(circle at 50% 30%,#000 20%,transparent 70%)}
+.bg .beam{position:absolute;width:140vmax;height:140vmax;top:50%;left:50%;translate:-50% -50%;border-radius:50%;
+  background:conic-gradient(from 0deg,transparent 0 46%,rgba(79,240,224,.05) 50%,transparent 54% 100%);animation:sweep 26s linear infinite}
+.bg .beam.b2{background:conic-gradient(from 120deg,transparent 0 47%,rgba(176,107,255,.05) 50%,transparent 53% 100%);animation-duration:34s;animation-direction:reverse}
+@keyframes sweep{to{transform:rotate(360deg)}}
+.rune{position:absolute;font-family:var(--disp);color:var(--rune);opacity:.0;user-select:none;pointer-events:none;
+  text-shadow:0 0 14px currentColor;animation:runef linear infinite}
+@keyframes runef{0%{opacity:0;transform:translateY(12px) scale(.9)}15%,80%{opacity:.3}100%{opacity:0;transform:translateY(-30px) scale(1.05)}}
+
+/* ===== structure ===== */
+.wrap{max-width:1140px;margin:0 auto;padding:0 clamp(1rem,4vw,2.4rem)}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2)}
+.glowb{position:relative}
+.glowb::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.4px;
+  background:conic-gradient(from var(--a),transparent 0 12%,var(--teal),var(--violet),var(--gold),transparent 68% 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  animation:spin 7s linear infinite;pointer-events:none}
+@keyframes spin{to{--a:360deg}}
+
+nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:1rem;padding:.7rem clamp(1rem,4vw,2.4rem);
+  background:linear-gradient(180deg,rgba(7,10,18,.85),rgba(7,10,18,.05));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{font-family:var(--disp);font-weight:700;font-size:1.15rem;letter-spacing:2px;color:var(--gold2);text-shadow:0 0 20px rgba(232,178,76,.4)}
+.nl{margin-left:auto;display:flex;gap:.3rem;flex-wrap:wrap}
+.nl a{padding:.4rem .8rem;border-radius:9px;color:var(--muted);font-weight:600;transition:.2s}
+.nl a:hover,.nl a.on{color:var(--text);background:rgba(95,224,224,.08)}
+.nl a.on{color:var(--gold2)}
+
+/* ===== hero ===== */
+.hero{text-align:center;padding:clamp(2.5rem,9vh,5.5rem) 0 2rem}
+.hero .eye{color:var(--teal);font-weight:600;letter-spacing:3px;text-transform:uppercase;font-size:.8rem;margin-bottom:1rem}
+.hero h1{font-size:clamp(2.6rem,8vw,5rem);letter-spacing:2px;
+  background:linear-gradient(180deg,#fff 8%,var(--gold) 95%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 26px rgba(232,178,76,.32))}
+.hero p.lead{max-width:54ch;margin:1.2rem auto 1.6rem;color:var(--muted);font-size:1.15rem}
+.activate{display:inline-block;font-family:var(--mono);font-size:.82rem;letter-spacing:.12em;color:var(--gold2);
+  border:1px solid rgba(232,178,76,.35);background:rgba(232,178,76,.08);padding:.5rem .95rem;border-radius:8px}
+
+/* ===== enchanted core ===== */
+.core{position:relative;width:min(300px,72vw);aspect-ratio:1;margin:2.4rem auto .5rem}
+.core .disc{position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 50% 42%,var(--gold2),var(--gold) 26%,transparent 60%),
+    radial-gradient(circle at 50% 60%,rgba(176,107,255,.4),transparent 68%);
+  filter:drop-shadow(0 0 40px rgba(232,178,76,.35))}
+.core .ring{position:absolute;inset:9%;border-radius:50%;border:1px solid var(--teal);opacity:.5}
+.core .ring.r2{inset:22%;border-style:dashed;border-color:var(--rune);opacity:.4}
+.core .pulse{position:absolute;inset:0;border-radius:50%;border:1px solid var(--gold);animation:pulse 3.6s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.68);opacity:.7}70%{opacity:0}100%{transform:scale(1.28);opacity:0}}
+.core .cap{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:.25rem}
+.core .cap b{font-family:var(--disp);font-weight:700;letter-spacing:.16em;font-size:1.05rem;color:#1a130a;text-shadow:0 1px 0 rgba(255,255,255,.35)}
+.core .cap span{font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;color:#2a1e0c}
+
+/* ===== sections ===== */
+section{padding:clamp(2.2rem,6vh,3.6rem) 0}
+.sechead{display:flex;align-items:baseline;gap:1rem;margin-bottom:1.5rem}
+.sechead .num{font-family:var(--mono);color:var(--teal);font-size:.78rem;letter-spacing:.12em}
+.sechead h2{font-size:clamp(1.4rem,4vw,2.1rem);background:linear-gradient(90deg,#fff,var(--rune));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sechead .rule{flex:1;height:1px;align-self:center;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 14px)}
+
+.grid{display:grid;gap:1.1rem}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{padding:1.3rem;border-radius:14px}
+.card .ref{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;color:var(--teal)}
+.card h3{font-size:1.12rem;color:var(--gold2);margin:.35rem 0 .4rem}
+.card p{color:var(--muted);font-size:.95rem}
+.card.hot{border-color:rgba(232,178,76,.28)}
+
+/* ===== two hub ===== */
+.hubs{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:stretch}
+.hub{padding:1.4rem;border-radius:14px}
+.hub .tag{font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.hub h3{font-size:1.25rem;margin:.35rem 0 .5rem}
+.hub.priv h3{color:var(--gold2)} .hub.pub h3{color:var(--teal)}
+.hub p{color:var(--muted);font-size:.95rem}
+.hubs .lk{display:grid;place-content:center;font-size:1.5rem;color:var(--violet)}
+.fuel{text-align:center;color:var(--muted);font-family:var(--mono);font-size:.8rem;margin-top:1.1rem}
+.fuel b{color:var(--text)}
+@media(max-width:640px){.hubs{grid-template-columns:1fr}.hubs .lk{transform:rotate(90deg)}}
+
+/* ===== bill of materials ===== */
+.bom{display:grid;gap:.6rem}
+.row{display:grid;grid-template-columns:4rem 1fr auto;gap:.8rem 1rem;align-items:center;padding:.85rem 1.1rem;border-radius:12px;color:inherit}
+a.row:hover{border-color:var(--teal);background:rgba(79,240,224,.05)}
+a.row:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.row .pn{font-family:var(--mono);font-size:.72rem;color:var(--teal);letter-spacing:.06em}
+.row .name{font-weight:700;color:var(--text)}
+.row .fn{color:var(--muted);font-size:.9rem}
+.row .right{display:flex;align-items:center;gap:.7rem;justify-self:end}
+.row .arrow{font-family:var(--mono);color:var(--teal);opacity:0;transition:.15s}
+a.row:hover .arrow{opacity:1}
+.pill{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;padding:.22rem .55rem;border-radius:7px;border:1px solid;white-space:nowrap}
+.pill.live{color:var(--teal);border-color:rgba(79,240,224,.4);background:rgba(79,240,224,.07)}
+.pill.ship{color:var(--gold2);border-color:rgba(232,178,76,.4);background:rgba(232,178,76,.08)}
+.pill.tool{color:var(--violet);border-color:rgba(176,107,255,.4);background:rgba(176,107,255,.08)}
+.pill.plan{color:var(--muted);border-color:var(--line)}
+@media(max-width:560px){.row{grid-template-columns:1fr;gap:.35rem}.row .right{justify-self:start}}
+
+/* ===== phases ===== */
+.phase{display:grid;grid-template-columns:3.4rem 1fr;gap:1rem;padding:1rem 0;border-top:1px solid var(--line)}
+.phase:first-child{border-top:0}
+.phase .p{font-family:var(--mono);font-weight:600;color:var(--teal);font-size:.95rem;padding-top:.15rem}
+.phase.now .p{color:var(--gold2)}
+.phase h3{font-size:1.05rem;color:var(--text);display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin-bottom:.2rem}
+.phase p{color:var(--muted);font-size:.93rem}
+.now-tag{font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold2);border:1px solid rgba(232,178,76,.4);background:rgba(232,178,76,.08);padding:.12rem .45rem;border-radius:6px}
+
+/* ===== specs ===== */
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem}
+.spec{padding:.9rem 1.1rem;border-radius:12px}
+.spec dt{font-family:var(--mono);font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal)}
+.spec dd{margin-top:.25rem;font-weight:700;color:var(--text);font-size:.98rem}
+
+footer{padding:2.5rem 0 4rem;text-align:center;color:var(--muted);border-top:1px solid var(--line);margin-top:1.5rem;font-size:.92rem;font-family:var(--mono);letter-spacing:.04em}
+footer .ember{color:var(--gold2)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="beam"></div><div class="beam b2"></div>
+  <div class="aurora"></div><div class="grid"></div>
+  <div id="runes"></div>
+</div>
+
+<nav>
+  <a class="brand" href="index.html">CODY NOAH</a>
+  <div class="nl">
+    <a href="index.html">Home</a>
+    <a href="world.html">The World</a>
+    <a href="arcade.html">🕹️ Arcade</a>
+    <a href="forgeheart.html" class="on">⚒ Forgeheart</a>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <p class="eye">⚒ Forgeheart — Personal AI Command System</p>
+  <h1>FORGEHEART</h1>
+  <p class="lead">The perfect workstation. Forgeheart is the cockpit I build everything else from — voice-driven, local-first, and mine. Every project I finish becomes a part bolted into it.</p>
+  <p class="activate">“Activate the Forgeheart.”</p>
+
+  <div class="core" role="img" aria-label="Forgeheart core">
+    <div class="disc"></div><div class="ring"></div><div class="ring r2"></div><div class="pulse"></div>
+    <div class="cap"><b>FORGEHEART</b><span>CORE · ONLINE</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- Subsystems -->
+  <section>
+    <div class="sechead"><span class="num">A</span><h2>Core subsystems</h2><span class="rule"></span></div>
+    <div class="grid g3">
+      <div class="card glass hot"><div class="ref">S1 · VOICE I/O</div><h3>Ears &amp; voice</h3><p>Wake word + Whisper (speech-to-text) + Piper (voice). Say it, it answers.</p></div>
+      <div class="card glass hot"><div class="ref">S2 · LOCAL BRAIN</div><h3>Private LLM</h3><p>Ollama running Llama 3.1 8B on the RX 6700 XT. Nothing you say leaves the box.</p></div>
+      <div class="card glass"><div class="ref">S3 · DASHBOARD</div><h3>Dual-screen HUD</h3><p>Left: your day &amp; status. Right: console. Node/Express + a lightweight web UI.</p></div>
+      <div class="card glass"><div class="ref">S4 · AGENTS</div><h3>The specialists</h3><p>Purpose-built agents: security, research, brand content, repairs. A light crew, not a heavy framework.</p></div>
+      <div class="card glass"><div class="ref">S5 · MEMORY</div><h3>State &amp; audit</h3><p>SQLite: todos, context, and an audit trail. It remembers, and it keeps receipts.</p></div>
+      <div class="card glass"><div class="ref">S6 · REMOTE</div><h3>Reach anywhere</h3><p>Tailscale links phone + PC on a private mesh. Secure by default, no open ports.</p></div>
+    </div>
+  </section>
+
+  <!-- Two-hub -->
+  <section>
+    <div class="sechead"><span class="num">B</span><h2>Where it all converges</h2><span class="rule"></span></div>
+    <div class="hubs">
+      <div class="hub glass priv"><div class="tag">Private hub</div><h3>Forgeheart</h3><p>The cockpit. How <em>I</em> run everything — behind Tailscale, just for me.</p></div>
+      <div class="lk" aria-hidden="true">⟷</div>
+      <div class="hub glass pub"><div class="tag">Public hub</div><h3>GrimForge · CodyNoah.net</h3><p>The storefront. How the world sees the work — and hires the smith.</p></div>
+    </div>
+    <p class="fuel">The projects are the shared fuel. Every finished one is a <b>part in the cockpit</b> and a <b>piece in the storefront window</b>.</p>
+  </section>
+
+  <!-- Bill of materials -->
+  <section>
+    <div class="sechead"><span class="num">C</span><h2>Bill of materials — modules</h2><span class="rule"></span></div>
+    <div class="bom">
+      <a class="row glass" href="https://summitgamingofwilkes.com" target="_blank" rel="noopener noreferrer">
+        <span class="pn">M-01</span>
+        <span><span class="name">Summit Gaming</span> · <span class="fn">e-commerce, Square POS — real store, real customers</span></span>
+        <span class="right"><span class="pill live">Live</span><span class="arrow">↗</span></span>
+      </a>
+      <div class="row glass"><span class="pn">M-02</span><span><span class="name">Digital Mirror</span> · <span class="fn">privacy self-audit → Forgeheart's security agent</span></span><span class="right"><span class="pill ship">v1.0 · gate built</span></span></div>
+      <div class="row glass"><span class="pn">M-03</span><span><span class="name">Wilkes Senior Resources</span> · <span class="fn">accessible site for a non-technical director</span></span><span class="right"><span class="pill live">Live · client</span></span></div>
+      <div class="row glass"><span class="pn">M-04</span><span><span class="name">Mountain Tech Image Studio</span> · <span class="fn">ComfyUI on the RX 6700 XT — asset &amp; frame generation</span></span><span class="right"><span class="pill tool">Tool · active</span></span></div>
+      <div class="row glass"><span class="pn">M-05</span><span><span class="name">Repairs Intake</span> · <span class="fn">mail-in console &amp; PC repair flow</span></span><span class="right"><span class="pill plan">Planned</span></span></div>
+      <div class="row glass"><span class="pn">M-06</span><span><span class="name">Decision Maker</span> · <span class="fn">switchable-personality decision utility</span></span><span class="right"><span class="pill tool">Built</span></span></div>
+    </div>
+  </section>
+
+  <!-- Build sequence -->
+  <section>
+    <div class="sechead"><span class="num">D</span><h2>Build sequence</h2><span class="rule"></span></div>
+    <div class="glass" style="padding:.6rem 1.3rem;border-radius:14px">
+      <div class="phase now"><div class="p">01</div><div><h3>Foundation <span class="now-tag">You are here</span></h3><p>Dual-screen dashboard + basic voice + todos + local Ollama brain, reachable over Tailscale.</p></div></div>
+      <div class="phase"><div class="p">02</div><div><h3>Daily life</h3><p>Email (read / summarize / draft), calendar, homework, morning brief.</p></div></div>
+      <div class="phase"><div class="p">03</div><div><h3>Brand &amp; repairs</h3><p>Content drafting, a ComfyUI image hook, and the mail-in repair intake module.</p></div></div>
+      <div class="phase"><div class="p">04</div><div><h3>The agent crew</h3><p>A light orchestrator directing specialized agents — security, research, content.</p></div></div>
+      <div class="phase"><div class="p">05</div><div><h3>Merge &amp; demo</h3><p>Forgeheart becomes the front door to the GrimForge storefront. The workstation, complete.</p></div></div>
+    </div>
+  </section>
+
+  <!-- Specs -->
+  <section>
+    <div class="sechead"><span class="num">E</span><h2>Rig &amp; operating specs</h2><span class="rule"></span></div>
+    <dl class="specs">
+      <div class="spec glass"><dt>Processor</dt><dd>AMD Ryzen</dd></div>
+      <div class="spec glass"><dt>Graphics</dt><dd>Radeon RX 6700 XT · 12 GB</dd></div>
+      <div class="spec glass"><dt>Memory</dt><dd>96 GB RAM</dd></div>
+      <div class="spec glass"><dt>Platform</dt><dd>Windows · local-first</dd></div>
+      <div class="spec glass"><dt>Stack</dt><dd>Ollama · Node · SQLite · Tailscale</dd></div>
+      <div class="spec glass"><dt>Ethos</dt><dd>Built solo, tools and all. Function first.</dd></div>
+    </dl>
+  </section>
+
+</main>
+
+<footer>
+  FORGEHEART · Blueprint rev 0.1 · <span class="ember">“Activate the Forgeheart.”</span> · Cody Noah · Mountain Tech · Wilkes County, NC
+</footer>
+
+<script>
+// floating runes — same spell as the rest of the site
+const RUNES='ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ✦✧⟡◈❋⌬';
+const rc=document.getElementById('runes');
+for(let i=0;i<14;i++){const s=document.createElement('span');s.className='rune';s.textContent=RUNES[Math.floor(Math.random()*RUNES.length)];
+  s.style.left=(Math.random()*100)+'%';s.style.top=(Math.random()*100)+'%';
+  s.style.fontSize=(14+Math.random()*28)+'px';const d=8+Math.random()*10;
+  s.style.animationDuration=d+'s';s.style.animationDelay=(-Math.random()*d)+'s';
+  s.style.color=['#5fe0d6','#b06bff','#e8b24c'][i%3];rc.appendChild(s);}
+</script>
+</body>
+</html>

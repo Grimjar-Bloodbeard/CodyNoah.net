@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrimForge — Forged in the Mountains</title>
+<meta name="description" content="GrimForge — a mountain-tech workshop for repairs, custom builds, web dev, TTRPG worlds, and homestead projects. By Cody Noah.">
+
+<!-- Pixel fonts (graceful fallback to monospace if offline) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================================================
+   GrimForge — framework-free, potato-optimized.
+   Background = a LIVE low-res pixel scene on <canvas> (parallax + embers),
+   scaled up with chunky square pixels so it reads like a running game.
+   Your AI art is kept as optional static "skins".
+   ========================================================================= */
+
+:root{
+  --ink:#0b0a14;
+  --bark:#1b140d;
+  --gold:#e8b24c;
+  --gold-bright:#f6d785;
+  --ember:#ff7a18;
+  --rune:#5fe0d6;
+  --parch:#e9dcc3;
+  --muted:#b09a7d;
+  --ring:rgba(232,178,76,.55);
+  --font-pixel:'Press Start 2P', 'Courier New', monospace;
+  --font-body:'VT323', 'Courier New', monospace;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  font-size:1.3rem;          /* VT323 runs small, so bump the base */
+  line-height:1.35;
+  color:var(--parch);
+  background:var(--ink);
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{font-family:var(--font-pixel);font-weight:400;line-height:1.35;margin:0 0 .5em}
+
+/* ---- Background stack --------------------------------------------------- */
+#bg{position:fixed;inset:0;z-index:-3;width:100vw;height:100vh;display:block;
+  image-rendering:pixelated;background:#0b0a14}
+.skins{position:fixed;inset:0;z-index:-2;pointer-events:none}
+.skins img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  image-rendering:pixelated;display:none}
+.skins img.on{display:block}
+.veil{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 50% 118%, rgba(255,122,24,.18), transparent 55%),
+    linear-gradient(180deg, rgba(8,6,12,.45) 0%, rgba(8,6,12,.15) 38%, rgba(8,6,12,.7) 100%);}
+
+/* ---- Top bar ----------------------------------------------------------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;
+  gap:1rem;padding:.7rem clamp(1rem,4vw,2.5rem);
+  background:linear-gradient(180deg, rgba(11,10,20,.92), rgba(11,10,20,0));}
+.brand{display:flex;align-items:center;gap:.5rem;font-family:var(--font-pixel);
+  font-size:.95rem;color:var(--gold-bright);text-shadow:0 0 14px rgba(232,178,76,.5);
+  white-space:nowrap}
+.brand .anvil{filter:drop-shadow(0 0 6px var(--ember));font-family:var(--font-body);font-size:1.4rem}
+.nav{display:flex;gap:.2rem;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+.nav a{padding:.3rem .65rem;border-radius:8px;font-size:1.15rem;color:var(--parch);
+  opacity:.85;transition:.18s;border:1px solid transparent}
+.nav a:hover{opacity:1;color:var(--gold-bright);border-color:var(--ring);background:rgba(232,178,76,.08)}
+
+/* scene switcher */
+.switcher{display:flex;align-items:center;gap:.45rem;margin-left:.6rem}
+.switcher button{width:15px;height:15px;border-radius:50%;border:1px solid var(--ring);
+  background:rgba(255,255,255,.12);cursor:pointer;padding:0;transition:.18s}
+.switcher button.active{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+.switcher button:hover{transform:scale(1.2)}
+.switcher .live.active{background:var(--rune);box-shadow:0 0 10px var(--rune)}
+
+/* ---- Hero / compass ---------------------------------------------------- */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:6rem 1rem 3rem;position:relative}
+.kicker{font-family:var(--font-pixel);font-size:.6rem;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--rune);opacity:.85;margin-bottom:.8rem}
+.hero h1{font-size:clamp(1.5rem,6vw,3.2rem);color:var(--gold-bright);
+  text-shadow:0 0 24px rgba(232,178,76,.45),0 3px 0 rgba(0,0,0,.5);letter-spacing:2px}
+.hero .tag{font-size:clamp(1.1rem,2.6vw,1.5rem);opacity:.92;margin-top:1rem;max-width:40ch}
+.hint{margin-top:1rem;font-size:1.1rem;color:var(--muted)}
+.hint b{color:var(--rune)}
+
+.compass-wrap{position:relative;width:min(80vw,440px);aspect-ratio:1;margin:1.6rem auto .4rem}
+.compass-backing{position:absolute;inset:-8%;border-radius:50%;
+  background:radial-gradient(circle, rgba(6,5,9,.85) 38%, rgba(6,5,9,.45) 60%, transparent 72%)}
+.compass{position:absolute;inset:0;width:100%;height:100%;
+  animation:breathe 7s ease-in-out infinite;will-change:transform}
+.compass text{font-family:var(--font-body)}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+.rune-ring{transform-origin:200px 200px;animation:spin 70s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.glow{filter:drop-shadow(0 0 4px rgba(232,178,76,.9))}
+.tree-pulse{animation:flicker 4.5s ease-in-out infinite}
+@keyframes flicker{0%,100%{opacity:.85}45%{opacity:1}60%{opacity:.7}}
+
+.spoke{cursor:pointer}
+.spoke .stick{stroke:var(--gold);stroke-width:2.5;opacity:.55;transition:.2s}
+.spoke .node{fill:var(--ink);stroke:var(--gold);stroke-width:2.5;transition:.2s}
+.spoke .glyph{fill:var(--gold-bright);transition:.2s}
+.spoke .lbl{fill:var(--parch);font-size:19px;opacity:0;transition:.2s;
+  paint-order:stroke;stroke:rgba(0,0,0,.85);stroke-width:3px}
+.spoke:hover .stick{opacity:1;stroke:var(--rune)}
+.spoke:hover .node{stroke:var(--rune);fill:#04201e;filter:drop-shadow(0 0 8px var(--rune))}
+.spoke:hover .glyph{fill:var(--rune)}
+.spoke:hover .lbl{opacity:1;fill:var(--gold-bright)}
+.spoke:focus-visible{outline:none}
+.spoke:focus-visible .node{stroke:var(--rune);filter:drop-shadow(0 0 8px var(--rune))}
+.spoke:focus-visible .lbl{opacity:1}
+.center-hub{cursor:pointer}
+.center-hub:hover .hub-ring{stroke:var(--rune)}
+
+/* ---- Content panels ---------------------------------------------------- */
+main{position:relative;z-index:5}
+.panel{min-height:78vh;padding:clamp(3rem,8vh,6rem) clamp(1.2rem,6vw,5rem);
+  display:flex;flex-direction:column;justify-content:center;
+  background:linear-gradient(180deg, rgba(11,10,20,0), rgba(11,10,20,.86) 18%, rgba(11,10,20,.93));
+  border-top:1px solid rgba(232,178,76,.14)}
+.panel .eyebrow{font-family:var(--font-pixel);color:var(--rune);letter-spacing:.2em;
+  text-transform:uppercase;font-size:.62rem;margin-bottom:.9rem}
+.panel h2{font-size:clamp(1.2rem,4vw,2.1rem);color:var(--gold-bright);
+  text-shadow:0 0 18px rgba(232,178,76,.3);letter-spacing:1px}
+.panel p.lead{font-size:clamp(1.15rem,2.4vw,1.5rem);max-width:62ch;opacity:.93}
+.cards{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.6rem}
+.card{flex:1 1 220px;min-width:200px;padding:1.2rem 1.3rem;border-radius:14px;
+  background:linear-gradient(160deg, rgba(37,26,16,.85), rgba(11,10,20,.85));
+  border:1px solid rgba(232,178,76,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 8px 24px rgba(0,0,0,.4);transition:.2s}
+.card:hover{transform:translateY(-4px);border-color:var(--rune);
+  box-shadow:0 0 0 1px var(--rune),0 12px 30px rgba(0,0,0,.5)}
+.card h3{font-family:var(--font-pixel);color:var(--gold-bright);font-size:.8rem;line-height:1.5}
+.card p{color:var(--muted);font-size:1.15rem;margin:0}
+.tagline-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.4rem}
+.pill{padding:.35rem .85rem;border-radius:999px;font-size:1.05rem;
+  border:1px solid var(--ring);color:var(--gold-bright);background:rgba(232,178,76,.06)}
+.cta{display:inline-block;margin-top:1.8rem;padding:.8rem 1.4rem;border-radius:10px;
+  font-family:var(--font-pixel);font-size:.72rem;color:var(--ink);
+  background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+  box-shadow:0 0 22px rgba(232,178,76,.4);transition:.2s;align-self:flex-start}
+.cta:hover{filter:brightness(1.08);transform:translateY(-2px)}
+
+footer{padding:2.5rem 1.5rem 3rem;text-align:center;color:var(--muted);
+  background:var(--ink);font-size:1.05rem;border-top:1px solid rgba(232,178,76,.14)}
+footer b{color:var(--gold)}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition:none !important;scroll-behavior:auto !important}
+}
+@media (max-width:560px){
+  .nav{display:none}
+  .brand{font-size:.8rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Living pixel scene ===== -->
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="skins">
+  <img data-skin="0" src="oKFDE.jpg" alt="" loading="lazy" decoding="async">
+  <img data-skin="1" src="QE9zL.jpg" alt="" loading="lazy" decoding="async">
+  <img data-skin="2" src="NOBkY.jpg" alt="" loading="lazy" decoding="async">
+</div>
+<div class="veil"></div>
+
+<!-- ===== Top bar ===== -->
+<header class="topbar">
+  <a class="brand" href="#top"><span class="anvil">⚒</span> GrimForge</a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#top">Forge</a>
+    <a href="#repairs">Repairs</a>
+    <a href="#builds">Builds</a>
+    <a href="#code">Code</a>
+    <a href="#ttrpg">TTRPG</a>
+    <a href="#homestead">Homestead</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="switcher" id="switcher" title="Switch the world">
+    <button class="live active" data-go="live" aria-label="Live pixel scene"></button>
+    <button data-go="0" aria-label="Cave art"></button>
+    <button data-go="1" aria-label="Forge art"></button>
+    <button data-go="2" aria-label="World-tree art"></button>
+  </div>
+</header>
+
+<!-- ===== Hero + compass nav ===== -->
+<section class="hero" id="top">
+  <p class="kicker">Wilkes County · Mountain Tech</p>
+  <h1>GrimForge</h1>
+  <p class="tag">A workshop for broken machines, custom rigs, and weird little worlds.</p>
+
+  <div class="compass-wrap">
+    <div class="compass-backing"></div>
+    <svg class="compass" viewBox="0 0 400 400" role="navigation" aria-label="Compass navigation">
+      <defs>
+        <radialGradient id="hubGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff4d8"/>
+          <stop offset="45%" stop-color="var(--gold-bright)"/>
+          <stop offset="100%" stop-color="#7a4d12"/>
+        </radialGradient>
+      </defs>
+
+      <g class="rune-ring glow" stroke="var(--gold)" stroke-width="1.6" fill="none" opacity=".5">
+        <circle cx="200" cy="200" r="185"/>
+        <circle cx="200" cy="200" r="172" stroke-dasharray="2 12"/>
+      </g>
+
+      <circle class="glow" cx="200" cy="200" r="150" fill="none" stroke="var(--gold)" stroke-width="2.5" opacity=".7"/>
+
+      <g class="tree-pulse glow" stroke="var(--gold-bright)" stroke-width="2.6" fill="none" stroke-linecap="round">
+        <path d="M200 250 L200 150"/>
+        <path d="M200 168 L176 140 M176 140 L162 126 M176 140 L186 122"/>
+        <path d="M200 168 L224 140 M224 140 L238 126 M224 140 L214 122"/>
+        <path d="M200 150 L200 120"/>
+        <path d="M200 250 L178 274 M178 274 L166 290 M178 274 L186 292"/>
+        <path d="M200 250 L222 274 M222 274 L234 290 M222 274 L214 292"/>
+      </g>
+
+      <g class="center-hub" id="hub" tabindex="0" role="link" aria-label="Forge (home)">
+        <circle class="hub-ring" cx="200" cy="200" r="24" fill="url(#hubGrad)" stroke="var(--gold)" stroke-width="2"/>
+        <text x="200" y="207" text-anchor="middle" font-size="18" fill="#2a1a07">⚒</text>
+      </g>
+
+      <a class="spoke" href="#repairs" tabindex="0" aria-label="Repairs">
+        <line class="stick" x1="200" y1="176" x2="200" y2="62"/>
+        <circle class="node" cx="200" cy="50" r="11"/>
+        <text class="glyph" x="200" y="55" text-anchor="middle" font-size="12">⚒</text>
+        <text class="lbl" x="200" y="28" text-anchor="middle">Repairs</text>
+      </a>
+      <a class="spoke" href="#builds" tabindex="0" aria-label="Custom builds">
+        <line class="stick" x1="221" y1="188" x2="320" y2="131"/>
+        <circle class="node" cx="330" cy="125" r="11"/>
+        <text class="glyph" x="330" y="130" text-anchor="middle" font-size="11">▣</text>
+        <text class="lbl" x="350" y="120" text-anchor="start">Builds</text>
+      </a>
+      <a class="spoke" href="#code" tabindex="0" aria-label="Web development">
+        <line class="stick" x1="221" y1="212" x2="320" y2="269"/>
+        <circle class="node" cx="330" cy="275" r="11"/>
+        <text class="glyph" x="330" y="280" text-anchor="middle" font-size="10">&lt;/&gt;</text>
+        <text class="lbl" x="350" y="295" text-anchor="start">Code</text>
+      </a>
+      <a class="spoke" href="#ttrpg" tabindex="0" aria-label="Tabletop RPG">
+        <line class="stick" x1="200" y1="224" x2="200" y2="338"/>
+        <circle class="node" cx="200" cy="350" r="11"/>
+        <text class="glyph" x="200" y="355" text-anchor="middle" font-size="11">⬢</text>
+        <text class="lbl" x="200" y="380" text-anchor="middle">TTRPG</text>
+      </a>
+      <a class="spoke" href="#homestead" tabindex="0" aria-label="Homestead">
+        <line class="stick" x1="179" y1="212" x2="80" y2="269"/>
+        <circle class="node" cx="70" cy="275" r="11"/>
+        <text class="glyph" x="70" y="280" text-anchor="middle" font-size="11">❦</text>
+        <text class="lbl" x="50" y="295" text-anchor="end">Homestead</text>
+      </a>
+      <a class="spoke" href="#contact" tabindex="0" aria-label="Contact">
+        <line class="stick" x1="179" y1="188" x2="80" y2="131"/>
+        <circle class="node" cx="70" cy="125" r="11"/>
+        <text class="glyph" x="70" y="130" text-anchor="middle" font-size="11">✉</text>
+        <text class="lbl" x="50" y="120" text-anchor="end">Contact</text>
+      </a>
+    </svg>
+  </div>
+
+  <p class="hint">Pick a direction on the compass — or <b>tap the runes</b> (top-right) to switch worlds. ⛏</p>
+</section>
+
+<!-- ===== Panels ===== -->
+<main>
+  <section class="panel" id="repairs">
+    <p class="eyebrow">North · The Anvil</p>
+    <h2>Repairs</h2>
+    <p class="lead">Bring me your broken machines — PCs, consoles, phones, that cursed laptop in the closet. Honest diagnosis, no parts you don't need, and I'll tell you straight if it's not worth saving.</p>
+    <div class="cards">
+      <div class="card"><h3>Diagnostics</h3><p>Free-ish look-over. You'll know what's wrong before a dollar changes hands.</p></div>
+      <div class="card"><h3>Revival</h3><p>Cleanups, reinstalls, part swaps. Old hardware that runs like it owes you money.</p></div>
+      <div class="card"><h3>Recovery</h3><p>Files off a dying drive before it goes dark for good.</p></div>
+    </div>
+    <a class="cta" href="#contact">Start a repair →</a>
+  </section>
+
+  <section class="panel" id="builds">
+    <p class="eyebrow">Northeast · The Bellows</p>
+    <h2>Custom Builds</h2>
+    <p class="lead">Rigs tuned to your budget and your games — from potato-revivals to glass-cannon battlestations. No marked-up parts, no mystery markup. Built by hand on the mountain.</p>
+    <div class="tagline-row">
+      <span class="pill">Budget potatoes</span><span class="pill">1440p gamers</span>
+      <span class="pill">Quiet workstations</span><span class="pill">Retro restomods</span>
+    </div>
+    <a class="cta" href="#contact">Spec a build →</a>
+  </section>
+
+  <section class="panel" id="code">
+    <p class="eyebrow">Southeast · The Loom</p>
+    <h2>Web &amp; Code</h2>
+    <p class="lead">Fast, lightweight sites that run on anything — built by hand and optimized to the bone. This page is the proof: zero frameworks, a whole game looping in the background, and it still loads on a Windows-XP-spirited potato.</p>
+    <div class="cards">
+      <div class="card"><h3>Sites</h3><p>Brand pages, shops, tools. Hand-built, no bloat, no trackers you didn't ask for.</p></div>
+      <div class="card"><h3>Apps &amp; tools</h3><p>Little utilities that do one thing well. Dice rollers to inventory dashboards.</p></div>
+    </div>
+    <a class="cta" href="#contact">Pitch a project →</a>
+  </section>
+
+  <section class="panel" id="ttrpg">
+    <p class="eyebrow">South · The Deep Roots</p>
+    <h2>TTRPG Worlds</h2>
+    <p class="lead">Homebrew worlds, tools, and tables. D&amp;D, dice, and digital companions for the games we actually play. Where the weird little worlds get forged.</p>
+    <div class="tagline-row">
+      <span class="pill">Homebrew settings</span><span class="pill">Battle maps</span>
+      <span class="pill">Player tools</span><span class="pill">Dice &amp; trackers</span>
+    </div>
+    <a class="cta" href="#homestead">Wander deeper →</a>
+  </section>
+
+  <section class="panel" id="homestead">
+    <p class="eyebrow">Southwest · The River</p>
+    <h2>Homestead</h2>
+    <p class="lead">The garden, the river, the slow stuff. Projects from the mountain between the screens — what gets built when the soldering iron cools off.</p>
+    <a class="cta" href="#contact">See what's growing →</a>
+  </section>
+
+  <section class="panel" id="contact">
+    <p class="eyebrow">Northwest · The Hearth</p>
+    <h2>Find the Forge</h2>
+    <p class="lead">Wilkes County, North Carolina. Drop a line, send a raven, whatever works. No bots, no phone-tree — you talk to the guy who does the work.</p>
+    <div class="cards">
+      <div class="card"><h3>Email</h3><p>cnoah538191@gmail.com</p></div>
+      <div class="card"><h3>Brand</h3><p>GrimForge — a Mountain Tech joint.</p></div>
+    </div>
+    <a class="cta" href="mailto:cnoah538191@gmail.com">Light the signal →</a>
+  </section>
+</main>
+
+<footer>
+  <p><b>GrimForge</b> · Forged in the mountains, built to last. — CodyNoah.net</p>
+  <p style="opacity:.6;margin-top:.4rem">Prototype · the background is a live pixel scene; the 3 dots swap in your AI art. Built framework-free for the potatoes. 🥔🔥</p>
+</footer>
+
+<script>
+/* =========================================================================
+   LIVE PIXEL SCENE — low internal resolution, integer-scaled, chunky pixels.
+   Parallax mountains, drifting fog, flickering forge, rising embers, stars.
+   Capped ~30fps; pauses on hidden tab / reduced-motion.
+   ========================================================================= */
+(function(){
+  var cv=document.getElementById('bg'), ctx=cv.getContext('2d',{alpha:false});
+  var PX=4, W=0, H=0, sky, far, mid, fore, stars, embers=[];
+  var mx=0.5, my=0.5, raf=0, last=0, mode='live';
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function rnd(a,b){return a+Math.random()*(b-a);}
+
+  function makeRange(bf,amp,seg,color){
+    var pts=[], x=-seg;
+    while(x<=W+seg){ pts.push({x:x, y:H*bf+rnd(-amp,amp)}); x+=seg; }
+    return {pts:pts, color:color};
+  }
+  function drawRange(r,off){
+    ctx.fillStyle=r.color; ctx.beginPath();
+    ctx.moveTo(r.pts[0].x-off, H);
+    for(var i=0;i<r.pts.length;i++) ctx.lineTo(r.pts[i].x-off, r.pts[i].y);
+    ctx.lineTo(r.pts[r.pts.length-1].x-off, H); ctx.closePath(); ctx.fill();
+  }
+  function resize(){
+    W=Math.max(80,Math.ceil(innerWidth/PX));
+    H=Math.max(60,Math.ceil(innerHeight/PX));
+    cv.width=W; cv.height=H;
+    sky=ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,'#0b0a1c'); sky.addColorStop(.5,'#231334');
+    sky.addColorStop(.78,'#4a230f'); sky.addColorStop(1,'#170c06');
+    far =makeRange(.56, H*0.09, Math.max(8,Math.floor(W/13)), '#2a1c3e');
+    mid =makeRange(.70, H*0.11, Math.max(7,Math.floor(W/10)), '#160f24');
+    fore=makeRange(.86, H*0.09, Math.max(6,Math.floor(W/8 )), '#0c0910');
+    stars=[]; var n=Math.floor(W*H/900);
+    for(var i=0;i<n;i++) stars.push({x:rnd(0,W), y:rnd(0,H*0.55), p:rnd(0,6.28)});
+    embers.length=0;
+  }
+  function spawn(){
+    embers.push({x:W*0.5+rnd(-W*0.07,W*0.07), y:H*0.9, vx:rnd(-0.08,0.08),
+      vy:rnd(-0.35,-0.7), age:0, life:rnd(60,150), s:rnd(0,1)<.5?1:2});
+  }
+  function draw(ts){
+    var ox=(mx-0.5);
+    ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
+    // stars
+    for(var i=0;i<stars.length;i++){ var s=stars[i];
+      var a=0.25+0.55*Math.abs(Math.sin(ts/600+s.p));
+      ctx.fillStyle='rgba(220,225,255,'+a.toFixed(2)+')'; ctx.fillRect(s.x|0,s.y|0,1,1);
+    }
+    // rune-moon + glow
+    var mxp=W*0.78, myp=H*0.20, mr=Math.max(3,H*0.028);
+    var g=ctx.createRadialGradient(mxp,myp,0,mxp,myp,mr*4);
+    g.addColorStop(0,'rgba(95,224,214,.35)'); g.addColorStop(1,'rgba(95,224,214,0)');
+    ctx.fillStyle=g; ctx.fillRect(mxp-mr*4,myp-mr*4,mr*8,mr*8);
+    ctx.fillStyle='rgba(95,224,214,.85)'; ctx.beginPath(); ctx.arc(mxp,myp,mr,0,6.28); ctx.fill();
+    // ranges (parallax)
+    drawRange(far,  ox*4);
+    drawRange(mid,  ox*7);
+    // fog band
+    ctx.fillStyle='rgba(150,140,185,.05)';
+    ctx.fillRect(0,H*0.6,W,H*0.13);
+    ctx.fillRect(0,H*0.66+Math.sin(ts/1400)*2,W,H*0.05);
+    drawRange(fore, ox*11);
+    // forge glow (flicker)
+    var fl=0.82+0.14*Math.sin(ts/95)+0.06*Math.sin(ts/41);
+    var fg=ctx.createRadialGradient(W*0.5,H*0.97,0,W*0.5,H*0.97,H*0.55*fl);
+    fg.addColorStop(0,'rgba(255,150,50,'+(0.45*fl).toFixed(2)+')');
+    fg.addColorStop(.4,'rgba(255,90,20,'+(0.16*fl).toFixed(2)+')');
+    fg.addColorStop(1,'rgba(255,90,20,0)');
+    ctx.fillStyle=fg; ctx.fillRect(0,H*0.4,W,H*0.6);
+    // embers
+    if(embers.length<22 && Math.random()<0.5) spawn();
+    for(var j=embers.length-1;j>=0;j--){ var e=embers[j];
+      e.x+=e.vx; e.y+=e.vy; e.age++;
+      var al=1-e.age/e.life;
+      if(e.age>=e.life || e.y<H*0.3){ embers.splice(j,1); continue; }
+      ctx.fillStyle='rgba(255,'+(140+((e.s===2)?40:0))+',50,'+al.toFixed(2)+')';
+      ctx.fillRect(e.x|0,e.y|0,e.s,e.s);
+    }
+  }
+  function loop(ts){ raf=requestAnimationFrame(loop); if(ts-last<33) return; last=ts; draw(ts); }
+  function start(){ if(reduce){ draw(performance.now()); return; } if(!raf){ last=0; raf=requestAnimationFrame(loop); } }
+  function stop(){ if(raf){ cancelAnimationFrame(raf); raf=0; } }
+
+  // ---- scene switcher (live canvas vs static art skins) ----
+  var imgs=document.querySelectorAll('.skins img');
+  var btns=document.querySelectorAll('#switcher button');
+  function setMode(m){
+    mode=m;
+    btns.forEach(function(b){ b.classList.toggle('active', b.dataset.go===m); });
+    if(m==='live'){
+      imgs.forEach(function(im){ im.classList.remove('on'); });
+      cv.style.display='block'; start();
+    } else {
+      stop(); cv.style.display='none';
+      imgs.forEach(function(im){ im.classList.toggle('on', im.dataset.skin===m); });
+    }
+  }
+  btns.forEach(function(b){ b.addEventListener('click', function(){ setMode(b.dataset.go); }); });
+
+  // ---- nav helpers ----
+  var hub=document.getElementById('hub');
+  function home(){ document.getElementById('top').scrollIntoView({behavior:'smooth'}); }
+  hub.addEventListener('click',home);
+  hub.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();home();} });
+  document.querySelectorAll('.spoke').forEach(function(a){
+    a.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault();
+        document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'}); }
+    });
+  });
+
+  // ---- environment hooks ----
+  addEventListener('mousemove',function(e){ mx=e.clientX/innerWidth; my=e.clientY/innerHeight; },{passive:true});
+  addEventListener('resize',function(){ resize(); if(mode==='live'&&reduce) draw(performance.now()); });
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden) stop(); else if(mode==='live') start();
+  });
+
+  resize(); setMode('live');
+})();
+</script>
+</body>
+</html>

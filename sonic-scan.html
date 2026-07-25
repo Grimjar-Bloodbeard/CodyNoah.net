@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study: Sonic Scan - photo-to-listing computer vision · Cody Noah</title>
+<meta name="description" content="How I built Sonic Scan for Summit Gaming: snap a photo, a vision model identifies + prices + drafts the listing, a human approves. The engineering, the failure-handling, and the AI decisions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/forge.css">
+<style>
+.cs{max-width:820px;margin:0 auto;padding:0 clamp(1rem,4vw,2rem) 4rem}
+.cs-head{padding:clamp(2rem,7vh,3.5rem) 0 1.4rem}
+.cs-head h1{font-size:clamp(2rem,6vw,3.2rem);background:linear-gradient(180deg,#fff 10%,var(--gold) 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cs-head .lead{color:var(--text);font-size:1.15rem;margin-top:.6rem;max-width:62ch;line-height:1.5}
+.cs-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+.cs-tags span{font-size:.72rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--rune);border:1px solid var(--line);border-radius:6px;padding:.2rem .6rem;background:rgba(95,224,214,.06)}
+.cs section{padding:1.7rem 0;border-top:1px solid var(--line)}
+.cs h2{font-size:1.35rem;color:var(--gold2);margin-bottom:.7rem}
+.cs p{color:var(--muted);line-height:1.6;margin-bottom:.7rem}
+.cs p b{color:var(--text)}
+/* pipeline diagram */
+.pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:.5rem;margin:1.2rem 0}
+.step{flex:1 1 120px;min-width:120px;background:rgba(7,10,18,.5);border:1px solid var(--line);border-radius:12px;padding:.7rem .6rem;text-align:center;position:relative}
+.step .ic{font-size:1.3rem;display:block;margin-bottom:.2rem}
+.step b{color:var(--gold2);font-size:.85rem;font-family:var(--disp);font-weight:500;display:block}
+.step small{color:var(--muted);font-size:.72rem}
+.step.ai{border-color:rgba(176,107,255,.5);background:rgba(176,107,255,.07)}
+.step.human{border-color:rgba(79,240,224,.5);background:rgba(79,240,224,.07)}
+.arrow{align-self:center;color:var(--gold);font-weight:700;font-size:1.1rem}
+@media(max-width:640px){.pipe{flex-direction:column}.arrow{transform:rotate(90deg)}}
+.dec{margin-bottom:1rem}
+.dec b{color:var(--gold2);font-family:var(--disp);font-weight:500;font-size:1.05rem}
+.impact{text-align:center;padding:1.4rem;border-radius:16px;margin:.5rem 0}
+.impact .big{font-family:var(--disp);font-size:clamp(1.4rem,5vw,2rem);color:var(--gold2)}
+.impact .big s{color:var(--muted);opacity:.6}
+.protect{border-left:2px solid rgba(176,107,255,.5);padding-left:1rem;color:var(--text);font-style:italic}
+.cs-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.6rem}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="beam"></div><div class="beam b2"></div>
+  <div class="aurora"></div><div class="grid"></div>
+  <div id="runes"></div>
+</div>
+
+<nav class="nav">
+  <a class="brand" href="index.html">GRIMFORGE CREATIONS<small>by Cody Noah</small></a>
+  <div class="nl">
+    <a href="hire.html">Hire</a>
+    <a href="resume.html">Résumé</a>
+    <a href="index.html">Home</a>
+  </div>
+</nav>
+
+<main class="cs">
+  <header class="cs-head">
+    <p class="eyebrow reveal">Case study · AI engineering</p>
+    <h1 class="reveal">Sonic Scan</h1>
+    <p class="lead reveal">Snap one photo of a game. A vision model identifies it, proposes a price, and drafts the whole listing. A human reviews and hits publish. Built for <b>Summit Gaming of Wilkes</b>.</p>
+    <div class="cs-tags reveal">
+      <span>Computer vision</span><span>Human-in-the-loop</span><span>Pipeline design</span><span>Cost/latency aware</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>The problem</h2>
+    <p>A retro-game shop lists dozens of items a week. Each one is photographed, identified, priced, described, and posted <b>by hand</b> - roughly ten minutes of tedium per item, and the bottleneck between "bought a collection" and "it's for sale." I wanted to compress that to a glance.</p>
+  </section>
+
+  <section>
+    <h2>The pipeline</h2>
+    <p>One photo in, a review-ready listing out. AI does the tedious 90%; a person keeps the final call.</p>
+    <div class="pipe reveal">
+      <div class="step human"><span class="ic">📸</span><b>Photo</b><small>one snap</small></div>
+      <span class="arrow">→</span>
+      <div class="step ai"><span class="ic">👁️</span><b>Vision model</b><small>identify item</small></div>
+      <span class="arrow">→</span>
+      <div class="step"><span class="ic">🗂️</span><b>Match</b><small>to catalog</small></div>
+      <span class="arrow">→</span>
+      <div class="step"><span class="ic">💲</span><b>Price</b><small>deterministic</small></div>
+      <span class="arrow">→</span>
+      <div class="step ai"><span class="ic">📝</span><b>Draft</b><small>the listing</small></div>
+      <span class="arrow">→</span>
+      <div class="step human"><span class="ic">✅</span><b>Review</b><small>approve + publish</small></div>
+    </div>
+    <p style="font-size:.85rem"><span style="color:var(--violet)">■</span> AI steps &nbsp; <span style="color:var(--teal)">■</span> human steps &nbsp; the rest is plain, testable code.</p>
+  </section>
+
+  <section>
+    <h2>The engineering decisions</h2>
+    <div class="dec"><b>1. AI interprets; code does the math.</b><p>The vision model decides <b>what</b> the item is - title, platform, edition. Deterministic code handles catalog matching and pricing. The model never touches money, so pricing stays predictable, auditable, and cheap.</p></div>
+    <div class="dec"><b>2. Human-in-the-loop, by design.</b><p>The AI <b>never publishes</b>. It drafts; a person reviews and approves. That single gate turns "the model might be wrong" from a liability into a twenty-second check - and keeps a human accountable for what goes live.</p></div>
+    <div class="dec"><b>3. Confidence and graceful failure.</b><p>A low-confidence identification gets <b>flagged for a closer look</b> instead of guessing. A bad photo degrades to "retake or fill in manually" - never a confidently wrong listing. Failure modes were designed on purpose, not discovered in production.</p></div>
+    <div class="dec"><b>4. Fast where a human is waiting.</b><p>Capture and review are instant; the model call runs asynchronously so nobody stares at a spinner. Latency budget spent where it's felt, not where it isn't.</p></div>
+  </section>
+
+  <section>
+    <h2>What I'd change now</h2>
+    <p>The first version leaned on a cloud vision API for identification. A modern <b>vision LLM</b> - one that can look at a photo <i>and</i> reason about it - can do identify, describe, and draft in a single call: a simpler pipeline, and it can run <b>locally on my own GPU</b> for zero API cost and full privacy. That's the upgrade path, and it's exactly the local-first AI direction I'm building toward.</p>
+  </section>
+
+  <section>
+    <div class="impact glass glowb reveal">
+      <p style="color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-size:.75rem;font-weight:700;margin-bottom:.4rem">The result</p>
+      <p class="big"><s>~10 minutes</s> &nbsp;→&nbsp; ~20 seconds per listing</p>
+      <p style="margin:.4rem 0 0">Same catalog quality, a fraction of the effort - the difference between "I'll list it later" and "it's live."</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What's protected</h2>
+    <p class="protect">This is the <b>shape</b> of the system and the decisions behind it - not the recipe. The exact prompts, the pricing logic, and the catalog-matching stay under the hood. If you're evaluating me and want to go deeper on the engineering, I'm glad to walk through it live.</p>
+    <div class="cs-actions">
+      <a class="btn ghost" href="resume.html" data-tip="Back to the résumé">← Résumé</a>
+      <a class="btn ghost" href="hire.html#work" data-tip="More live projects">More work</a>
+      <a class="btn ghost" href="cyberfantasy.html#forge" data-tip="A live AI art generator I built">See a live AI demo →</a>
+      <a class="btn" href="https://summitgamingofwilkes.com" target="_blank" rel="noopener" data-tip="The live store this runs for">See Summit live ↗</a>
+    </div>
+  </section>
+</main>
+
+<script src="js/forge.js"></script>
+</body>
+</html>

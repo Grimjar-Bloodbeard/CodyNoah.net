@@ -1,0 +1,157 @@
+/* ============================================================
+   GrimForge Creations - shared design system  (forge.css)
+   Fantasy-Cyber: void-dark canvas, teal/violet arcana,
+   molten gold + forge-ember accents. Framework-free.
+   Edit the theme HERE once and every page follows.
+   ============================================================ */
+@property --a { syntax:'<angle>'; initial-value:0deg; inherits:false; }
+
+:root{
+  --void:#070a12; --void2:#0b0f1c;
+  --teal:#4ff0e0; --rune:#5fe0d6; --violet:#b06bff;
+  --gold:#e8b24c; --gold2:#f6d785;
+  --ember:#ff7a2c; --ember2:#ff5a1c; --forge:#ff3d2e;
+  --text:#e4ebf7; --muted:#8b98b6;
+  --glass:rgba(20,28,50,.5); --line:rgba(120,150,220,.18);
+  --ui:'Rajdhani',system-ui,sans-serif; --disp:'Cinzel',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ui);background:var(--void);color:var(--text);
+  font-size:18px;line-height:1.55;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:var(--disp);font-weight:700;line-height:1.1}
+
+/* ===== atmospheric background: aurora + grid + sweeping beams + runes ===== */
+.bg{position:fixed;inset:0;z-index:-3;overflow:hidden;background:var(--void)}
+.bg .aurora{position:absolute;inset:-25%;filter:blur(30px);transition:background-position .3s;
+  background:
+    radial-gradient(38% 38% at var(--mx,18%) var(--my,24%),rgba(79,240,224,.16),transparent 60%),
+    radial-gradient(40% 40% at 82% 16%,rgba(176,107,255,.15),transparent 60%),
+    radial-gradient(46% 46% at 60% 92%,rgba(232,178,76,.13),transparent 60%);
+  animation:drift 22s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate3d(4%,-3%,0) scale(1.08)}}
+.bg .grid{position:absolute;inset:0;opacity:.05;
+  background-image:linear-gradient(rgba(95,224,214,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(95,224,214,.6) 1px,transparent 1px);
+  background-size:48px 48px;-webkit-mask:radial-gradient(circle at 50% 30%,#000 20%,transparent 70%);mask:radial-gradient(circle at 50% 30%,#000 20%,transparent 70%)}
+.bg .beam{position:absolute;width:140vmax;height:140vmax;top:50%;left:50%;translate:-50% -50%;border-radius:50%;
+  background:conic-gradient(from 0deg,transparent 0 46%,rgba(79,240,224,.05) 50%,transparent 54% 100%);animation:sweep 26s linear infinite}
+.bg .beam.b2{background:conic-gradient(from 120deg,transparent 0 47%,rgba(176,107,255,.05) 50%,transparent 53% 100%);animation-duration:34s;animation-direction:reverse}
+@keyframes sweep{to{transform:rotate(360deg)}}
+.rune{position:absolute;font-family:var(--disp);opacity:0;user-select:none;pointer-events:none;
+  text-shadow:0 0 14px currentColor;animation:runef linear infinite}
+@keyframes runef{0%{opacity:0;transform:translateY(12px) scale(.9)}15%,80%{opacity:.35}100%{opacity:0;transform:translateY(-30px) scale(1.05)}}
+
+/* ===== layout + surfaces ===== */
+.wrap{max-width:1140px;margin:0 auto;padding:0 clamp(1rem,4vw,2.4rem)}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:16px;
+  backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2)}
+.glowb{position:relative}
+.glowb::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.4px;
+  background:conic-gradient(from var(--a),transparent 0 12%,var(--teal),var(--violet),var(--gold),transparent 68% 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  animation:spin 7s linear infinite;pointer-events:none}
+@keyframes spin{to{--a:360deg}}
+
+/* ===== top nav ===== */
+.nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:1rem;padding:.65rem clamp(1rem,4vw,2.4rem);
+  background:linear-gradient(180deg,rgba(7,10,18,.85),rgba(7,10,18,.05));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{font-family:var(--disp);font-weight:700;font-size:1.05rem;letter-spacing:2px;color:var(--gold2);
+  text-shadow:0 0 20px rgba(232,178,76,.4);line-height:1.05}
+.brand small{display:block;font-family:var(--ui);font-size:.58rem;letter-spacing:3px;color:var(--muted);font-weight:600}
+.nl{margin-left:auto;display:flex;gap:.25rem;flex-wrap:wrap;align-items:center}
+.nl a{padding:.4rem .8rem;border-radius:9px;color:var(--muted);font-weight:600;transition:.2s}
+.nl a:hover,.nl a.active{color:var(--text);background:rgba(95,224,224,.08)}
+
+/* ===== buttons ===== */
+.btn{font-family:var(--ui);font-weight:700;font-size:1rem;letter-spacing:.4px;padding:.8rem 1.5rem;border-radius:11px;
+  border:none;cursor:pointer;display:inline-block;transition:transform .15s,box-shadow .2s;
+  background:linear-gradient(180deg,var(--gold2),var(--gold));color:#120d05;
+  box-shadow:0 6px 22px rgba(232,178,76,.32),inset 0 1px 0 rgba(255,255,255,.4)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(232,178,76,.5)}
+.btn.ghost{background:transparent;color:var(--teal);border:1px solid rgba(79,240,224,.5);box-shadow:none}
+.btn.ghost:hover{background:rgba(79,240,224,.08)}
+.btn.violet{background:linear-gradient(180deg,#c88bff,var(--violet));color:#160a26;box-shadow:0 6px 22px rgba(176,107,255,.34)}
+
+/* ===== section helpers ===== */
+section{padding:clamp(2.5rem,7vh,4.5rem) 0}
+.eyebrow{color:var(--violet);font-weight:700;letter-spacing:3px;text-transform:uppercase;font-size:.75rem;margin-bottom:.5rem}
+h2.sec{font-size:clamp(1.7rem,5vw,2.6rem);margin-bottom:.4rem;
+  background:linear-gradient(90deg,#fff,var(--rune));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);max-width:60ch;margin-bottom:2rem}
+.grid{display:grid;gap:1.1rem}
+.g4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card{padding:1.4rem;border-radius:16px}
+
+/* ===== scroll reveal ===== */
+.reveal{opacity:0;transform:translateY(22px);
+  transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ===== footer ===== */
+.foot{padding:2.5rem 0 4rem;text-align:center;color:var(--muted);border-top:1px solid var(--line);margin-top:2rem;font-size:.95rem}
+.foot a{color:var(--rune)}
+
+/* ===== clarity-first hover hints (add data-tip="..." to any control) ===== */
+[data-tip]{position:relative}
+[data-tip]::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 9px);
+  transform:translateX(-50%) translateY(5px);white-space:nowrap;pointer-events:none;z-index:90;
+  background:#0c1120;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:.42rem .65rem;
+  font-family:var(--ui);font-weight:600;font-size:.78rem;letter-spacing:.2px;
+  box-shadow:0 8px 22px rgba(0,0,0,.55);opacity:0;transition:opacity .16s ease,transform .16s ease}
+[data-tip]::before{content:'';position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--line);opacity:0;pointer-events:none;z-index:90;transition:opacity .16s ease}
+[data-tip]:hover::after,[data-tip]:focus-visible::after{opacity:1;transform:translateX(-50%) translateY(0)}
+[data-tip]:hover::before,[data-tip]:focus-visible::before{opacity:1}
+/* .tip-below for controls near the top of the screen (e.g. nav) */
+[data-tip].tip-below::after{bottom:auto;top:calc(100% + 9px);transform:translateX(-50%) translateY(-5px)}
+[data-tip].tip-below::before{bottom:auto;top:calc(100% + 4px);border-top-color:transparent;border-bottom-color:var(--line)}
+[data-tip].tip-below:hover::after,[data-tip].tip-below:focus-visible::after{transform:translateX(-50%) translateY(0)}
+@media (hover:none){[data-tip]::after,[data-tip]::before{display:none}}
+
+/* ===== Meepo mascot (shared) ===== */
+/* Meepo hides at the bottom-right corner, peeking over the edge. He pops up on
+   hover, and stays up (.up) while talking - on tap or the every-8-min hint. */
+#meepo{position:fixed;right:18px;bottom:0;z-index:80;width:94px;cursor:pointer;
+  filter:drop-shadow(0 -3px 12px rgba(0,0,0,.4));transform:translateY(56%);
+  transition:transform .55s cubic-bezier(.34,1.45,.5,1)}
+#meepo:hover,#meepo:focus-visible,#meepo.up{transform:translateY(-6%)}
+#meepo svg.kobold{width:100%;height:auto;display:block;overflow:visible}
+/* kobold sprite parts: glow pulse, wing flap, eye blink, orbiting sparkles */
+.kobold .k-glow{transform-box:fill-box;transform-origin:center;animation:kglowp 3.2s ease-in-out infinite}
+@keyframes kglowp{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.14)}}
+.kobold .k-wing{transform-box:fill-box}
+.kobold .kl{transform-origin:27px 46px;animation:kflapL .5s ease-in-out infinite}
+.kobold .kr{transform-origin:45px 46px;animation:kflapR .5s ease-in-out infinite}
+@keyframes kflapL{0%,100%{transform:rotate(4deg)}50%{transform:rotate(22deg)}}
+@keyframes kflapR{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(-22deg)}}
+.kobold .k-eye{transform-box:fill-box;transform-origin:center;animation:kblink 5.5s infinite}
+@keyframes kblink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.12)}}
+.kobold .k-spark{transform-box:fill-box;transform-origin:center;animation:ktwk 2.4s ease-in-out infinite}
+.kobold .s2{animation-delay:1.2s}
+@keyframes ktwk{0%,100%{opacity:.25;transform:scale(.5) rotate(0)}50%{opacity:1;transform:scale(1) rotate(120deg)}}
+/* speech bubble is a child of #meepo, so it flies with him; classes flip it near edges */
+.bubble{position:absolute;bottom:calc(100% + 10px);right:2px;left:auto;top:auto;z-index:81;
+  width:max-content;max-width:min(262px,72vw);padding:.72rem .95rem;border-radius:14px 14px 2px 14px;
+  font-size:.97rem;line-height:1.42;color:var(--text);background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,0,0,.45);
+  opacity:0;transform:translateY(8px) scale(.96);transform-origin:bottom right;
+  transition:opacity .2s,transform .2s;pointer-events:none}
+.bubble.show{opacity:1;transform:none}
+.bubble.bleft{right:auto;left:2px;border-radius:14px 14px 14px 2px;transform-origin:bottom left}
+.bubble.bbelow{bottom:auto;top:calc(100% + 10px);border-radius:2px 14px 14px 14px}
+.bubble.bbelow.bleft{border-radius:14px 2px 14px 14px}
+.bubble b{color:var(--teal)}
+
+@media (max-width:560px){
+  .nav{gap:.5rem;padding:.5rem .8rem}
+  .brand{font-size:.95rem}
+  .nl{gap:.1rem;width:100%;justify-content:flex-start;margin-left:0}
+  .nl a{padding:.35rem .55rem;font-size:.92rem}
+  #meepo{width:74px;right:10px}
+  .bubble{max-width:min(210px,74vw);font-size:.92rem}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrimForge — Cyber-Fantasy UI</title>
+<meta name="description" content="A cyber-fantasy interface kit - lightweight, framework-free, and tuned to run on anything.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========================================================================
+   GrimForge · Cyber-Fantasy UI kit — one file, no frameworks.
+   Arcane tech + fantasy: rune-teal, molten gold, spell-violet on the void.
+   ======================================================================== */
+@property --a { syntax:'<angle>'; initial-value:0deg; inherits:false; }
+
+:root{
+  --void:#070a12; --void2:#0b1020;
+  --teal:#4ff0e0; --rune:#5fe0d6; --violet:#b06bff;
+  --gold:#e8b24c; --gold2:#f6d785;
+  --text:#e4ebf7; --muted:#8b98b6;
+  --glass:rgba(20,28,50,.55); --line:rgba(120,150,220,.18);
+  --ui:'Rajdhani',system-ui,sans-serif; --disp:'Cinzel',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ui);background:var(--void);color:var(--text);overflow-x:hidden;
+  font-size:18px;line-height:1.5;letter-spacing:.2px;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{font-family:var(--disp);font-weight:700;line-height:1.1}
+
+/* ---- living background: aurora + rune grid ---- */
+body::before{content:'';position:fixed;inset:-25%;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(38% 38% at 18% 28%, rgba(79,240,224,.16), transparent 60%),
+    radial-gradient(40% 40% at 82% 18%, rgba(176,107,255,.15), transparent 60%),
+    radial-gradient(46% 46% at 62% 92%, rgba(232,178,76,.13), transparent 60%),
+    var(--void);
+  filter:blur(28px);animation:drift 20s ease-in-out infinite alternate}
+body::after{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.05;
+  background-image:linear-gradient(rgba(95,224,214,.6) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(95,224,214,.6) 1px,transparent 1px);
+  background-size:46px 46px;
+  -webkit-mask:radial-gradient(circle at 50% 32%,#000 25%,transparent 72%);
+          mask:radial-gradient(circle at 50% 32%,#000 25%,transparent 72%)}
+@keyframes drift{to{transform:translate3d(4%,-3%,0) scale(1.08)}}
+
+/* ---- animated conic glow border (the "how'd you do that" trick) ---- */
+.glowb{position:relative;border-radius:16px}
+.glowb::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.4px;
+  background:conic-gradient(from var(--a),transparent 0 12%,var(--teal),var(--violet),var(--gold),transparent 68% 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  animation:spin 7s linear infinite;pointer-events:none}
+@keyframes spin{to{--a:360deg}}
+
+.wrap{max-width:1120px;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem)}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:16px;
+  backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2)}
+
+/* ---- nav ---- */
+nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:1rem;
+  padding:.7rem clamp(1rem,4vw,2.5rem);
+  background:linear-gradient(180deg,rgba(7,10,18,.85),rgba(7,10,18,.1));
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{font-family:var(--disp);font-weight:700;font-size:1.25rem;letter-spacing:2px;
+  color:var(--gold2);text-shadow:0 0 22px rgba(232,178,76,.4)}
+.brand b{color:var(--teal)}
+.nlinks{margin-left:auto;display:flex;gap:.3rem;align-items:center}
+.nlinks a{padding:.4rem .8rem;border-radius:9px;color:var(--muted);font-weight:600;transition:.2s}
+.nlinks a:hover{color:var(--text);background:rgba(95,224,214,.08)}
+.pill{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:700;letter-spacing:.5px;
+  color:var(--teal);border:1px solid rgba(79,240,224,.4);border-radius:999px;padding:.28rem .7rem;
+  background:rgba(79,240,224,.06)}
+
+/* ---- hero ---- */
+.hero{text-align:center;padding:clamp(3rem,10vh,7rem) 0 3rem;position:relative}
+.emblem{width:120px;height:120px;margin:0 auto 1.6rem;position:relative;display:grid;place-items:center}
+.emblem .ring{position:absolute;inset:0;border-radius:50%}
+.emblem .ring::before{border-radius:50%;padding:2px;animation-duration:5s}
+.emblem .core{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:2rem;
+  background:radial-gradient(circle at 40% 35%,#123,#050810);
+  box-shadow:0 0 40px rgba(79,240,224,.45),inset 0 0 20px rgba(176,107,255,.4);color:var(--gold2)}
+.hero h1{font-size:clamp(2.6rem,8vw,5rem);letter-spacing:2px;
+  background:linear-gradient(180deg,#fff 10%,var(--gold) 90%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 26px rgba(232,178,76,.32))}
+.hero .sub{color:var(--teal);font-weight:600;letter-spacing:4px;text-transform:uppercase;font-size:.85rem;margin-bottom:1rem}
+.hero p.lead{max-width:44ch;margin:1rem auto 2rem;color:var(--muted);font-size:1.15rem}
+.cta{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+
+/* ---- buttons ---- */
+.btn{position:relative;overflow:hidden;font-family:var(--ui);font-weight:700;font-size:1rem;letter-spacing:.5px;
+  padding:.8rem 1.6rem;border-radius:11px;border:none;cursor:pointer;transition:transform .15s,box-shadow .2s;
+  background:linear-gradient(180deg,var(--gold2),var(--gold));color:#120d05;
+  box-shadow:0 6px 22px rgba(232,178,76,.32),inset 0 1px 0 rgba(255,255,255,.4)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(232,178,76,.5)}
+.btn:active{transform:translateY(0)}
+.btn.rune{background:linear-gradient(180deg,#2af0dd,#12b8ab);color:#031a18;box-shadow:0 6px 22px rgba(79,240,224,.32)}
+.btn.rune:hover{box-shadow:0 10px 32px rgba(79,240,224,.5)}
+.btn.ghost{background:transparent;color:var(--teal);border:1px solid rgba(79,240,224,.5);box-shadow:none}
+.btn.ghost:hover{background:rgba(79,240,224,.08);box-shadow:0 0 24px rgba(79,240,224,.25)}
+.rip{position:absolute;border-radius:50%;transform:translate(-50%,-50%) scale(0);
+  background:rgba(255,255,255,.5);pointer-events:none;animation:rip .6s ease-out}
+@keyframes rip{to{transform:translate(-50%,-50%) scale(6);opacity:0}}
+
+/* ---- sections ---- */
+section{padding:clamp(2.5rem,7vh,5rem) 0}
+.eyebrow{color:var(--violet);font-weight:700;letter-spacing:3px;text-transform:uppercase;font-size:.78rem;margin-bottom:.5rem}
+h2.sec{font-size:clamp(1.8rem,5vw,2.8rem);margin-bottom:.4rem;
+  background:linear-gradient(90deg,#fff,var(--rune));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sec-sub{color:var(--muted);max-width:52ch;margin-bottom:2rem}
+
+.grid{display:grid;gap:1.1rem}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{padding:1.4rem;border-radius:16px}
+.card h3{font-size:1.25rem;color:var(--gold2);margin-bottom:.5rem;letter-spacing:.5px}
+.card p{color:var(--muted);font-size:1rem}
+.card .ico{font-size:1.6rem;display:grid;place-items:center;width:48px;height:48px;border-radius:12px;margin-bottom:.9rem;
+  background:rgba(79,240,224,.08);border:1px solid rgba(79,240,224,.25);box-shadow:0 0 22px rgba(79,240,224,.15)}
+
+/* ---- toggles + input (secure-by-default demo) ---- */
+.controls{display:flex;flex-wrap:wrap;gap:1.4rem;align-items:center}
+.sw{display:inline-flex;align-items:center;gap:.6rem;cursor:pointer;font-weight:600;user-select:none}
+.sw input{display:none}
+.track{width:52px;height:28px;border-radius:999px;background:rgba(120,150,220,.2);position:relative;transition:.25s;border:1px solid var(--line)}
+.track::after{content:'';position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+  background:#cdd7ee;transition:.25s}
+.sw input:checked+.track{background:linear-gradient(90deg,var(--teal),var(--violet));border-color:transparent;
+  box-shadow:0 0 18px rgba(79,240,224,.5)}
+.sw input:checked+.track::after{left:26px;background:#fff}
+
+.field{display:flex;gap:.6rem;flex-wrap:wrap;max-width:520px}
+.field input{flex:1;min-width:220px;font-family:var(--ui);font-size:1.05rem;color:var(--text);
+  background:rgba(6,10,20,.6);border:1px solid var(--line);border-radius:11px;padding:.8rem 1rem;outline:none;transition:.2s}
+.field input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(79,240,224,.15)}
+.field:has(input:valid) .ok{opacity:1}
+.ok{opacity:0;color:var(--teal);align-self:center;font-weight:700;transition:.2s}
+
+/* ---- the Forge (mock generator) ---- */
+.forge{display:grid;grid-template-columns:1.1fr .9fr;gap:1.4rem;padding:1.6rem;align-items:stretch}
+.forge .panel label{display:block;color:var(--muted);font-weight:600;letter-spacing:.5px;margin:.9rem 0 .3rem;font-size:.85rem;text-transform:uppercase}
+.forge select{width:100%;font-family:var(--ui);font-size:1.05rem;color:var(--text);
+  background:rgba(6,10,20,.6);border:1px solid var(--line);border-radius:11px;padding:.7rem .9rem;outline:none}
+.forge select:focus{border-color:var(--teal)}
+.result{position:relative;border-radius:14px;overflow:hidden;min-height:320px;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 30%,#0e1428,#060912)}
+.result .ph{color:var(--muted);text-align:center;padding:1rem}
+.result img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .6s}
+.result img.show{opacity:1}
+.result .scan{position:absolute;inset:0;opacity:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(79,240,224,.35),transparent);height:40%}
+.result.loading .scan{opacity:1;animation:scan 1.1s ease-in-out infinite}
+@keyframes scan{0%{transform:translateY(-120%)}100%{transform:translateY(320%)}}
+.floading{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;background:rgba(6,9,18,.9);z-index:3;padding:1rem;text-align:center}
+.result.loading .floading{display:flex}
+.floading .hollow{width:110px;filter:invert(1) drop-shadow(0 0 14px rgba(79,240,224,.55));animation:hbob 1.6s ease-in-out infinite}
+@keyframes hbob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-7px) scale(1.03)}}
+.floading .fbar{width:72%;height:8px;border-radius:6px;background:rgba(255,255,255,.1);border:1px solid var(--line);overflow:hidden}
+.floading .fbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));box-shadow:0 0 12px var(--teal);transition:width .3s}
+.floading .ftime{font-family:var(--ui);color:var(--teal);font-weight:700;letter-spacing:1px}
+.statline{display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding:.35rem 0;color:var(--muted);font-size:.95rem}
+.statline b{color:var(--gold2)}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.5px;color:var(--teal);
+  border:1px solid rgba(79,240,224,.35);border-radius:6px;padding:.15rem .5rem;background:rgba(79,240,224,.06)}
+
+/* ---- reveal on scroll ---- */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+footer{padding:3rem 0 4rem;text-align:center;color:var(--muted);border-top:1px solid var(--line);margin-top:2rem}
+footer b{color:var(--gold2)}
+
+@media (max-width:720px){ .forge{grid-template-columns:1fr} .nlinks a:not(.pill){display:none} }
+@media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} .reveal{opacity:1;transform:none} }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="brand">⚒ GRIM<b>FORGE</b></span>
+  <div class="nlinks">
+    <a href="#kit">Kit</a>
+    <a href="#forge">The Forge</a>
+    <a href="world.html">The World</a>
+    <span class="pill">🔒 Secure by default</span>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="emblem">
+    <div class="ring glowb"></div>
+    <div class="core">⚚</div>
+  </div>
+  <p class="sub reveal">Cyber-Fantasy Interface</p>
+  <h1 class="reveal">Beautiful. Effortless.<br>Secure by nature.</h1>
+  <p class="lead reveal">Arcane tech meets clean design. Lightweight, secure, and tuned to the bone - no bloat, and it runs on a potato. This is the look, and the <i>feel</i>, of everything I make.</p>
+  <div class="cta reveal">
+    <button class="btn" data-rip onclick="document.getElementById('forge').scrollIntoView({behavior:'smooth'})">⚒ Enter the Forge</button>
+    <a href="world.html" class="btn ghost">Walk the World →</a>
+  </div>
+</header>
+
+<!-- SECURE BY DEFAULT -->
+<section class="wrap" id="secure">
+  <p class="eyebrow reveal">How I build</p>
+  <h2 class="sec reveal">Secure by default.</h2>
+  <p class="sec-sub reveal">Not a feature you toggle - a habit. I vet every build for vulnerabilities before it ships, and I try to break my own work before anyone pays for it, so I know exactly where the limits are.</p>
+  <div class="grid g3">
+    <div class="card glass reveal"><div class="ico">🔨</div><h3>I break it first</h3><p>Before it sells, I try to break it myself - so the weak spots turn up on my bench, not in someone's hands.</p></div>
+    <div class="card glass reveal"><div class="ico">🛡️</div><h3>Less to attack</h3><p>Static, framework-free builds have almost nothing to breach: no server to hack, no database to leak, no third-party trackers riding along.</p></div>
+    <div class="card glass reveal"><div class="ico">🔍</div><h3>Vetted before it ships</h3><p>Every build gets a real once-over for vulnerabilities before it goes live. Security by discipline, not by afterthought.</p></div>
+  </div>
+</section>
+
+<!-- COMPONENT KIT -->
+<section class="wrap" id="kit">
+  <p class="eyebrow reveal">The Kit</p>
+  <h2 class="sec reveal">Runes you can click.</h2>
+  <p class="sec-sub reveal">Buttons, switches, and fields — the everyday parts, made gorgeous. Toggle, tap, focus a field. It should feel alive.</p>
+
+  <div class="card glass reveal" style="display:flex;flex-direction:column;gap:1.6rem">
+    <div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:center">
+      <button class="btn" data-rip>Primary</button>
+      <button class="btn rune" data-rip>Rune</button>
+      <button class="btn ghost" data-rip>Ghost</button>
+    </div>
+    <div class="controls">
+      <label class="sw"><input type="checkbox" checked><span class="track"></span>Auto-updates</label>
+      <label class="sw"><input type="checkbox" checked><span class="track"></span>Dark mode</label>
+      <label class="sw"><input type="checkbox"><span class="track"></span>Share telemetry</label>
+    </div>
+    <form class="field" onsubmit="return false">
+      <input type="email" placeholder="you@somewhere.com" required>
+      <button class="btn rune" data-rip>Send magic link</button>
+      <span class="ok">✓ ready</span>
+    </form>
+  </div>
+</section>
+
+<!-- THE FORGE -->
+<section class="wrap" id="forge">
+  <p class="eyebrow reveal">On-demand art</p>
+  <h2 class="sec reveal">The Forge.</h2>
+  <p class="sec-sub reveal">Pick what to forge, then hit the button. <b>On my machine this is live</b> — it really drives the local AI and conjures the thing you chose. For visitors, it shows a real render it made earlier. Either way, your choices shape the result — watch the panel below tell you which mode you're in.</p>
+
+  <div class="forge glass glowb reveal">
+    <div class="panel">
+      <label>What are we forging</label>
+      <select id="f-what"><option>NPC — Mountain Smith</option><option>Monster — Rune Wraith</option><option>Item — Ashen Blade</option><option>Location — Neon Grotto</option></select>
+      <label>Style</label>
+      <select id="f-style"><option>Cyber-Fantasy</option><option>Anime</option><option>Painterly</option><option>Semi-real</option></select>
+      <label>Element</label>
+      <select id="f-el"><option>Rune-teal</option><option>Molten gold</option><option>Spell-violet</option></select>
+      <button class="btn" id="f-go" data-rip style="margin-top:1.3rem;width:100%">⚒ Forge it</button>
+      <div id="f-status" style="margin-top:.8rem;font-size:.85rem;color:var(--muted)">◌ checking the forge…</div>
+      <div id="f-stats" style="margin-top:1.1rem"></div>
+    </div>
+    <div class="result" id="f-result">
+      <div class="ph">The forge is cold.<br><span style="opacity:.6">Hit <b>Forge it</b> to conjure.</span></div>
+      <img id="f-img" src="demo_portrait.webp" alt="AI-forged render">
+      <div class="scan"></div>
+      <div class="floading" id="f-load">
+        <img class="hollow" src="loading_hollow.webp" alt="">
+        <div class="fbar"><i id="f-bar"></i></div>
+        <div class="ftime" id="f-time">forging…</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <p><b>GrimForge</b> · Cyber-Fantasy UI · lightweight, secure, runs on a potato.</p>
+  <p style="opacity:.6;margin-top:.4rem">Made for people who'd rather build the cool thing than talk about it.</p>
+</footer>
+
+<script>
+// ripple
+document.addEventListener('pointerdown',e=>{ const b=e.target.closest('[data-rip]'); if(!b)return;
+  const r=document.createElement('span'); r.className='rip'; const box=b.getBoundingClientRect();
+  r.style.left=(e.clientX-box.left)+'px'; r.style.top=(e.clientY-box.top)+'px'; r.style.width=r.style.height='24px';
+  b.appendChild(r); setTimeout(()=>r.remove(),600); });
+
+// scroll reveal
+const io=new IntersectionObserver((es)=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// The Forge — LIVE when the Studio is running on this machine, honest demo otherwise.
+const STATS={
+  'NPC — Mountain Smith':[['Role','Forge-Keeper'],['HP','48'],['Demeanor','Gruff, fair'],['Reward','Ash Marks']],
+  'Monster — Rune Wraith':[['CR','6'],['HP','82'],['Trait','Phase-flicker'],['Weakness','Cold iron']],
+  'Item — Ashen Blade':[['Type','Longsword +1'],['Dmg','1d8+3 fire'],['Rune','Emberbind'],['Value','1,200 gp']],
+  'Location — Neon Grotto':[['Zone','Sixth Ring'],['Light','Bioluminescent'],['Danger','Moderate'],['Loot','Sap crystals']]
+};
+const WHAT={
+  'NPC — Mountain Smith':['a rugged mountain blacksmith, fantasy npc, character portrait',832,1216],
+  'Monster — Rune Wraith':['a menacing rune wraith, glowing sigils, dark fantasy creature',832,1216],
+  'Item — Ashen Blade':['an ornate ashen longsword etched with glowing runes, fantasy weapon concept, plain dark background',1024,1024],
+  'Location — Neon Grotto':['a mystical glowing crystal grotto cavern, fantasy environment, wide establishing shot',1216,832]
+};
+const FSTYLE={'Cyber-Fantasy':'high fantasy, ancient arcane technology, divine runework, magic-as-technology, intricate ornate detail, ','Anime':'(anime style:1.3), cel shading, flat color, ','Painterly':'digital painting, concept art, ','Semi-real':'semi-realistic, painterly, '};
+const FEL={'Rune-teal':'teal rune-light','Molten gold':'molten gold','Spell-violet':'violet arcane glow'};
+// Demo mode: each choice pulls a fitting real render (not the same image every time)
+function demoSrc(what,style,el){
+  if(/Wraith/i.test(what)) return 'artgen/out/hollow_sonic_00001_.png';
+  if(/Blade/i.test(what))  return 'artgen/out/forge_00004_.png';
+  if(/Grotto/i.test(what)) return (el==='Molten gold')?'artgen/out/grimforge_hero_00001_.png':'artgen/out/scene_00001_.png';
+  return (style==='Anime')?'artgen/out/custom_00001_.png':'demo_portrait.webp'; // NPC / Mountain Smith
+}
+const F={res:document.getElementById('f-result'),img:document.getElementById('f-img'),stats:document.getElementById('f-stats'),status:document.getElementById('f-status')};
+const ST='http://localhost:7861'; let STUDIO=null, MODEL=null;
+
+function demoMode(){ F.status.innerHTML='<span style="color:var(--muted)">&#9676; Demo mode — the live forge runs on the builder’s machine.</span>'; }
+fetch(ST+'/api/models').then(r=>r.json()).then(m=>{
+  if(m&&m.length){ STUDIO=ST; MODEL=m.find(x=>/illustrious|anime|noob/i.test(x))||m[0];
+    F.status.innerHTML='<span class="tag">&#9889; LIVE — this forge is really running</span>'; }
+  else demoMode();
+}).catch(demoMode);
+
+function forgeStats(what,mode){
+  F.stats.innerHTML='<span class="tag">'+(mode==='LIVE'?'FORGED &middot; live':'DEMO &middot; pre-rendered')+'</span>';
+  (STATS[what]||[]).forEach((r,i)=>setTimeout(()=>{const d=document.createElement('div');d.className='statline';
+    d.innerHTML='<span>'+r[0]+'</span><b>'+r[1]+'</b>';F.stats.appendChild(d);},120*(i+1)));
+}
+let _ft0=0,_fiv=0;
+function fStart(){ _ft0=Date.now(); const est=45000;
+  _fiv=setInterval(()=>{ const el=Date.now()-_ft0, pct=Math.min(92,el/est*100);
+    const b=document.getElementById('f-bar'); if(b)b.style.width=pct+'%';
+    const t=document.getElementById('f-time'); if(t)t.textContent='forging… '+Math.round(el/1000)+'s'; },300); }
+function fStop(){ if(_fiv){clearInterval(_fiv);_fiv=0;} }
+document.getElementById('f-go').addEventListener('click',async()=>{
+  const what=document.getElementById('f-what').value, style=document.getElementById('f-style').value, el=document.getElementById('f-el').value;
+  F.img.classList.remove('show'); F.res.classList.add('loading'); F.stats.innerHTML=''; fStart();
+  if(STUDIO){
+    try{
+      const w=WHAT[what]||['fantasy character',832,1216];
+      const prompt='masterpiece, best quality, '+(FSTYLE[style]||'')+w[0]+', '+(FEL[el]||'')+', cinematic lighting, highly detailed';
+      const d=await(await fetch(STUDIO+'/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:MODEL,prompt:prompt,negative:'worst quality, low quality, blurry, watermark, text, extra fingers, bad hands',width:w[1],height:w[2],steps:26,cfg:5.5,name:'forge'})})).json();
+      fStop(); F.res.classList.remove('loading');
+      if(d&&d.ok){ F.img.onload=()=>F.img.classList.add('show'); F.img.src=STUDIO+d.url+'?t='+Date.now(); forgeStats(what,'LIVE'); return; }
+    }catch(e){}
+    fStop(); F.res.classList.remove('loading');
+  }
+  setTimeout(()=>{ fStop(); F.res.classList.remove('loading');
+    F.img.onload=()=>F.img.classList.add('show'); F.img.src=demoSrc(what,style,el);
+    if(F.img.complete)F.img.classList.add('show'); forgeStats(what,'DEMO'); }, STUDIO?60:1200);
+});
+</script>
+</body>
+</html>

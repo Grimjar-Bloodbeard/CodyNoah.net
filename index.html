@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrimForge Creations · by Cody Noah</title>
+<meta name="description" content="GrimForge Creations - the one-smith workshop of Cody Noah. Two ways in: explore the Lab, or hire the smith. Real, live software from Wilkes County, NC.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/forge.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+/* ===== landing / the gate ===== */
+#embers{position:fixed;inset:0;z-index:-2;width:100%;height:100%;pointer-events:none}
+.gate{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:clamp(1.5rem,5vh,3rem) clamp(1rem,4vw,2rem)}
+
+.crest{font-family:var(--disp);letter-spacing:5px;font-size:.78rem;color:var(--ember);text-transform:uppercase;
+  margin-bottom:.4rem;opacity:0;animation:fadein .8s .1s both}
+.title{font-size:clamp(3rem,14vw,8rem);letter-spacing:2px;line-height:.92;display:flex;gap:.02em;flex-wrap:wrap;justify-content:center}
+.title span{display:inline-block;
+  background:linear-gradient(180deg,#fff 0%,var(--gold2) 38%,var(--gold) 68%,var(--ember2) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 28px rgba(255,122,44,.32));
+  animation:strike .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*.07s)}
+@keyframes strike{
+  0%{opacity:0;transform:translateY(-.5em) rotateX(70deg) scale(1.35);filter:brightness(3.5) drop-shadow(0 0 2px #fff)}
+  55%{opacity:1;filter:brightness(1.7) drop-shadow(0 0 40px rgba(255,190,90,.9))}
+  100%{opacity:1;transform:none}}
+.creations{font-family:var(--disp);font-weight:700;line-height:1;margin-top:.1rem;
+  letter-spacing:clamp(.28em,2vw,.6em);padding-left:clamp(.28em,2vw,.6em);
+  font-size:clamp(1.15rem,5.4vw,2.15rem);
+  background:linear-gradient(180deg,var(--gold2),var(--gold) 65%,var(--ember2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 16px rgba(232,178,76,.3));opacity:0;animation:fadein .8s .85s both}
+.byline{font-family:var(--disp);letter-spacing:3px;font-size:clamp(.8rem,2.5vw,1.05rem);color:var(--muted);
+  margin-top:.55rem;opacity:0;animation:fadein .8s 1s both}
+.byline::before{content:'⚒ ';color:var(--ember);opacity:.85}
+.tag{max-width:52ch;margin:1.1rem auto 0;color:var(--muted);font-size:clamp(1rem,2.6vw,1.18rem);
+  opacity:0;animation:fadein .9s 1.05s both}
+.tag b{color:var(--rune);font-weight:600}
+@keyframes fadein{to{opacity:1}}
+
+.choose{margin-top:.6rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;font-size:.72rem;font-weight:700;
+  opacity:0;animation:fadein .8s 1.3s both}
+
+/* the two doors */
+.doors{display:grid;grid-template-columns:1fr 2px 1fr;gap:clamp(.7rem,2vw,1.4rem);align-items:stretch;
+  width:100%;max-width:900px;margin:1.2rem auto 0;perspective:1400px}
+.door{position:relative;transform-style:preserve-3d;
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform .25s ease,filter .35s,box-shadow .35s;
+  border-radius:18px;min-height:clamp(230px,38vh,320px);padding:1.6rem;overflow:hidden;cursor:pointer;
+  display:flex;flex-direction:column;justify-content:flex-end;text-align:left;
+  border:1px solid var(--line);opacity:0;animation:doorin .9s cubic-bezier(.2,.7,.2,1) both}
+.door.lab{animation-delay:1.35s}
+.door.hire{animation-delay:1.5s}
+@keyframes doorin{0%{opacity:0;transform:translateY(28px) scale(.96)}100%{opacity:1;transform:none}}
+.doors:has(.door:hover) .door:not(:hover){filter:brightness(.55) saturate(.7);transform:scale(.975)}
+.door:hover{box-shadow:0 24px 60px rgba(0,0,0,.5)}
+
+.door .scene{position:absolute;inset:0;z-index:-1;transition:transform .3s}
+.door.lab .scene{background:radial-gradient(120% 90% at 30% 10%,rgba(79,240,224,.22),transparent 55%),radial-gradient(100% 100% at 85% 110%,rgba(176,107,255,.28),transparent 60%),linear-gradient(160deg,#0d1930,#0a0f1e)}
+.door.hire .scene{background:radial-gradient(120% 90% at 70% 10%,rgba(246,215,133,.22),transparent 55%),radial-gradient(100% 100% at 15% 110%,rgba(255,90,28,.24),transparent 60%),linear-gradient(160deg,#241a10,#120c08)}
+/* light spill from the opening on hover */
+.door::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:100%;transform:skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);transition:left .6s;pointer-events:none}
+.door:hover::after{left:130%}
+
+/* floating pixel motes in the Lab door */
+.mote{position:absolute;width:10px;height:10px;border-radius:2px;opacity:.0;
+  animation:rise 6s linear infinite;box-shadow:0 0 10px currentColor}
+@keyframes rise{0%{opacity:0;transform:translateY(20px)}15%,80%{opacity:.8}100%{opacity:0;transform:translateY(-90px)}}
+
+.door .k{font-size:2.4rem;margin-bottom:.5rem;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5))}
+.door h2{font-size:clamp(1.5rem,4vw,2.1rem);letter-spacing:1px}
+.door.lab h2{color:var(--rune)}
+.door.hire h2{color:var(--gold2)}
+.door p{color:var(--muted);font-size:.98rem;margin-top:.3rem;max-width:34ch}
+.door .go{margin-top:.9rem;font-weight:700;font-size:.95rem;display:inline-flex;align-items:center;gap:.4rem;transition:gap .2s}
+.door.lab .go{color:var(--teal)} .door.hire .go{color:var(--gold)}
+.door:hover .go{gap:.75rem}
+
+/* the molten forge-seam between the doors */
+.seam{position:relative;border-radius:2px;background:linear-gradient(180deg,transparent,var(--ember2) 20%,var(--gold2) 50%,var(--ember2) 80%,transparent);
+  box-shadow:0 0 16px rgba(255,122,44,.6),0 0 40px rgba(255,90,28,.35);animation:seamflk 2.4s ease-in-out infinite}
+@keyframes seamflk{0%,100%{opacity:.7;filter:brightness(1)}50%{opacity:1;filter:brightness(1.4)}}
+@media(max-width:640px){
+  .gate{justify-content:flex-start;padding-top:clamp(2rem,8vh,3.2rem)}
+  .title{font-size:clamp(2rem,12.5vw,3.6rem);letter-spacing:1px}
+  .creations{font-size:clamp(1rem,6.6vw,1.7rem)}
+  .tag{font-size:1.02rem;padding:0 .2rem}
+  .doors{grid-template-columns:1fr;max-width:430px;gap:.9rem}
+  .seam{height:2px;width:52%;justify-self:center;margin:.15rem 0;
+    background:linear-gradient(90deg,transparent,var(--ember2),var(--gold2),var(--ember2),transparent)}
+  .door{min-height:auto;padding:1.25rem 1.3rem}
+  .door p{max-width:none;font-size:.95rem}
+  .door .k{font-size:2rem;margin-bottom:.3rem}
+  .door.lab{box-shadow:0 10px 26px rgba(79,240,224,.14),0 0 0 1px rgba(79,240,224,.18)}
+  .door.hire{box-shadow:0 10px 26px rgba(255,90,28,.14),0 0 0 1px rgba(246,215,133,.18)}
+  .forging{margin-top:1.2rem;flex-wrap:wrap;justify-content:center;text-align:center;max-width:94vw}
+  .mini-brand{font-size:.72rem;top:12px;left:12px}
+}
+
+/* ===== tap-to-enter: the door opens onto a scene, then into the page ===== */
+.enter{position:fixed;inset:0;z-index:200;background:#05070d;opacity:0;visibility:hidden;transition:opacity .3s ease;pointer-events:none}
+.enter.show{opacity:1;visibility:visible;pointer-events:auto}
+.enter .scene{position:absolute;inset:0;opacity:0;overflow:hidden}
+.enter.lab .scene-lab,.enter.hire .scene-hire{opacity:1}
+/* the two doors that part to reveal the scene */
+.enter .dp{position:absolute;top:0;bottom:0;width:51%;z-index:5;background:linear-gradient(180deg,#161a22,#0c0f16);box-shadow:inset 0 0 70px rgba(0,0,0,.7)}
+.enter .dp::after{content:'';position:absolute;top:0;bottom:0;width:3px;box-shadow:0 0 26px 7px rgba(255,150,60,.6)}
+.enter .dp.left{left:0;border-right:1px solid #2a2f3a}.enter .dp.left::after{right:0}
+.enter .dp.right{right:0;border-left:1px solid #2a2f3a}.enter .dp.right::after{left:0}
+.enter.show .dp.left{animation:doorL 1.6s cubic-bezier(.6,.02,.3,1) forwards}
+.enter.show .dp.right{animation:doorR 1.6s cubic-bezier(.6,.02,.3,1) forwards}
+@keyframes doorL{0%,16%{transform:translateX(0)}100%{transform:translateX(-102%)}}
+@keyframes doorR{0%,16%{transform:translateX(0)}100%{transform:translateX(102%)}}
+/* Lab: night wilderness, campfire approaching from the distance */
+.scene-lab{background:linear-gradient(180deg,#081019,#0c1b28 52%,#0a1712)}
+.scene-lab .stars{position:absolute;inset:0;opacity:.85;background-image:
+  radial-gradient(1.5px 1.5px at 20% 18%,#cfe8ff,transparent),radial-gradient(1px 1px at 62% 12%,#bfe0ff,transparent),
+  radial-gradient(1.5px 1.5px at 80% 22%,#eaf4ff,transparent),radial-gradient(1px 1px at 40% 9%,#cfe8ff,transparent),
+  radial-gradient(1px 1px at 88% 14%,#bfe0ff,transparent),radial-gradient(1.5px 1.5px at 12% 30%,#eaf4ff,transparent),
+  radial-gradient(1px 1px at 52% 25%,#dffbff,transparent)}
+.scene-lab .ridge{position:absolute;left:-6%;right:-6%;bottom:0;height:40%;background:#04100c;border-radius:48% 52% 0 0/100% 100% 0 0}
+.scene-lab .pine{position:absolute;bottom:32%;width:0;height:0;border-left:solid transparent;border-right:solid transparent;border-bottom:solid #071a13}
+.scene-lab .pine.p1{left:14%;border-left-width:20px;border-right-width:20px;border-bottom-width:64px}
+.scene-lab .pine.p2{left:28%;border-left-width:14px;border-right-width:14px;border-bottom-width:46px}
+.scene-lab .pine.p3{right:22%;border-left-width:22px;border-right-width:22px;border-bottom-width:72px}
+.scene-lab .pine.p4{right:9%;border-left-width:13px;border-right-width:13px;border-bottom-width:44px}
+.scene-lab .fire{position:absolute;left:50%;bottom:30%;transform:translateX(-50%) scale(.16);transform-origin:center bottom}
+.enter.lab.show .fire{animation:approach 1.55s cubic-bezier(.3,.15,.2,1) forwards}
+@keyframes approach{0%{transform:translateX(-50%) scale(.16);filter:brightness(.55)}100%{transform:translateX(-50%) scale(1);filter:brightness(1.15)}}
+.fire .fglow{position:absolute;left:50%;bottom:-50px;width:340px;height:340px;transform:translateX(-50%);mix-blend-mode:screen;
+  background:radial-gradient(circle,rgba(255,190,90,.6),rgba(255,110,30,.2) 42%,transparent 68%);animation:flick .12s infinite alternate}
+.fire .fglow.core{width:150px;height:190px;bottom:-6px;background:radial-gradient(circle,rgba(255,246,210,.82),rgba(255,150,50,.3) 48%,transparent 72%);animation-duration:.09s}
+@keyframes flick{from{opacity:.78;transform:translateX(-50%) scale(.98)}to{opacity:1;transform:translateX(-50%) scale(1.05)}}
+.fire .logs{position:absolute;left:50%;bottom:0;width:84px;height:16px;transform:translateX(-50%);background:linear-gradient(90deg,#2a1a0c,#5c3a1e 50%,#2a1a0c);border-radius:6px;box-shadow:0 0 16px rgba(255,120,40,.5)}
+.fire .flame{position:absolute;left:50%;bottom:9px;transform-origin:50% 100%;filter:blur(.5px);
+  background:linear-gradient(180deg,#fffdf0 4%,#ffe27a 32%,#ff9a2e 64%,#ff4a14 88%,transparent);
+  border-radius:50% 50% 46% 46%/76% 76% 40% 40%;animation:flame .5s ease-in-out infinite alternate}
+.fire .flame.f1{width:30px;height:66px;margin-left:-15px}
+.fire .flame.f2{width:18px;height:48px;margin-left:-25px;animation-duration:.4s;animation-delay:-.1s}
+.fire .flame.f3{width:16px;height:44px;margin-left:9px;animation-duration:.63s;animation-delay:-.25s}
+.fire .flame.f4{width:12px;height:34px;margin-left:-4px;animation-duration:.34s;background:linear-gradient(180deg,#fff,#ffd45a 52%,#ff8a2c)}
+.fire .flame.f5{width:10px;height:28px;margin-left:15px;animation-duration:.72s;animation-delay:-.4s}
+@keyframes flame{0%{transform:scaleY(.9) skewX(-7deg)}100%{transform:scaleY(1.24) skewX(8deg)}}
+/* rising embers - a spark stream spawned on the Lab cutscene */
+.scene-lab .ember{position:absolute;bottom:30%;width:5px;height:5px;border-radius:50%;background:#ffd27a;
+  box-shadow:0 0 9px 2px rgba(255,140,50,.85);opacity:0;pointer-events:none;animation:emberrise 1.5s ease-out forwards}
+@keyframes emberrise{0%{opacity:0;transform:translate(0,0) scale(1.1)}15%{opacity:1}100%{opacity:0;transform:translate(var(--ex,0px),calc(-1 * var(--er,90px))) scale(.3)}}
+/* Hire: the forge lights up */
+.scene-hire{background:radial-gradient(120% 95% at 50% 100%,#3a1c0c,#0c0805)}
+.scene-hire .fg{position:absolute;left:50%;bottom:22%;width:340px;height:340px;transform:translateX(-50%) scale(.28);transform-origin:center bottom}
+.enter.hire.show .fg{animation:approach 1.55s ease-out forwards}
+.scene-hire .fg::before{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(255,150,50,.6),rgba(255,60,20,.15) 45%,transparent 70%);animation:flick .18s infinite alternate}
+.scene-hire .anvil{position:absolute;left:50%;bottom:20%;width:120px;height:56px;transform:translateX(-50%);background:#140f0a;opacity:0;
+  clip-path:polygon(0 42%,22% 42%,28% 0,72% 0,78% 42%,100% 42%,84% 58%,60% 58%,60% 100%,40% 100%,40% 58%,16% 58%);animation:anvilin 1s .35s forwards}
+@keyframes anvilin{to{opacity:.92}}
+.enter-label{position:absolute;left:0;right:0;bottom:13%;z-index:6;text-align:center;font-family:var(--disp);letter-spacing:3px;
+  color:var(--gold2);font-size:clamp(1rem,3vw,1.5rem);opacity:0;text-shadow:0 2px 20px rgba(255,120,40,.55)}
+.enter.show .enter-label{animation:fadein .7s .65s forwards}
+/* when GSAP drives the cutscene, stand down the CSS keyframes so they don't fight it */
+.enter.gsap .dp.left,.enter.gsap .dp.right,.enter.gsap .scene-lab .fire,.enter.gsap .scene-hire .fg,.enter.gsap .enter-label{animation:none!important}
+
+/* currently forging ticker */
+.forging{margin:1.6rem auto 0;display:inline-flex;align-items:center;gap:.6rem;padding:.5rem 1rem;border-radius:999px;
+  font-size:.92rem;color:var(--muted);opacity:0;animation:fadein .8s 1.7s both}
+.forging .dot{width:9px;height:9px;border-radius:50%;background:var(--ember);box-shadow:0 0 10px var(--ember);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
+.forging b{color:var(--gold2);font-weight:600}
+.forging .lbl{color:var(--ember);font-weight:700;letter-spacing:.5px;text-transform:uppercase;font-size:.72rem}
+
+.mini-brand{position:fixed;top:14px;left:16px;z-index:40;font-family:var(--disp);letter-spacing:2px;font-size:.8rem;color:var(--gold2);opacity:.85}
+</style>
+</head>
+<body>
+
+<canvas id="embers"></canvas>
+<div class="bg">
+  <div class="beam"></div><div class="beam b2"></div>
+  <div class="aurora"></div><div class="grid"></div>
+  <div id="runes"></div>
+</div>
+
+<span class="mini-brand">⚒ GRIMFORGE</span>
+
+<main class="gate">
+  <p class="crest">⚒ The one-smith workshop of</p>
+  <h1 class="title" id="title" aria-label="GrimForge Creations"></h1>
+  <div class="creations">CREATIONS</div>
+  <p class="byline">by Cody Noah</p>
+  <p class="tag">A mountain workshop in Wilkes County, NC. I forge <b>real, live software</b> for real people - and build weird, fun things because I can't help it.</p>
+
+  <p class="choose">Two ways in</p>
+  <div class="doors">
+    <a class="door lab" href="world.html">
+      <div class="scene"></div>
+      <span class="k">⚔️</span>
+      <h2>Enter the Lab</h2>
+      <p>Walk the pixel world, play the arcade, and watch what's still glowing on the anvil. The fun side.</p>
+      <span class="go">Explore →</span>
+    </a>
+    <div class="seam"></div>
+    <a class="door hire" href="hire.html">
+      <div class="scene"></div>
+      <span class="k">⚒️</span>
+      <h2>Hire the Smith</h2>
+      <p>The professional side - live sites, real skills, PC and console repair. See the proof, then start a project.</p>
+      <span class="go">Show me →</span>
+    </a>
+  </div>
+
+  <div class="forging glass">
+    <span class="dot"></span><span class="lbl">Currently forging</span>
+    <b id="fg">CodyNoah.net 1.0 - the two-door gate</b>
+  </div>
+</main>
+
+<!-- tap-to-enter transition -->
+<div class="enter" id="enter" aria-hidden="true">
+  <div class="scene scene-lab">
+    <span class="stars"></span>
+    <span class="ridge"></span>
+    <span class="pine p1"></span><span class="pine p2"></span><span class="pine p3"></span><span class="pine p4"></span>
+    <div class="fire"><span class="fglow"></span><span class="fglow core"></span><span class="logs"></span><span class="flame f1"></span><span class="flame f2"></span><span class="flame f3"></span><span class="flame f4"></span><span class="flame f5"></span></div>
+    <div class="enter-label">Follow the firelight...</div>
+  </div>
+  <div class="scene scene-hire">
+    <div class="fg"></div><span class="anvil"></span>
+    <div class="enter-label">To the forge...</div>
+  </div>
+  <span class="dp left"></span><span class="dp right"></span>
+</div>
+
+<!-- Meepo -->
+<div class="bubble" id="bubble"></div>
+<div id="meepo" title="Poke me!" data-tips='["Oi! I&apos;m <b>Meepo</b>. Pick a door - <b>Lab</b> for fun, <b>Smith</b> for business.","Left&apos;s the playground, right&apos;s the resume. Both are Cody.","See that seam glowing? That&apos;s the forge. Don&apos;t touch, it&apos;s hot.","<b>Currently forging</b> down there updates as Cody builds. Neat, huh?","Everything here, one guy made. Power tools and all. Honest work."]'>
+</div>
+
+<script src="js/forge.js"></script>
+<script>
+/* forge the title letters in, one strike at a time */
+(function(){
+  var word='GRIMFORGE', t=document.getElementById('title');
+  for(var i=0;i<word.length;i++){ var s=document.createElement('span'); s.textContent=word[i]; s.style.setProperty('--i',i); t.appendChild(s); }
+})();
+
+/* rising ember/spark canvas */
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var cv=document.getElementById('embers'); if(!cv) return;
+  var ctx=cv.getContext('2d'), W=0,H=0, DPR=Math.min(window.devicePixelRatio||1,2), parts=[];
+  var N=innerWidth<640?34:70;
+  function mk(seed){ return {x:Math.random()*W, y:seed?Math.random()*H:H+8, r:.6+Math.random()*2.1,
+    vy:-(.25+Math.random()*1.0), vx:(Math.random()-.5)*.4, life:seed?Math.random()*180:0, max:150+Math.random()*160, hue:18+Math.random()*32}; }
+  function size(){ W=cv.clientWidth; H=cv.clientHeight; cv.width=W*DPR; cv.height=H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
+  function init(){ size(); parts=[]; for(var i=0;i<N;i++) parts.push(mk(true)); }
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<parts.length;i++){ var p=parts[i];
+      p.x+=p.vx; p.y+=p.vy; p.vy-=0.0016; p.life++;
+      if(p.life>=p.max||p.y<-12){ parts[i]=mk(false); continue; }
+      var a=Math.sin(Math.PI*(p.life/p.max))*0.85;
+      var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4.2);
+      g.addColorStop(0,'hsla('+p.hue+',100%,66%,'+a+')');
+      g.addColorStop(1,'hsla('+p.hue+',100%,50%,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*4.2,0,6.3); ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  init(); addEventListener('resize',init,{passive:true});
+  if(!reduce) frame();
+})();
+
+/* 3D tilt on the doors, following the cursor */
+(function(){
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  document.querySelectorAll('.door').forEach(function(d){
+    d.addEventListener('pointermove',function(e){
+      var r=d.getBoundingClientRect();
+      var px=(e.clientX-r.left)/r.width-.5, py=(e.clientY-r.top)/r.height-.5;
+      d.style.setProperty('--ry',(px*9).toFixed(2)+'deg');
+      d.style.setProperty('--rx',(-py*9).toFixed(2)+'deg');
+    });
+    d.addEventListener('pointerleave',function(){ d.style.setProperty('--rx','0deg'); d.style.setProperty('--ry','0deg'); });
+  });
+
+  /* scatter a few glowing pixel motes inside the Lab door */
+  var lab=document.querySelector('.door.lab .scene');
+  if(lab){ var cols=['#4ff0e0','#b06bff','#f6d785'];
+    for(var i=0;i<7;i++){ var m=document.createElement('span'); m.className='mote';
+      m.style.left=(10+Math.random()*80)+'%'; m.style.bottom=(Math.random()*40)+'%';
+      m.style.color=cols[i%3]; m.style.animationDelay=(-Math.random()*6)+'s';
+      m.style.animationDuration=(5+Math.random()*4)+'s'; lab.appendChild(m); }
+  }
+})();
+
+/* the Currently Forging ticker - swaps through recent work (Forge Admin will feed this later) */
+(function(){
+  var items=[
+    'CodyNoah.net 1.0 - the two-door gate',
+    'Summit Gaming - purchase-email fix shipped',
+    'Forgeheart - the local command center',
+    'The Lab - wiring up playable demos'
+  ];
+  var el=document.getElementById('fg'), i=0;
+  setInterval(function(){ i=(i+1)%items.length; el.style.opacity=0;
+    setTimeout(function(){ el.textContent=items[i]; el.style.opacity=1; },300);
+  },3800);
+  el.style.transition='opacity .3s';
+})();
+
+/* tap-to-enter: a GSAP timeline choreographs the doors opening onto the scene,
+   then walks you into the page. Falls back to the CSS cutscene if GSAP is absent. */
+(function(){
+  var enter=document.getElementById('enter'); if(!enter) return;
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var going=false;
+  document.querySelectorAll('.door').forEach(function(d){
+    d.addEventListener('click',function(e){
+      var href=d.getAttribute('href'); if(!href) return;
+      e.preventDefault();
+      if(going){ location.href=href; return; }   // second tap skips the cutscene
+      going=true;
+      var isLab=d.classList.contains('lab');
+      enter.classList.add(isLab?'lab':'hire','show');
+      enter.addEventListener('click',function(){ location.href=href; },{once:true});
+
+      if(isLab){                                     // spark stream so the campfire actually mesmerizes
+        var sc=enter.querySelector('.scene-lab');
+        for(var k=0;k<16;k++){
+          var em=document.createElement('span'); em.className='ember';
+          em.style.left=(45+Math.random()*10)+'%';
+          em.style.setProperty('--ex',((Math.random()-.5)*80)+'px');
+          em.style.setProperty('--er',(70+Math.random()*150)+'px');
+          em.style.animationDelay=(Math.random()*1.1)+'s';
+          em.style.animationDuration=(1+Math.random()*.9)+'s';
+          sc.appendChild(em);
+        }
+      }
+
+      var G=window.gsap;
+      if(reduce || !G){                              // reduced-motion or no GSAP -> CSS cutscene / quick fade
+        setTimeout(function(){ location.href=href; }, reduce?350:1650);
+        return;
+      }
+
+      // ---- GSAP overhaul ----
+      enter.classList.add('gsap');                   // stand down the CSS keyframes
+      var dpL=enter.querySelector('.dp.left'), dpR=enter.querySelector('.dp.right');
+      var scene=enter.querySelector(isLab?'.scene-lab':'.scene-hire');
+      var focus=scene.querySelector(isLab?'.fire':'.fg');
+      var label=scene.querySelector('.enter-label');
+      G.set([dpL,dpR],{xPercent:0});
+      G.set(focus,{xPercent:-50, scale:.14, transformOrigin:'50% 100%'});
+      G.set(label,{opacity:0, y:14});
+      G.timeline({delay:.16, onComplete:function(){ location.href=href; }})
+        .to(dpL,  {xPercent:-104, duration:1.05, ease:'power3.inOut'}, 0)      // doors part, smooth accel/decel
+        .to(dpR,  {xPercent: 104, duration:1.05, ease:'power3.inOut'}, 0)
+        .to(focus,{scale:1,       duration:1.25, ease:'power2.out'},  .18)     // firelight rises toward you
+        .to(label,{opacity:1, y:0, duration:.55, ease:'back.out(1.8)'}, .72)   // label pops in with a little overshoot
+        .to({},   {duration:.28});                                            // brief hold, then navigate
+    });
+  });
+})();
+</script>
+</body>
+</html>

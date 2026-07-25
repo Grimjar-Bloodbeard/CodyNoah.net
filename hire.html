@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hire the Smith - Cody Noah · GrimForge Creations</title>
+<meta name="description" content="Cody Noah - independent developer in Wilkes County, NC. AI-driven custom software, live e-commerce and accessible sites, plus PC/console repair and builds. Real, running proof.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/forge.css">
+<style>
+/* ---- hire page specifics ---- */
+.hero{text-align:center;padding:clamp(2.6rem,9vh,5.5rem) 0 2.4rem}
+.hero .eye{color:var(--teal);font-weight:600;letter-spacing:3px;text-transform:uppercase;font-size:.8rem;margin-bottom:1rem}
+.hero h1{font-size:clamp(2.3rem,7vw,4.4rem);letter-spacing:1px;
+  background:linear-gradient(180deg,#fff 8%,var(--gold) 95%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 26px rgba(232,178,76,.32))}
+.hero p.lead{max-width:56ch;margin:1.3rem auto 2rem;color:var(--muted);font-size:1.18rem}
+.cta{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+
+/* about */
+.about{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:2rem;align-items:center}
+.about .frame{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/5;min-height:220px}
+.about .frame img{width:100%;height:100%;object-fit:cover;filter:saturate(1.05) contrast(1.03)}
+.about .frame::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(7,10,18,.7));pointer-events:none}
+.about .frame figcaption{position:absolute;left:0;right:0;bottom:0;padding:.8rem 1rem;font-family:var(--disp);color:var(--gold2);font-size:.95rem;letter-spacing:1px}
+.about p{color:var(--muted);margin-bottom:1rem}
+.about p b{color:var(--text)}
+.about .hon{border-left:2px solid rgba(176,107,255,.5);padding-left:1rem;color:var(--text);font-style:italic}
+@media(max-width:820px){.about{grid-template-columns:1fr}.about .frame{max-width:340px;margin:0 auto}}
+
+/* skills */
+.skill{padding:1.4rem;border-radius:16px}
+.skill .ic{font-size:1.7rem;width:50px;height:50px;border-radius:12px;display:grid;place-items:center;margin-bottom:.8rem;
+  background:rgba(79,240,224,.08);border:1px solid rgba(79,240,224,.25);box-shadow:0 0 20px rgba(79,240,224,.13)}
+.skill h3{font-size:1.15rem;color:var(--gold2);margin-bottom:.4rem}
+.skill p{color:var(--muted);font-size:.96rem}
+.skill .tags{margin-top:.7rem;display:flex;flex-wrap:wrap;gap:.35rem}
+.skill .tags span{font-size:.7rem;font-weight:600;color:var(--rune);border:1px solid var(--line);border-radius:6px;padding:.12rem .5rem;background:rgba(95,224,214,.05)}
+
+/* work cards with a branded "live preview" header */
+.work-card{border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,box-shadow .3s}
+.work-card:hover{transform:translateY(-4px)}
+.prev{position:relative;height:150px;overflow:hidden;background-size:cover;background-position:top center;
+  display:grid;place-items:center;border-bottom:1px solid var(--line)}
+.prev.summit{background:radial-gradient(120% 120% at 20% 0%,#12324a,#0a0f1c)}
+.prev.senior{background:radial-gradient(120% 120% at 80% 0%,#183a2a,#0a0f1c)}
+.prev.mirror{background:radial-gradient(120% 120% at 50% 0%,#2a1846,#0a0f1c)}
+.prev .glyph{font-size:2.6rem;filter:drop-shadow(0 4px 14px rgba(0,0,0,.5));opacity:.92}
+.prev .shine{position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.13) 50%,transparent 60%);
+  transform:translateX(-120%);transition:transform .7s}
+.work-card:hover .prev .shine{transform:translateX(120%)}
+.prev .pill{position:absolute;top:.6rem;right:.6rem;font-size:.66rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  padding:.18rem .55rem;border-radius:6px;border:1px solid}
+.pill.live{color:#0a1410;background:var(--teal);border-color:var(--teal)}
+.pill.tool{color:var(--violet);background:rgba(176,107,255,.12);border-color:rgba(176,107,255,.5)}
+.pill.forge{color:var(--ember);background:rgba(255,122,44,.1);border-color:rgba(255,122,44,.5)}
+.work-card .body{padding:1.2rem 1.3rem 1.4rem;flex:1;display:flex;flex-direction:column}
+.work-card h3{font-size:1.2rem;color:var(--text);margin-bottom:.35rem}
+.work-card p{color:var(--muted);font-size:.95rem;flex:1}
+.work-card .more{color:var(--teal);font-weight:700;font-size:.92rem;margin-top:.9rem;display:inline-flex;align-items:center;gap:.35rem}
+.work-card .more:hover{gap:.6rem}
+/* "Under the hood" - shows capability + impact, never the how */
+.work-card .hood{margin-top:.85rem;border-top:1px solid var(--line);padding-top:.6rem}
+.work-card .hood summary{cursor:pointer;font-weight:700;font-size:.8rem;letter-spacing:.5px;text-transform:uppercase;color:var(--violet);
+  list-style:none;display:flex;align-items:center;gap:.4rem}
+.work-card .hood summary::-webkit-details-marker{display:none}
+.work-card .hood summary::after{content:'+';margin-left:auto;color:var(--muted);font-size:1.15rem;line-height:1}
+.work-card .hood[open] summary::after{content:'\2212'}
+.work-card .hood ul{margin:.65rem 0 0;padding-left:1.05rem;display:flex;flex-direction:column;gap:.35rem}
+.work-card .hood li{color:var(--muted);font-size:.88rem;line-height:1.4}
+.work-card .hood li b{color:var(--rune);font-weight:600}
+
+/* repairs */
+.repair{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;margin-bottom:1.6rem}
+.repair li{list-style:none;padding:1rem 1.1rem;border-radius:13px}
+.repair li b{color:var(--gold2);display:block;margin-bottom:.2rem;font-family:var(--disp);font-weight:500;letter-spacing:.3px}
+.repair li span{color:var(--muted);font-size:.92rem}
+.repbox{text-align:center;padding:2rem;border-radius:18px}
+.repbox h3{color:var(--gold2);font-size:1.5rem;margin-bottom:.4rem}
+.repbox p{color:var(--muted);max-width:56ch;margin:0 auto 1.2rem}
+.reqform{display:grid;gap:.9rem;max-width:560px;margin:1.4rem auto 0;text-align:left}
+.reqform .row{display:grid;gap:.9rem;grid-template-columns:1fr 1fr}
+.reqform label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rune);margin-bottom:.3rem}
+.reqform input,.reqform select,.reqform textarea{width:100%;font-family:var(--ui);font-size:1rem;color:var(--text);
+  background:rgba(7,10,18,.6);border:1px solid var(--line);border-radius:10px;padding:.7rem .8rem;transition:border-color .2s,box-shadow .2s}
+.reqform input:focus,.reqform select:focus,.reqform textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(79,240,224,.12)}
+.reqform textarea{min-height:110px;resize:vertical}
+.reqform option{background:#0b0f1c;color:var(--text)}
+.reqform .btn{justify-self:start;margin-top:.2rem}
+.reqform .fine{font-size:.82rem;color:var(--muted);margin-top:.2rem}
+.reqform .fine a{color:var(--rune)}
+@media(max-width:560px){.reqform .row{grid-template-columns:1fr}}
+
+/* contact */
+.contact{text-align:center}
+.contact .mail{font-family:var(--disp);font-size:clamp(1.3rem,4vw,2rem);color:var(--gold2);display:inline-block;margin:.6rem 0;
+  filter:drop-shadow(0 0 18px rgba(232,178,76,.3))}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="beam"></div><div class="beam b2"></div>
+  <div class="aurora"></div><div class="grid"></div>
+  <div id="runes"></div>
+</div>
+
+<nav class="nav">
+  <a class="brand" href="index.html">GRIMFORGE CREATIONS<small>by Cody Noah</small></a>
+  <div class="nl">
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#case-studies">Case Studies</a>
+    <a href="#repairs">Repairs</a>
+    <a href="#contact">Contact</a>
+    <a href="resume.html" class="tip-below" style="color:var(--gold2)" data-tip="Résumé + projects for employers">📄 Résumé</a>
+    <a href="world.html" style="color:var(--violet)" class="tip-below" data-tip="My pixel world, arcade &amp; games">⚔ The Lab</a>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <p class="eye reveal">⚒ The professional side of the forge · Wilkes County, NC</p>
+  <h1 class="reveal">Hire the smith.</h1>
+  <p class="lead reveal">I'm Cody Noah - I use AI as a power tool to architect and ship custom software solo, the kind of system you'd expect from a whole dev team, not one guy. Hardware repair and custom builds round out the shop. The proof isn't a slideshow. It's <b>live software that real people use right now.</b></p>
+  <div class="cta reveal">
+    <a href="#work" class="btn" data-tip="Jump to my live projects below">See what's live</a>
+    <a href="#start" class="btn ghost" data-tip="Scope your project + budget in 30 seconds">Start a project</a>
+  </div>
+  <p class="reveal" style="margin-top:1rem;color:var(--muted);font-size:.96rem">Hiring for a role? <a href="resume.html" style="color:var(--gold2);font-weight:700">See my résumé + projects →</a> · <a href="https://github.com/Grimjar-Bloodbeard" target="_blank" rel="noopener" style="color:var(--rune);font-weight:700">Code on GitHub ↗</a></p>
+</header>
+
+<!-- ABOUT -->
+<section class="wrap" id="about">
+  <p class="eyebrow reveal">Who's holding the hammer</p>
+  <h2 class="sec reveal">About</h2>
+  <div class="about" style="margin-top:1.4rem">
+    <div class="reveal">
+      <p>I'm an <b>independent developer and hardware tinkerer</b> in Wilkes County, North Carolina - a decade in manufacturing, precision machining, and welding before I ever shipped a line of code. That background didn't get left at the door; it's why I build things meant to survive contact with the real world, not just look good in a demo. Self-taught, moving fast, and happiest with a problem in front of me.</p>
+      <p class="hon reveal">Straight truth: the sites below, I built because I wanted to - not because anyone signed a check. A local game shop and a local senior center both run on things I made, and the education has been worth more to me than an invoice. That's starting to change. The habit of shipping real work isn't.</p>
+      <p>I forge with <b>modern power tools</b> - AI, automation, and a stubborn streak that doesn't know how to quit - and I'm not shy about it. The craft isn't pretending I hand-chiseled every line. It's knowing <b>what</b> to build, wiring it together clean, and making it survive contact with real users.</p>
+    </div>
+    <figure class="frame glass glowb reveal">
+      <img src="forge_hero.webp" alt="The GrimForge workshop" onerror="this.src='meepo.webp'">
+      <figcaption>GrimForge · the one-smith workshop</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="wrap" id="skills">
+  <p class="eyebrow reveal">The kit</p>
+  <h2 class="sec reveal">What I bring to the anvil</h2>
+  <p class="sub reveal">One person who does the computer <i>and</i> the website <i>and</i> the weird custom thing you can't buy off a shelf.</p>
+  <div class="grid g3">
+    <div class="skill glass reveal"><div class="ic">⚙️</div><h3>AI-Driven Development</h3><p>My core edge. I use AI as a force multiplier to architect and ship custom software solo - the kind of build that used to take a whole team, priced for a small business, not an enterprise contract.</p><div class="tags"><span>AI-assisted builds</span><span>custom systems</span><span>solo-shipped</span></div></div>
+    <div class="skill glass reveal"><div class="ic">🌐</div><h3>Web &amp; Systems</h3><p>Full stack, front to back. Fast, lightweight sites and the servers behind them - built to run on anything, no bloat.</p><div class="tags"><span>Node / Express</span><span>MySQL</span><span>vanilla JS</span><span>nginx</span></div></div>
+    <div class="skill glass reveal"><div class="ic">🛒</div><h3>E-commerce &amp; Payments</h3><p>Live storefronts wired to real payment rails - carts, checkout, webhooks, receipts, inventory that stays in sync.</p><div class="tags"><span>Square POS</span><span>webhooks</span><span>inventory sync</span></div></div>
+    <div class="skill glass reveal"><div class="ic">🔧</div><h3>PC &amp; Console Repair</h3><p>NVMe upgrades, thermal repastes, deep cleans, custom builds, firmware. Bring me the cursed laptop in the closet.</p><div class="tags"><span>SSD clones</span><span>repaste</span><span>custom builds</span></div></div>
+    <div class="skill glass reveal"><div class="ic">🐉</div><h3>TTRPG &amp; Worlds</h3><p>Homebrew D&amp;D tools, maps, and whole worlds - even a browser game engine. The fun that keeps the rest sharp.</p><div class="tags"><span>game engine</span><span>tools</span><span>maps</span></div></div>
+    <div class="skill glass reveal"><div class="ic">🤝</div><h3>You talk to the builder</h3><p>No account manager, no phone tree, no handoff to a junior. The person who scopes it is the person who ships it.</p><div class="tags"><span>direct</span><span>honest</span><span>local</span></div></div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section class="wrap" id="work">
+  <p class="eyebrow reveal">Selected work</p>
+  <h2 class="sec reveal">Not screenshots - real, running things.</h2>
+  <p class="sub reveal">The proof's in what's live. Go click on them.</p>
+  <div class="grid g3">
+
+    <article class="work-card glass glowb reveal">
+      <div class="prev summit"><span class="glyph">🎮</span><span class="shine"></span><span class="pill live">Live</span></div>
+      <div class="body">
+        <h3>Summit Gaming of Wilkes</h3>
+        <p>A full e-commerce store - retro games, trading cards, real Square checkout, real customers. I built it end to end and I keep it running: inventory sync, webhooks, receipts, the works.</p>
+        <details class="hood">
+          <summary>⚙ Under the hood</summary>
+          <ul>
+            <li>Live <b>order dashboard</b> + sales analytics for a real storefront</li>
+            <li><b>Inventory that syncs itself</b> against the register - no drift</li>
+            <li>📸 <b>Photo-to-listing</b> tool: snap a pic, it drafts the listing - <a href="sonic-scan.html" style="color:var(--rune)">read the case study →</a></li>
+            <li>A <b>self-healing safety net</b> that catches any order the system misses</li>
+            <li>Automated receipts, wired to real card checkout at the point of sale</li>
+            <li><b>Hardened against automated attacks</b> - rate-limiting and clean session handling keep bots and credential-stuffing attempts from getting anywhere</li>
+          </ul>
+        </details>
+        <a class="more" href="https://summitgamingofwilkes.com" target="_blank" rel="noopener">Visit the live store →</a>
+      </div>
+    </article>
+
+    <article class="work-card glass reveal">
+      <div class="prev senior"><span class="glyph">🏛️</span><span class="shine"></span><span class="pill live">Live</span></div>
+      <div class="body">
+        <h3>Wilkes Senior Resources</h3>
+        <p>An accessible, easy-to-run site I built for a local senior center - designed for 55+ visitors and a non-technical director who needs to edit it without calling me.</p>
+        <details class="hood">
+          <summary>⚙ Under the hood</summary>
+          <ul>
+            <li>Pages the <b>director edits herself</b>, live - zero code</li>
+            <li><b>Accessibility built in</b> for 55+ visitors</li>
+            <li>Runs on <b>cloud infrastructure</b> - always on, nothing for staff to maintain</li>
+          </ul>
+        </details>
+        <a class="more" href="https://wilkesseniorresources.org" target="_blank" rel="noopener">See the live site →</a>
+      </div>
+    </article>
+
+    <article class="work-card glass reveal">
+      <div class="prev mirror"><span class="glyph">🪞</span><span class="shine"></span><span class="pill tool">Tool</span></div>
+      <div class="body">
+        <h3>Digital Mirror</h3>
+        <p>A privacy-awareness tool that shows people what the internet already knows about them - built to educate, not to scare. Shipped and self-contained.</p>
+        <a class="more" href="#contact">Ask me for a demo →</a>
+      </div>
+    </article>
+
+  </div>
+  <p class="sub reveal" style="margin-top:1.4rem;text-align:center">More is always on the anvil - a pixel world, an arcade, D&amp;D tools, a decision engine. <a href="world.html" style="color:var(--violet);font-weight:700">Wander the Lab →</a> to see what's still glowing.</p>
+</section>
+
+<!-- CASE STUDIES -->
+<section class="wrap" id="case-studies">
+  <p class="eyebrow reveal">Under the hood</p>
+  <h2 class="sec reveal">Deep dives</h2>
+  <p class="sub reveal">Two systems taken apart - the decisions, the trade-offs, the failure modes I designed for. The engineering, not just the screenshot. (The recipe stays mine.)</p>
+  <div class="grid reveal" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem;margin-top:1.2rem">
+
+    <a class="work-card glass glowb" href="live-inventory.html" style="text-decoration:none">
+      <div class="prev summit"><span class="glyph">📡</span><span class="shine"></span><span class="pill live">Real-time</span></div>
+      <div class="body">
+        <h3>Live Inventory</h3>
+        <p>Sell an item at the register and the website updates in the same second - and the other way around. One source of truth, a real-time broadcast layer, a self-healing safety net. Live at Summit; becoming a SaaS.</p>
+        <span class="more">Read the case study →</span>
+      </div>
+    </a>
+
+    <a class="work-card glass" href="sonic-scan.html" style="text-decoration:none">
+      <div class="prev mirror"><span class="glyph">👁️</span><span class="shine"></span><span class="pill tool">AI / vision</span></div>
+      <div class="body">
+        <h3>Sonic Scan</h3>
+        <p>Snap one photo of a game; a vision model identifies it, prices it, and drafts the whole listing - a person just approves. AI does the tedious 90%, deterministic code does the money, a human keeps the final call.</p>
+        <span class="more">Read the case study →</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- REPAIRS -->
+<section class="wrap" id="repairs">
+  <p class="eyebrow reveal">Hardware</p>
+  <h2 class="sec reveal">Repairs &amp; upgrades</h2>
+  <p class="sub reveal">Local drop-off in Wilkes County, or secure mail-in. Honest quotes, no mystery fees, and you see the work.</p>
+  <ul class="repair">
+    <li class="glass reveal"><b>PC performance</b><span>HDD → NVMe clones with zero data loss, RAM/GPU upgrades, thermal repastes.</span></li>
+    <li class="glass reveal"><b>Console restoration</b><span>Deep cleans, fan and thermal fixes, shell swaps for loud, dusty PS5 / Xbox / Switch.</span></li>
+    <li class="glass reveal"><b>Custom builds</b><span>Your parts or mine - clean assembly, tidy cabling, BIOS, and a tuned first boot. Heads up: hardware costs what it costs - I'll lay out real options across your actual budget before a dime gets spent.</span></li>
+    <li class="glass reveal"><b>Handheld modding</b><span>Clean installs of stable custom firmware on classic consoles and handhelds.</span></li>
+  </ul>
+  <div class="repbox glass glowb reveal">
+    <h3>Need something fixed? Mail it my way.</h3>
+    <p>I stay busy, but I work hard for the money and I don't half-do it. Repairs, upgrades, or just "hey, what should I build?" - all fair game. Fill this out and I'll come back with a straight, itemized quote: parts, labor, return shipping, no mystery fees.</p>
+    <form class="reqform" id="reqform">
+      <div class="row">
+        <div><label for="rf-name">Your name</label><input id="rf-name" name="name" autocomplete="name" required></div>
+        <div><label for="rf-email">Email</label><input id="rf-email" name="email" type="email" autocomplete="email" required></div>
+      </div>
+      <div class="row">
+        <div><label for="rf-type">What do you need?</label>
+          <select id="rf-type" name="type">
+            <option>Repair</option>
+            <option>Upgrade or custom build</option>
+            <option>Build advice</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div><label for="rf-how">Local or mail-in?</label>
+          <select id="rf-how" name="how">
+            <option>Not sure yet</option>
+            <option>Local drop-off (Wilkes County)</option>
+            <option>Mail-in</option>
+          </select>
+        </div>
+      </div>
+      <div><label for="rf-device">Device or subject</label><input id="rf-device" name="device" placeholder="e.g. PS5, gaming PC, a build I'm planning"></div>
+      <div><label for="rf-details">Tell me more</label><textarea id="rf-details" name="details" placeholder="Symptoms, what you want out of it, budget or timeline if you've got one..."></textarea></div>
+      <button type="submit" class="btn" data-tip="Opens your email with everything filled in">Send it to Cody</button>
+      <p class="fine">This opens your email with everything filled in - just hit send. Rather just write me? <a href="mailto:cnoah538191@gmail.com">cnoah538191@gmail.com</a></p>
+    </form>
+  </div>
+</section>
+
+<!-- START A PROJECT -->
+<section class="wrap" id="start">
+  <p class="eyebrow reveal">Start a project</p>
+  <h2 class="sec reveal">Let's scope it out</h2>
+  <p class="sub reveal">Tell me what you're after and roughly what it's worth to you - I'll come back with a plan and honest pricing. Plain English, no pressure, no obligation.</p>
+  <div class="repbox glass glowb reveal">
+    <form class="reqform" id="pitchform">
+      <div class="row">
+        <div><label for="pj-name">Your name</label><input id="pj-name" name="name" autocomplete="name" required></div>
+        <div><label for="pj-email">Email</label><input id="pj-email" name="email" type="email" autocomplete="email" required></div>
+      </div>
+      <div class="row">
+        <div><label for="pj-type">What kind of project?</label>
+          <select id="pj-type" name="type">
+            <option>Website</option>
+            <option>Web app or custom system</option>
+            <option>Tool or automation</option>
+            <option>AI integration</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+        <div><label for="pj-budget">Budget / what you can spend</label><input id="pj-budget" name="budget" placeholder="e.g. $500, ~$2k, or not sure"></div>
+      </div>
+      <div><label for="pj-timeline">Timeline</label><input id="pj-timeline" name="timeline" placeholder="e.g. no rush, a few weeks, ASAP"></div>
+      <div><label for="pj-details">What do you need it to do?</label><textarea id="pj-details" name="details" placeholder="What it should do, who it's for, anything you've already got in mind..."></textarea></div>
+      <button type="submit" class="btn" data-tip="Opens your email with the pitch organized for you">Send my pitch</button>
+      <p class="fine">This opens your email with everything organized - just hit send. Rather write directly? <a href="mailto:cnoah538191@gmail.com">cnoah538191@gmail.com</a></p>
+    </form>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="wrap contact" id="contact">
+  <p class="eyebrow reveal">Get in touch</p>
+  <h2 class="sec reveal" style="margin-bottom:.8rem">Let's build something.</h2>
+  <p class="sub reveal" style="margin:0 auto 1rem">Wilkes County, North Carolina. No bots, no phone-tree - you talk to the person who does the work.</p>
+  <a class="mail reveal" href="mailto:cnoah538191@gmail.com">cnoah538191@gmail.com</a>
+  <div class="cta reveal" style="margin-top:1.4rem">
+    <a href="index.html" class="btn ghost">← Back to the gate</a>
+    <a href="world.html" class="btn violet">⚔ Enter the Lab</a>
+  </div>
+</section>
+
+<footer class="foot">
+  <p>GrimForge Creations · Cody Noah · Wilkes County, NC · forged with modern power tools and stubbornness. <span style="opacity:.7">Meepo helped. Barely.</span></p>
+</footer>
+
+<!-- Meepo -->
+<div class="bubble" id="bubble"></div>
+<div id="meepo" title="Poke me!" data-tips='["Oi! I&apos;m <b>Meepo</b>. This is the serious side - the <b>Lab</b> is where the fun hides.","Summit&apos;s an actual store with actual customers. Go <b>click it</b>, I dare you.","Cody didn&apos;t get paid for these. Built &apos;em to learn. Respect.","Need a repair? That gold button doesn&apos;t bite.","Every line forged with power tools. AI and all. No pretending here."]'>
+</div>
+
+<script src="js/forge.js"></script>
+<script>
+/* Repairs intake -> composes a pre-filled email. No backend, nothing to leak. */
+(function () {
+  var f = document.getElementById('reqform'); if (!f) return;
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = function (id) { return (document.getElementById(id).value || '').trim(); };
+    var type = v('rf-type'), dev = v('rf-device');
+    var subject = 'GrimForge - ' + type + (dev ? ' (' + dev + ')' : '');
+    var body = 'Name: ' + v('rf-name') + '\nEmail: ' + v('rf-email') + '\nNeed: ' + type
+      + '\nLocal or mail-in: ' + v('rf-how') + '\nDevice/subject: ' + dev
+      + '\n\nDetails:\n' + v('rf-details') + '\n';
+    window.location.href = 'mailto:cnoah538191@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  });
+})();
+
+/* Project pitch -> composes a structured, pre-filled email (budget + scope + timeline). */
+(function () {
+  var f = document.getElementById('pitchform'); if (!f) return;
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = function (id) { return (document.getElementById(id).value || '').trim(); };
+    var type = v('pj-type');
+    var subject = 'GrimForge project - ' + type;
+    var body = 'Name: ' + v('pj-name') + '\nEmail: ' + v('pj-email') + '\nProject type: ' + type
+      + '\nBudget: ' + v('pj-budget') + '\nTimeline: ' + v('pj-timeline')
+      + '\n\nWhat they need:\n' + v('pj-details') + '\n';
+    window.location.href = 'mailto:cnoah538191@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  });
+})();
+</script>
+</body>
+</html>

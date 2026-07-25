@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Kobold Dash · GrimForge Arcade</title>
+<meta name="description" content="An endless runner starring Meepo the kobold. Jump the forge hazards, grab the gems, run as far as you can. Built by Cody Noah, framework-free.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/forge.css">
+<style>
+.game-wrap{max-width:760px;margin:0 auto;padding:.6rem clamp(1rem,4vw,2rem) 3rem;text-align:center}
+.gtitle{font-size:clamp(1.7rem,6vw,2.6rem);margin:.3rem 0 .8rem;letter-spacing:1px;
+  background:linear-gradient(180deg,#fff,var(--gold) 68%,var(--ember2));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 20px rgba(255,122,44,.32))}
+.hud{display:flex;gap:1.4rem;justify-content:center;align-items:flex-end;margin-bottom:.8rem;flex-wrap:wrap}
+.hud-item{display:flex;flex-direction:column;align-items:center;gap:.25rem}
+.hud-item>span{font-size:.66rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.hud-item>b{font-family:var(--disp);font-size:1.5rem;color:var(--gold2);line-height:1}
+.stage{position:relative;width:100%;max-width:720px;margin:0 auto;aspect-ratio:16/9}
+#game{width:100%;height:100%;display:block;border-radius:18px;border:1px solid var(--line);cursor:pointer;touch-action:manipulation}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;padding:1rem;border-radius:18px;
+  background:rgba(7,10,18,.5);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);transition:opacity .3s}
+.overlay.hide{opacity:0;pointer-events:none}
+.ov-card{padding:1.5rem 1.7rem;border-radius:18px;max-width:360px}
+.ov-card h2{font-size:1.5rem;color:var(--gold2);margin-bottom:.5rem}
+.ov-card p{color:var(--muted);font-size:.94rem;margin-bottom:1.1rem}
+.ov-card .rank{font-family:var(--disp);font-size:2.4rem;color:var(--gold);filter:drop-shadow(0 0 18px rgba(232,178,76,.55));vertical-align:-.15em;margin-left:.2em}
+.mute{position:absolute;top:10px;right:10px;background:rgba(7,10,18,.6);border:1px solid var(--line);border-radius:9px;padding:.25rem .5rem;cursor:pointer;font-size:1rem;color:var(--text);line-height:1}
+.hint{color:var(--muted);font-size:.9rem;margin-top:1rem}
+.hint b{color:var(--rune)}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="beam"></div><div class="beam b2"></div>
+  <div class="aurora"></div><div class="grid"></div>
+  <div id="runes"></div>
+</div>
+
+<nav class="nav">
+  <a class="brand" href="index.html">GRIMFORGE CREATIONS<small>by Cody Noah</small></a>
+  <div class="nl">
+    <a href="arcade.html">🕹 Arcade</a>
+    <a href="world.html" style="color:var(--violet)">⚔ The Lab</a>
+  </div>
+</nav>
+
+<main class="game-wrap">
+  <h1 class="gtitle">Kobold Dash</h1>
+  <div class="hud">
+    <div class="hud-item"><span>Distance</span><b id="dist">0m</b></div>
+    <div class="hud-item"><span>Gems</span><b id="gems">0</b></div>
+    <div class="hud-item"><span>Best</span><b id="best">0m</b></div>
+  </div>
+  <div class="stage">
+    <canvas id="game"></canvas>
+    <div class="overlay" id="overlay">
+      <div class="ov-card glass glowb">
+        <h2 id="ov-title">Kobold Dash</h2>
+        <p id="ov-msg">Meepo runs on his own. <b>Tap, click, or press space to jump</b> - press again in the air for a <b>double jump</b>. Hop the forge hazards, grab the gems, and see how far you get.</p>
+        <button class="btn" id="startbtn">🐲 Run!</button>
+      </div>
+    </div>
+    <button class="mute" id="mute" title="Sound on/off" aria-label="Toggle sound">🔊</button>
+  </div>
+  <p class="hint">Tap / click / <b>space</b> to jump · again in the air to <b>double-jump</b></p>
+</main>
+
+<script src="js/forge.js"></script>
+<script>
+(function(){
+  var cv=document.getElementById('game'), ctx=cv.getContext('2d');
+  var distEl=document.getElementById('dist'), gemsEl=document.getElementById('gems'), bestEl=document.getElementById('best');
+  var overlay=document.getElementById('overlay'), ovTitle=document.getElementById('ov-title'), ovMsg=document.getElementById('ov-msg');
+  var startbtn=document.getElementById('startbtn'), muteBtn=document.getElementById('mute');
+  var W=0,H=0,DPR=Math.min(window.devicePixelRatio||1,2), S=1;
+  function resize(){ var w=cv.clientWidth||640, h=cv.clientHeight||360; W=w;H=h;S=Math.min(w,h); cv.width=w*DPR;cv.height=h*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); ground=H*0.82; }
+  addEventListener('resize',function(){ resize(); if(state!=='run') draw(); },{passive:true});
+
+  var state='ready', muted=false;
+  var ground=0, speed=0, dist=0, gemCount=0, best=+(localStorage.getItem('kdash_best')||0);
+  var player, obstacles, gems, parts, jumps, groundX, hills1, hills2, frame;
+
+  function T(){return performance.now();}
+  var AC=null;
+  function beep(f,d,type,v){ if(muted)return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    var o=AC.createOscillator(),g=AC.createGain(); o.type=type||'triangle'; o.frequency.value=f; o.connect(g);g.connect(AC.destination);
+    var t=AC.currentTime; g.gain.setValueAtTime(v||.1,t); g.gain.exponentialRampToValueAtTime(.0008,t+(d||.1)); o.start(t);o.stop(t+(d||.1)); }catch(e){} }
+
+  function reset(){
+    resize();
+    speed = S*0.012; dist=0; gemCount=0; jumps=0; frame=0; groundX=0;
+    var ph=S*0.11;
+    player={ x:W*0.2, y:ground-ph, vy:0, w:S*0.09, h:ph, grounded:true, sq:1 };
+    obstacles=[]; gems=[]; parts=[];
+    obsGap = W*0.6; gemGap = W*0.85;
+    updateHud();
+  }
+  var obsGap=0, gemGap=0;
+
+  function jump(){
+    if(state!=='run') return;
+    if(jumps<2){ player.vy = -S*0.026; jumps++; player.grounded=false; player.sq=1.25;
+      beep(jumps===1?520:700,.09,'triangle',.09);
+      for(var i=0;i<6;i++) parts.push({x:player.x,y:player.y+player.h,vx:-1-Math.random()*2,vy:1+Math.random()*1.5,life:0,max:20,hue:35,dust:true});
+    }
+  }
+
+  function spawnObstacle(){
+    var hh = S*(0.07+Math.random()*0.08);
+    var ww = S*(0.05+Math.random()*0.06);
+    obstacles.push({ x:W+ww, w:ww, h:hh });
+    obsGap = rand(W*0.42, W*0.72);
+  }
+  function spawnGem(){
+    var y = ground - S*(0.14+Math.random()*0.22);
+    gems.push({ x:W+S*0.05, y:y, r:S*0.032, got:false });
+    gemGap = rand(W*0.55, W*1.1);
+  }
+  function rand(a,b){return a+Math.random()*(b-a);}
+
+  function updateHud(){ distEl.textContent=Math.floor(dist/24)+'m'; gemsEl.textContent=gemCount; bestEl.textContent=Math.floor(best/24)+'m'; }
+
+  function start(){ reset(); state='run'; overlay.classList.add('hide'); }
+  function gameOver(){
+    state='over'; beep(130,.35,'sawtooth',.13);
+    if(dist>best){ best=dist; localStorage.setItem('kdash_best', String(Math.floor(best))); }
+    var m=Math.floor(dist/24);
+    var rank = m>600?'S': m>380?'A': m>200?'B':'C';
+    ovTitle.innerHTML='Down he goes!<span class="rank">'+rank+'</span>';
+    ovMsg.innerHTML='You ran <b>'+m+'m</b> and grabbed <b>'+gemCount+'</b> gems. Best so far: <b>'+Math.floor(best/24)+'m</b>.';
+    startbtn.textContent='🐲 Run again';
+    overlay.classList.remove('hide'); updateHud();
+  }
+
+  function hit(a,b){ return a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y; }
+
+  function update(){
+    frame++;
+    speed += S*0.0000075;                 // gentle ramp
+    dist += speed;
+    // player physics
+    player.vy += S*0.0013;                 // gravity
+    player.y += player.vy;
+    if(player.y >= ground-player.h){ player.y=ground-player.h; player.vy=0; if(!player.grounded){player.sq=0.7;} player.grounded=true; jumps=0; }
+    else player.grounded=false;
+    player.sq += (1-player.sq)*0.2;         // ease squash back to 1
+
+    // obstacles
+    for(var i=obstacles.length-1;i>=0;i--){ var o=obstacles[i]; o.x-=speed;
+      if(o.x+o.w<-10){ obstacles.splice(i,1); continue; }
+      if(hit(player,{x:o.x,y:ground-o.h,w:o.w,h:o.h})){ return gameOver(); }
+    }
+    if(obstacles.length===0 || obstacles[obstacles.length-1].x < W - obsGap) spawnObstacle();
+
+    // gems
+    for(var j=gems.length-1;j>=0;j--){ var g=gems[j]; g.x-=speed;
+      if(g.x+g.r<-10){ gems.splice(j,1); continue; }
+      var pc={x:player.x+player.w/2, y:player.y+player.h/2};
+      if(!g.got && Math.hypot(pc.x-g.x, pc.y-g.y) < g.r+player.w*0.5){ g.got=true; gemCount++; beep(880,.08,'sine',.08);
+        for(var k=0;k<10;k++) parts.push({x:g.x,y:g.y,vx:(Math.random()-.5)*3,vy:(Math.random()-.5)*3,life:0,max:26,hue:170});
+        gems.splice(j,1); }
+    }
+    if(gems.length===0 || gems[gems.length-1].x < W - gemGap) spawnGem();
+
+    // particles
+    for(var p=parts.length-1;p>=0;p--){ var q=parts[p]; q.x-=speed*0.5; q.x+=q.vx; q.y+=q.vy; q.vy+= q.dust?0.05:0.08; q.life++; if(q.life>=q.max) parts.splice(p,1); }
+
+    // parallax + ground scroll
+    groundX=(groundX - speed)% (S*0.2);
+    updateHud();
+  }
+
+  function drawKobold(){
+    var x=player.x, y=player.y, w=player.w, h=player.h, cx=x+w/2;
+    var sy=player.sq, sx=1+(1-sy)*0.6;                // squash & stretch
+    var bw=w*sx, bh=h*sy, by=y+h-bh;
+    ctx.save(); ctx.translate(cx, by+bh); ctx.scale(1, 1);
+    // legs (only visible grounded)
+    if(player.grounded){ var swing=Math.sin(frame*0.4)*bw*0.18;
+      ctx.fillStyle='#2c7d69';
+      ctx.fillRect(-bw*0.22+swing, -bh*0.06, bw*0.16, bh*0.14);
+      ctx.fillRect(bw*0.06-swing, -bh*0.06, bw*0.16, bh*0.14);
+    }
+    // body
+    ctx.beginPath(); ctx.ellipse(0, -bh*0.5, bw*0.5, bh*0.5, 0,0,6.29);
+    ctx.fillStyle='#4fd0b4'; ctx.strokeStyle='#2c7d69'; ctx.lineWidth=Math.max(1.5,S*0.006); ctx.fill(); ctx.stroke();
+    // belly
+    ctx.beginPath(); ctx.ellipse(bw*0.05, -bh*0.4, bw*0.26, bh*0.32, 0,0,6.29); ctx.fillStyle='#cbf1e7'; ctx.fill();
+    // horns
+    ctx.fillStyle='#f6d785';
+    ctx.beginPath(); ctx.moveTo(-bw*0.28,-bh*0.82); ctx.lineTo(-bw*0.4,-bh*1.05); ctx.lineTo(-bw*0.14,-bh*0.86); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(bw*0.28,-bh*0.82); ctx.lineTo(bw*0.4,-bh*1.05); ctx.lineTo(bw*0.14,-bh*0.86); ctx.fill();
+    // eyes (facing right/forward)
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.ellipse(bw*0.08,-bh*0.62,bw*0.13,bh*0.16,0,0,6.29); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(bw*0.32,-bh*0.62,bw*0.11,bh*0.15,0,0,6.29); ctx.fill();
+    ctx.fillStyle='#141b28';
+    ctx.beginPath(); ctx.arc(bw*0.13,-bh*0.6,bw*0.06,0,6.29); ctx.fill();
+    ctx.beginPath(); ctx.arc(bw*0.35,-bh*0.6,bw*0.055,0,6.29); ctx.fill();
+    ctx.restore();
+  }
+
+  function draw(){
+    // sky
+    var g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#0b1424'); g.addColorStop(.6,'#0d1b2c'); g.addColorStop(1,'#0a1712');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    // parallax hills (two layers)
+    drawHills(H*0.7, '#0c2233', (dist*0.15)%(W), W*0.9, H*0.16);
+    drawHills(H*0.78,'#0a1a16', (dist*0.3)%(W*0.7), W*0.55, H*0.22);
+    // ground
+    ctx.fillStyle='#081410'; ctx.fillRect(0,ground,W,H-ground);
+    ctx.strokeStyle='rgba(95,224,214,.35)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(0,ground); ctx.lineTo(W,ground); ctx.stroke();
+    // ground dashes
+    ctx.strokeStyle='rgba(95,224,214,.14)'; ctx.lineWidth=2;
+    for(var gx=groundX; gx<W; gx+=S*0.2){ ctx.beginPath(); ctx.moveTo(gx,ground+S*0.05); ctx.lineTo(gx+S*0.09,ground+S*0.05); ctx.stroke(); }
+    // gems
+    for(var j=0;j<gems.length;j++){ var gm=gems[j];
+      ctx.save(); ctx.translate(gm.x,gm.y); ctx.rotate(frame*0.05);
+      var gg=ctx.createRadialGradient(0,0,0,0,0,gm.r*1.6); gg.addColorStop(0,'rgba(127,255,208,.5)'); gg.addColorStop(1,'rgba(127,255,208,0)');
+      ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(0,0,gm.r*1.6,0,6.29); ctx.fill();
+      ctx.fillStyle='#7fffd0'; ctx.strokeStyle='#2c7d69'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(0,-gm.r); ctx.lineTo(gm.r*0.8,0); ctx.lineTo(0,gm.r); ctx.lineTo(-gm.r*0.8,0); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.restore();
+    }
+    // obstacles (forge hazards: dark rock + ember top)
+    for(var i=0;i<obstacles.length;i++){ var o=obstacles[i];
+      ctx.fillStyle='#0d0f16'; ctx.strokeStyle='#2a2f3a'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(o.x,ground); ctx.lineTo(o.x+o.w*0.2,ground-o.h); ctx.lineTo(o.x+o.w*0.8,ground-o.h); ctx.lineTo(o.x+o.w,ground); ctx.closePath(); ctx.fill(); ctx.stroke();
+      var eg=ctx.createRadialGradient(o.x+o.w/2,ground-o.h,0,o.x+o.w/2,ground-o.h,o.w); eg.addColorStop(0,'rgba(255,120,40,.7)'); eg.addColorStop(1,'rgba(255,90,20,0)');
+      ctx.fillStyle=eg; ctx.beginPath(); ctx.arc(o.x+o.w/2,ground-o.h,o.w*0.7,0,6.29); ctx.fill();
+    }
+    // particles
+    for(var p=0;p<parts.length;p++){ var q=parts[p]; var a=1-q.life/q.max;
+      ctx.fillStyle=(q.dust?'rgba(160,150,120,':'hsla('+q.hue+',90%,65%,')+a+')';
+      ctx.beginPath(); ctx.arc(q.x,q.y,(q.dust?2.5:2.2)*a+0.5,0,6.29); ctx.fill(); }
+    // player
+    drawKobold();
+  }
+  function drawHills(baseY,color,off,wd,ht){
+    ctx.fillStyle=color; ctx.beginPath(); ctx.moveTo(0,baseY);
+    for(var x=-off-wd; x<W+wd; x+=wd){ ctx.quadraticCurveTo(x+wd*0.5, baseY-ht, x+wd, baseY); }
+    ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath(); ctx.fill();
+  }
+
+  function loop(){ if(state==='run'){ update(); } if(state==='run'||state==='over'||state==='ready') draw(); requestAnimationFrame(loop); }
+
+  // input
+  function press(e){ if(state==='run'){ e.preventDefault(); jump(); } }
+  cv.addEventListener('pointerdown',press);
+  addEventListener('keydown',function(e){ if(e.code==='Space'){ if(state==='run'){e.preventDefault();jump();} } });
+  startbtn.addEventListener('click',start);
+  muteBtn.addEventListener('click',function(){ muted=!muted; muteBtn.textContent=muted?'🔇':'🔊'; });
+
+  resize(); reset(); state='ready'; updateHud(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

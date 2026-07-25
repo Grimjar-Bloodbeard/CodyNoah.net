@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Arcade — GrimForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+@property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
+:root{--void:#070a12;--teal:#4ff0e0;--rune:#5fe0d6;--violet:#b06bff;--gold:#e8b24c;--gold2:#f6d785;--text:#e4ebf7;--muted:#8b98b6;--glass:rgba(20,28,50,.5);--line:rgba(120,150,220,.18);--ui:'Rajdhani',system-ui,sans-serif;--disp:'Cinzel',Georgia,serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ui);background:var(--void);color:var(--text);font-size:18px;overflow-x:hidden}
+a{color:inherit;text-decoration:none}h1,h2,h3{font-family:var(--disp)}
+body::before{content:'';position:fixed;inset:-25%;z-index:-2;filter:blur(30px);pointer-events:none;
+  background:radial-gradient(38% 38% at 18% 22%,rgba(79,240,224,.16),transparent 60%),radial-gradient(40% 40% at 82% 16%,rgba(176,107,255,.15),transparent 60%),radial-gradient(46% 46% at 60% 92%,rgba(232,178,76,.13),transparent 60%),var(--void);animation:drift 22s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate3d(4%,-3%,0) scale(1.08)}}
+.glowb{position:relative}
+.glowb::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.4px;background:conic-gradient(from var(--a),transparent 0 12%,var(--teal),var(--violet),var(--gold),transparent 68% 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 7s linear infinite;pointer-events:none}
+@keyframes spin{to{--a:360deg}}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(14px)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(1rem,4vw,2.4rem)}
+nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:1rem;padding:.7rem clamp(1rem,4vw,2.4rem);background:linear-gradient(180deg,rgba(7,10,18,.85),rgba(7,10,18,.05));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{font-family:var(--disp);font-weight:700;font-size:1.15rem;letter-spacing:2px;color:var(--gold2)}
+.nl{margin-left:auto;display:flex;gap:.3rem}.nl a{padding:.4rem .8rem;border-radius:9px;color:var(--muted);font-weight:600}.nl a:hover{color:var(--text);background:rgba(95,224,224,.08)}
+header{text-align:center;padding:clamp(2.5rem,8vh,5rem) 0 2rem}
+header .eye{color:var(--teal);letter-spacing:3px;text-transform:uppercase;font-size:.8rem;font-weight:600;margin-bottom:.6rem}
+header h1{font-size:clamp(2.4rem,7vw,4rem);background:linear-gradient(180deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 24px rgba(232,178,76,.3))}
+header p{color:var(--muted);max-width:48ch;margin:1rem auto 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:1.2rem;padding-bottom:4rem}
+.cab{border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.cab .art{height:150px;display:grid;place-items:center;font-size:3.4rem;background:radial-gradient(circle at 50% 40%,#12203a,#080d18);border-bottom:1px solid var(--line)}
+.cab .body{padding:1.1rem;display:flex;flex-direction:column;gap:.5rem;flex:1}
+.cab h3{color:var(--gold2);font-size:1.25rem}
+.cab p{color:var(--muted);font-size:.95rem;flex:1}
+.chip{align-self:flex-start;font-size:.68rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:.15rem .55rem;border-radius:6px;border:1px solid}
+.chip.live{color:var(--teal);border-color:rgba(79,240,224,.4);background:rgba(79,240,224,.07)}
+.chip.soon{color:var(--muted);border-color:var(--line)}
+.play{margin-top:.4rem;font-family:var(--ui);font-weight:700;font-size:.95rem;padding:.6rem 1rem;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(180deg,var(--gold2),var(--gold));color:#120d05;box-shadow:0 4px 16px rgba(232,178,76,.3)}
+.play.dim{background:transparent;color:var(--muted);border:1px solid var(--line);box-shadow:none;cursor:default}
+.player{position:fixed;inset:0;z-index:100;background:#05070e;display:none;flex-direction:column}
+.player.on{display:flex}
+.player .bar{display:flex;align-items:center;gap:1rem;padding:.6rem 1rem;border-bottom:1px solid var(--line);background:rgba(7,10,18,.9)}
+.player .bar b{font-family:var(--disp);color:var(--gold2);letter-spacing:1px}
+.pclose{margin-left:auto;font-family:var(--ui);font-weight:700;color:var(--text);background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:9px;padding:.4rem .8rem;cursor:pointer}
+.player iframe{flex:1;width:100%;border:none;background:#070a12}
+footer{padding:2rem 0 3rem;text-align:center;color:var(--muted);border-top:1px solid var(--line);font-size:.9rem}
+</style>
+</head>
+<body>
+<nav><span class="brand">🕹️ THE ARCADE</span><div class="nl"><a href="index.html">Home</a><a href="world.html">The World</a></div></nav>
+<header class="wrap"><p class="eye">GrimForge · a modern flash-game hub</p><h1>The Arcade</h1><p>Simple to pick up, deep enough to lose an afternoon to. Forged one cabinet at a time.</p></header>
+<div class="wrap grid">
+  <div class="cab glass glowb"><div class="art">🐲</div><div class="body"><span class="chip live">Playable</span><h3>Meepo's Launch</h3><p>Charge, fling the kobold, glide, upgrade, go further. The "one more run" flinger.</p><button class="play" onclick="playGame('arcade/meepos-launch/index.html','Meepo\'s Launch')">▶ Play</button></div></div>
+  <div class="cab glass glowb"><div class="art">⚒</div><div class="body"><span class="chip live">Playable</span><h3>Anvil Rhythm</h3><p>Rhythm-blacksmithing. Strike the anvil on the beat, chain combos, forge the blade before it shatters.</p><button class="play" onclick="playGame('anvil.html','Anvil Rhythm')">▶ Play</button></div></div>
+  <div class="cab glass glowb"><div class="art">🏃</div><div class="body"><span class="chip live">Playable</span><h3>Kobold Dash</h3><p>Endless runner. Meepo runs, you jump the forge hazards and grab gems - how far can you get?</p><button class="play" onclick="playGame('kobold-dash.html','Kobold Dash')">▶ Play</button></div></div>
+  <div class="cab glass"><div class="art">⛏</div><div class="body"><span class="chip soon">Soon</span><h3>Deep Delver</h3><p>One-more-turn mining roguelite. Dig deep, mind your light, cash out or get greedy.</p><button class="play dim" disabled>In the forge…</button></div></div>
+</div>
+<footer class="wrap">GrimForge Arcade · more cabinets landing soon · built by Cody Noah</footer>
+<div class="player" id="player">
+  <div class="bar"><b id="ptitle">Game</b><button class="pclose" id="pclose">✕ Back to Arcade</button></div>
+  <iframe id="pframe" src="" allow="autoplay; fullscreen"></iframe>
+</div>
+<script>
+function playGame(url,title){ document.getElementById('ptitle').textContent=title; document.getElementById('pframe').src=url; document.getElementById('player').classList.add('on'); }
+document.getElementById('pclose').addEventListener('click',()=>{ document.getElementById('player').classList.remove('on'); document.getElementById('pframe').src=''; });
+</script>
+</body>
+</html>

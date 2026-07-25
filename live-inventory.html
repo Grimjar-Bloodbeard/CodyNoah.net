@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study: Live Inventory - real-time stock sync · Cody Noah</title>
+<meta name="description" content="How I built a real-time inventory system for Summit Gaming: sell an item at the register and the website updates in the same second, and vice-versa. The architecture, the self-healing safety net, and the path to a multi-tenant SaaS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/forge.css">
+<style>
+.cs{max-width:820px;margin:0 auto;padding:0 clamp(1rem,4vw,2rem) 4rem}
+.cs-head{padding:clamp(2rem,7vh,3.5rem) 0 1.4rem}
+.cs-head h1{font-size:clamp(2rem,6vw,3.2rem);background:linear-gradient(180deg,#fff 10%,var(--gold) 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cs-head .lead{color:var(--text);font-size:1.15rem;margin-top:.6rem;max-width:62ch;line-height:1.5}
+.cs-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+.cs-tags span{font-size:.72rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--rune);border:1px solid var(--line);border-radius:6px;padding:.2rem .6rem;background:rgba(95,224,214,.06)}
+.cs section{padding:1.7rem 0;border-top:1px solid var(--line)}
+.cs h2{font-size:1.35rem;color:var(--gold2);margin-bottom:.7rem}
+.cs p{color:var(--muted);line-height:1.6;margin-bottom:.7rem}
+.cs p b{color:var(--text)}
+/* pipeline diagram */
+.pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:.5rem;margin:1.2rem 0}
+.step{flex:1 1 120px;min-width:120px;background:rgba(7,10,18,.5);border:1px solid var(--line);border-radius:12px;padding:.7rem .6rem;text-align:center;position:relative}
+.step .ic{font-size:1.3rem;display:block;margin-bottom:.2rem}
+.step b{color:var(--gold2);font-size:.85rem;font-family:var(--disp);font-weight:500;display:block}
+.step small{color:var(--muted);font-size:.72rem}
+.step.rt{border-color:rgba(79,240,224,.5);background:rgba(79,240,224,.08)}
+.step.db{border-color:rgba(232,178,76,.5);background:rgba(232,178,76,.06)}
+.arrow{align-self:center;color:var(--gold);font-weight:700;font-size:1.1rem}
+@media(max-width:640px){.pipe{flex-direction:column}.arrow{transform:rotate(90deg)}}
+.loop{text-align:center;font-size:.85rem;color:var(--rune);margin-top:.3rem}
+.dec{margin-bottom:1rem}
+.dec b{color:var(--gold2);font-family:var(--disp);font-weight:500;font-size:1.05rem}
+.impact{text-align:center;padding:1.4rem;border-radius:16px;margin:.5rem 0}
+.impact .big{font-family:var(--disp);font-size:clamp(1.4rem,5vw,2rem);color:var(--gold2)}
+.impact .big s{color:var(--muted);opacity:.6}
+.saas{border:1px solid rgba(79,240,224,.35);border-radius:14px;padding:1.1rem 1.2rem;background:rgba(79,240,224,.04);margin-top:.4rem}
+.saas h3{color:var(--rune);font-size:1rem;font-family:var(--disp);font-weight:600;margin-bottom:.5rem;letter-spacing:.5px}
+.saas ul{margin:0;padding-left:1.1rem;color:var(--muted);line-height:1.6}
+.saas ul b{color:var(--text)}
+.protect{border-left:2px solid rgba(176,107,255,.5);padding-left:1rem;color:var(--text);font-style:italic}
+.cs-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.6rem}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="beam"></div><div class="beam b2"></div>
+  <div class="aurora"></div><div class="grid"></div>
+  <div id="runes"></div>
+</div>
+
+<nav class="nav">
+  <a class="brand" href="index.html">GRIMFORGE CREATIONS<small>by Cody Noah</small></a>
+  <div class="nl">
+    <a href="hire.html">Hire</a>
+    <a href="resume.html">Résumé</a>
+    <a href="index.html">Home</a>
+  </div>
+</nav>
+
+<main class="cs">
+  <header class="cs-head">
+    <p class="eyebrow reveal">Case study · Real-time systems</p>
+    <h1 class="reveal">Live Inventory</h1>
+    <p class="lead reveal">One item, two places to sell it - the shop counter and the website. This keeps them in lockstep in real time: sell it in-store and the site updates in the same breath, sell it online and the register knows. Built for <b>Summit Gaming of Wilkes</b>; now being shaped into a product other small shops can use.</p>
+    <div class="cs-tags reveal">
+      <span>Real-time</span><span>WebSockets</span><span>Node + MySQL</span><span>Self-healing</span><span>Multi-tenant-ready</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>The problem</h2>
+    <p>A shop that sells in two places has one recurring nightmare: the last copy of a game sells at the register and online in the same minute. Now it's <b>oversold</b> - someone gets a refund and an apology instead of their order. The common "fix" is manual: reconcile spreadsheets, refresh pages, hope. I didn't want two systems kept in sync by hand. I wanted <b>one truth</b> that updates every screen the instant it changes.</p>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <p>A stock change anywhere becomes one event that every screen hears at once - no refresh, no polling, no drift.</p>
+    <div class="pipe reveal">
+      <div class="step"><span class="ic">🏪</span><b>Sale happens</b><small>register or web</small></div>
+      <span class="arrow">→</span>
+      <div class="step db"><span class="ic">🗄️</span><b>One source of truth</b><small>MySQL commits it</small></div>
+      <span class="arrow">→</span>
+      <div class="step rt"><span class="ic">📡</span><b>Broadcast</b><small>Socket.IO event</small></div>
+      <span class="arrow">→</span>
+      <div class="step"><span class="ic">🖥️</span><b>Every screen updates</b><small>counter · phone · site</small></div>
+    </div>
+    <p class="loop reveal">↻ It runs both directions - an online sale updates the register exactly the same way.</p>
+    <p style="font-size:.85rem"><span style="color:var(--gold)">■</span> the database is the single truth &nbsp; <span style="color:var(--teal)">■</span> the real-time layer that makes it feel instant</p>
+  </section>
+
+  <section>
+    <h2>The engineering decisions</h2>
+    <div class="dec"><b>1. One source of truth, broadcast on change.</b><p>The database is the only thing that's ever "right." Every stock change commits there first, then fires an event. No screen ever <i>guesses</i> a count or polls for one - it gets <b>told</b>. That's what kills the drift.</p></div>
+    <div class="dec"><b>2. Real-time over WebSockets, not refresh.</b><p>Socket.IO pushes the change the moment it lands, to every open screen at once - the counter, the manager's phone, a customer mid-checkout. Sub-second, no F5. That instant feel is the whole product.</p></div>
+    <div class="dec"><b>3. A self-healing safety net.</b><p>If an event is ever missed - a dropped connection, a crash mid-write - a reconciliation pass catches it and corrects the count. A glitch stays a glitch; it never graduates into an oversold order. Failure was designed for, not discovered in production.</p></div>
+    <div class="dec"><b>4. Thin client, heavy server.</b><p>Phone or desktop, the screen just listens. The real work stays server-side, so it runs great on a cheap tablet at the counter and an old laptop in the back office alike.</p></div>
+  </section>
+
+  <section>
+    <h2>Where it's going - a SaaS for small shops</h2>
+    <p>Today it runs one store. The core is being reshaped so <b>any</b> small retailer can have live inventory without enterprise pricing - one real-time engine, many shops, each walled off from the others.</p>
+    <div class="saas reveal">
+      <h3>The multi-tenant plan</h3>
+      <ul>
+        <li><b>Isolation at the data layer</b> - every shop is scoped by a tenant key, enforced in one place so no shop can ever see another's numbers.</li>
+        <li><b>Real-time, per shop</b> - each store gets its own broadcast room, so live updates only reach the people who should see them.</li>
+        <li><b>Its own front door</b> - a subdomain per shop, their branding, their catalog.</li>
+        <li><b>Self-serve</b> - sign up, import your catalog, go live - the parts that turn a system into a product.</li>
+      </ul>
+    </div>
+    <div class="saas reveal" style="margin-top:1rem;border-color:rgba(232,178,76,.4);background:rgba(232,178,76,.05)">
+      <h3 style="color:var(--gold2)">Update: it's built - meet StockForge</h3>
+      <p style="color:var(--muted);line-height:1.6;margin:0">The multi-tenant version is now a working product, <b style="color:var(--gold2)">StockForge</b>: real-time stock synced across a register and a customer storefront, hard tenant isolation (one shop can never see another's numbers), a stampede test that proves it never oversells under a thousand simultaneous buyers, catalog upload, and AI photo-to-listing that keeps a human as the final say. Same engine as Summit, rebuilt for many shops.</p>
+    </div>
+    <p style="margin-top:.8rem;font-size:.92rem"><i>Straight truth: it runs <b>live at Summit today</b> as a single shop, and StockForge is <b>demo-ready</b> but not yet publicly hosted. I'd rather show you exactly where the line is than oversell it.</i></p>
+  </section>
+
+  <section>
+    <div class="impact glass glowb reveal">
+      <p style="color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-size:.75rem;font-weight:700;margin-bottom:.4rem">The result</p>
+      <p class="big"><s>oversold &amp; reconciled by hand</s> &nbsp;→&nbsp; one truth, every screen, in real time</p>
+      <p style="margin:.4rem 0 0">The counter and the website are never more than a second out of step - and nobody touches a spreadsheet to make it so.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What's protected</h2>
+    <p class="protect">This is the <b>shape</b> of the system and the thinking behind it - not the source. The event schema, the reconciliation logic, and the tenant-isolation layer stay under the hood. If you're evaluating me and want to go deeper on the engineering, I'm glad to walk through it live.</p>
+    <div class="cs-actions">
+      <a class="btn ghost" href="hire.html#work" data-tip="More live projects">← Back to work</a>
+      <a class="btn ghost" href="sonic-scan.html" data-tip="My AI computer-vision case study">The AI case study →</a>
+      <a class="btn" href="https://summitgamingofwilkes.com" target="_blank" rel="noopener" data-tip="The live store this runs">See Summit live ↗</a>
+    </div>
+  </section>
+</main>
+
+<script src="js/forge.js"></script>
+</body>
+</html>

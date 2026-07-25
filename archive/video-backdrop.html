@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GrimForge Video Backdrop 1920x1080</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Fixed 1920x1080. Open, then screenshot/export at 100% for a clean PNG backdrop.
+   In CapCut/DaVinci: this on the bottom layer, your console footage on top,
+   scaled to sit inside the glowing frame. */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#05070d}
+:root{--gold:#e8b24c;--gold2:#f6d785;--teal:#4ff0e0;--rune:#5fe0d6;--violet:#b06bff;--ember:#ff7a2c;--ember2:#ff5a1c;--text:#e4ebf7;--muted:#8b98b6}
+.stage{position:relative;width:1920px;height:1080px;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 118%,rgba(255,120,40,.18),transparent 55%),
+    radial-gradient(50% 50% at 16% 14%,rgba(79,240,224,.12),transparent 60%),
+    radial-gradient(50% 50% at 84% 12%,rgba(176,107,255,.12),transparent 60%),
+    linear-gradient(180deg,#070a12,#0a0f1e)}
+.grid{position:absolute;inset:0;opacity:.05;
+  background-image:linear-gradient(rgba(95,224,214,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(95,224,214,.6) 1px,transparent 1px);
+  background-size:60px 60px;-webkit-mask:radial-gradient(circle at 50% 40%,#000 30%,transparent 75%)}
+.rune{position:absolute;font-family:'Cinzel',serif;text-shadow:0 0 16px currentColor;opacity:.22;user-select:none}
+
+/* footage frame */
+.frame{position:absolute;left:160px;top:78px;width:1600px;height:900px;border-radius:14px;
+  background:linear-gradient(180deg,#0a0e18,#060910);
+  box-shadow:0 0 0 2px rgba(120,150,220,.25), 0 0 60px rgba(255,140,50,.22), inset 0 0 90px rgba(0,0,0,.6);
+  border:6px solid transparent;
+  background-clip:padding-box}
+.frame::before{content:'';position:absolute;inset:-6px;border-radius:16px;z-index:-1;
+  background:linear-gradient(135deg,var(--gold2),var(--ember2) 40%,var(--violet) 72%,var(--teal));
+  filter:brightness(1.05)}
+.frame .guide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:6px;color:rgba(139,152,182,.35);font-size:34px;text-transform:uppercase}
+.frame .corner{position:absolute;width:34px;height:34px;border:3px solid var(--gold2);opacity:.85;filter:drop-shadow(0 0 8px rgba(232,178,76,.5))}
+.frame .corner.tl{top:14px;left:14px;border-right:none;border-bottom:none}
+.frame .corner.tr{top:14px;right:14px;border-left:none;border-bottom:none}
+.frame .corner.bl{bottom:14px;left:14px;border-right:none;border-top:none}
+.frame .corner.br{bottom:14px;right:14px;border-left:none;border-top:none}
+
+/* top brand bar */
+.brand{position:absolute;left:0;right:0;top:0;height:78px;display:flex;align-items:center;justify-content:space-between;padding:0 44px}
+.brand .mark{font-family:'Cinzel',serif;font-weight:700;font-size:38px;letter-spacing:5px;color:var(--gold2);text-shadow:0 0 26px rgba(232,178,76,.5)}
+.brand .mark b{color:var(--teal)}
+.brand .by{font-family:'Rajdhani',sans-serif;font-weight:600;letter-spacing:3px;color:var(--muted);font-size:20px;text-transform:uppercase}
+
+/* bottom title strip */
+.strip{position:absolute;left:160px;right:160px;bottom:0;height:78px;display:flex;align-items:center;justify-content:space-between}
+.strip .title{font-family:'Cinzel',serif;font-weight:500;letter-spacing:2px;color:var(--gold2);font-size:30px;opacity:.9}
+.strip .handle{font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:3px;color:var(--rune);font-size:22px}
+.strip .anvil{color:var(--ember);font-size:26px;margin-right:.4em}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="grid"></div>
+  <span class="rune" style="left:60px;top:300px;color:var(--rune);font-size:60px">ᚠ</span>
+  <span class="rune" style="left:44px;top:640px;color:var(--violet);font-size:52px">ᚹ</span>
+  <span class="rune" style="right:64px;top:360px;color:var(--gold2);font-size:58px">ᛗ</span>
+  <span class="rune" style="right:48px;top:660px;color:var(--teal);font-size:50px">ᛥ</span>
+
+  <div class="brand">
+    <span class="mark">⚒ GRIM<b>FORGE</b></span>
+    <span class="by">Cody Noah · Wilkes County, NC</span>
+  </div>
+
+  <div class="frame">
+    <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+    <div class="guide">▶ your console footage sits here</div>
+  </div>
+
+  <div class="strip">
+    <span class="title"><span class="anvil">⚒</span>Episode title goes here</span>
+    <span class="handle">GRIMFORGE CREATIONS</span>
+  </div>
+</div>
+</body>
+</html>

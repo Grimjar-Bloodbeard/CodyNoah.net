@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrimForge — Command Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+@property --a { syntax:'<angle>'; initial-value:0deg; inherits:false; }
+:root{--void:#070a12;--teal:#4ff0e0;--rune:#5fe0d6;--violet:#b06bff;--gold:#e8b24c;--gold2:#f6d785;
+  --text:#e4ebf7;--muted:#8b98b6;--glass:rgba(20,28,50,.55);--line:rgba(120,150,220,.18);
+  --ui:'Rajdhani',system-ui,sans-serif;--disp:'Cinzel',Georgia,serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ui);background:var(--void);color:var(--text);font-size:18px;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{font-family:var(--disp);font-weight:700;line-height:1.1}
+body::before{content:'';position:fixed;inset:-25%;z-index:-2;pointer-events:none;
+  background:radial-gradient(38% 38% at 18% 22%,rgba(79,240,224,.15),transparent 60%),
+    radial-gradient(40% 40% at 82% 16%,rgba(176,107,255,.14),transparent 60%),
+    radial-gradient(46% 46% at 60% 94%,rgba(232,178,76,.12),transparent 60%),var(--void);
+  filter:blur(28px);animation:drift 22s ease-in-out infinite alternate}
+body::after{content:'';position:fixed;inset:0;z-index:-2;opacity:.05;pointer-events:none;
+  background-image:linear-gradient(rgba(95,224,214,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(95,224,214,.6) 1px,transparent 1px);
+  background-size:46px 46px;-webkit-mask:radial-gradient(circle at 50% 28%,#000 22%,transparent 72%);mask:radial-gradient(circle at 50% 28%,#000 22%,transparent 72%)}
+@keyframes drift{to{transform:translate3d(4%,-3%,0) scale(1.08)}}
+.glowb{position:relative}
+.glowb::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.4px;
+  background:conic-gradient(from var(--a),transparent 0 12%,var(--teal),var(--violet),var(--gold),transparent 68% 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  animation:spin 7s linear infinite;pointer-events:none}
+@keyframes spin{to{--a:360deg}}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1rem,4vw,2.4rem)}
+
+nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:1rem;padding:.7rem clamp(1rem,4vw,2.4rem);
+  background:linear-gradient(180deg,rgba(7,10,18,.9),rgba(7,10,18,.1));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{font-family:var(--disp);font-weight:700;font-size:1.2rem;letter-spacing:2px;color:var(--gold2);text-shadow:0 0 22px rgba(232,178,76,.4)}
+.brand b{color:var(--teal)}
+.portals{margin-left:auto;display:flex;gap:.4rem;flex-wrap:wrap}
+.portals a{padding:.4rem .8rem;border-radius:9px;color:var(--muted);font-weight:600;border:1px solid transparent;transition:.2s}
+.portals a:hover{color:var(--text);background:rgba(95,224,214,.08);border-color:var(--line)}
+.lab-dot{width:8px;height:8px;border-radius:50%;background:#555;display:inline-block;margin-right:.35rem;vertical-align:middle}
+.lab-dot.on{background:var(--teal);box-shadow:0 0 10px var(--teal)}
+
+header.hero{padding:clamp(2.5rem,7vh,4.5rem) 0 1.5rem}
+.hero .sub{color:var(--teal);font-weight:600;letter-spacing:4px;text-transform:uppercase;font-size:.8rem;margin-bottom:.6rem}
+.hero h1{font-size:clamp(2.2rem,6vw,3.6rem);letter-spacing:1px;background:linear-gradient(180deg,#fff 10%,var(--gold) 95%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 24px rgba(232,178,76,.3))}
+.hero p{color:var(--muted);max-width:56ch;margin-top:.6rem;font-size:1.1rem}
+.stats{display:flex;gap:1.5rem;margin-top:1.2rem;flex-wrap:wrap}
+.stats b{font-family:var(--disp);color:var(--gold2);font-size:1.6rem}
+.stats span{color:var(--muted);font-size:.9rem;display:block;letter-spacing:1px;text-transform:uppercase}
+
+.launch{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0 2.5rem}
+.tile{padding:1.3rem;border-radius:16px;display:flex;flex-direction:column;gap:.4rem;cursor:pointer;transition:transform .18s}
+.tile:hover{transform:translateY(-3px)}
+.tile .ic{font-size:1.8rem}
+.tile h3{font-size:1.15rem;color:var(--gold2)}
+.tile p{color:var(--muted);font-size:.92rem}
+
+h2.sec{font-size:1.4rem;letter-spacing:2px;text-transform:uppercase;color:var(--rune);margin:2rem 0 1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.1rem}
+.card{padding:1.3rem;border-radius:16px;display:flex;flex-direction:column;gap:.5rem}
+.card .top{display:flex;align-items:center;gap:.6rem}
+.card h3{font-size:1.2rem;color:var(--text)}
+.chip{font-size:.7rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:.15rem .55rem;border-radius:6px;border:1px solid;white-space:nowrap}
+.chip.live{color:var(--teal);border-color:rgba(79,240,224,.4);background:rgba(79,240,224,.07)}
+.chip.building{color:var(--violet);border-color:rgba(176,107,255,.4);background:rgba(176,107,255,.07)}
+.chip.handoff{color:var(--gold2);border-color:rgba(232,178,76,.4);background:rgba(232,178,76,.07)}
+.chip.paused{color:var(--muted);border-color:var(--line)}
+.card p{color:var(--muted);font-size:.95rem;flex:1}
+.acts{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.4rem}
+.act{font-family:var(--ui);font-weight:700;font-size:.85rem;padding:.45rem .8rem;border-radius:9px;cursor:pointer;border:1px solid var(--line);background:rgba(6,10,20,.5);color:var(--text);transition:.18s;text-decoration:none;display:inline-block}
+.act:hover{border-color:var(--teal);color:var(--teal)}
+.act.gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#12100a;border:none;box-shadow:0 4px 16px rgba(232,178,76,.28)}
+.act.dim{opacity:.5;pointer-events:none}
+
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+footer{padding:3rem 0 4rem;text-align:center;color:var(--muted);border-top:1px solid var(--line);margin-top:3rem}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="brand">⚒ GRIM<b>FORGE</b></span>
+  <div class="portals">
+    <a href="world.html">🎮 World</a>
+    <a href="cyberfantasy.html">✨ UI Kit</a>
+    <a href="cyberfantasy.html#forge" id="labLink"><span class="lab-dot" id="labDot"></span>The Forge</a>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <p class="sub reveal">Command Deck</p>
+  <h1 class="reveal">Everything you're building, in one place.</h1>
+  <p class="reveal">Every project, its status, and its live link, all in one place. This is the home base.</p>
+  <div class="stats reveal">
+    <div><b id="s-total">–</b><span>Projects</span></div>
+    <div><b id="s-live">–</b><span>Live</span></div>
+    <div><b id="s-active">–</b><span>Active</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="launch">
+    <a class="tile glass glowb reveal" href="world.html"><span class="ic">🎮</span><h3>The World</h3><p>Walk the explorable pixel world.</p></a>
+    <a class="tile glass reveal" href="cyberfantasy.html"><span class="ic">✨</span><h3>Cyber-Fantasy UI</h3><p>The design kit + the live Forge.</p></a>
+    <a class="tile glass reveal" href="cyberfantasy.html#forge"><span class="ic">⚒</span><h3>The Forge</h3><p>The live AI art generator - make assets on demand.</p></a>
+  </div>
+
+  <h2 class="sec reveal">Projects</h2>
+  <div class="grid" id="grid"></div>
+</div>
+
+<footer class="wrap"><p>GrimForge Command Deck · Cody Noah · Wilkes County, NC</p></footer>
+
+<script>
+const PROJECTS=[
+  {name:'CodyNoah.net / GrimForge',status:'building',blurb:'This site - the two-door gate, the professional Hire side, an explorable pixel Lab, and playable games. Building toward a live launch.',link:'index.html',forge:false},
+  {name:'Summit Gaming of Wilkes',status:'live',blurb:'Live e-commerce (retro games + TCG, Square POS) I built and run day to day. Handing off to the owner.',link:'https://summitgamingofwilkes.com',forge:false},
+  {name:'Wilkes Senior Resources',status:'live',blurb:'Accessible site I built for a local senior center - live on cloud infra. On hold pending real feature work.',link:'https://wilkesseniorresources.org',forge:false},
+  {name:'Forgeheart',status:'building',blurb:'North star: a self-hosted local AI command center that folds my projects in as modules. Vault brain is up.',link:'#',forge:false},
+  {name:'Digital Mirror',status:'live',blurb:'Shipped privacy tool - shows what the internet already knows about you. A security-consulting lead magnet.',link:'#',forge:false},
+  {name:'Summit Tech Repairs',status:'building',blurb:'Mail-in hardware repair + PC/console upgrade service - the near-term revenue engine funding the software.',link:'hire.html#repairs',forge:false},
+  {name:'Gather',status:'paused',blurb:'Big privacy-first social-coordination app, spec stage. Multi-month; funded later by repairs.',link:'#',forge:false},
+  {name:'Decision Maker (Deciduel)',status:'paused',blurb:'AI decision tool with switchable personalities. A clean demo, not yet publish-ready.',link:'#',forge:false},
+  {name:'World Ash (D&D)',status:'paused',blurb:'Unified TTRPG campaign + an owned book renderer that dropped the GMBinder dependency. Back-burnered.',link:'#',forge:false}
+];
+const LABEL={live:'Live',building:'Building',handoff:'Handoff',paused:'Paused'};
+const grid=document.getElementById('grid');
+PROJECTS.forEach(p=>{
+  const c=document.createElement('div'); c.className='card glass reveal';
+  const hasLink=p.link&&p.link!=='#';
+  c.innerHTML='<div class="top"><h3>'+p.name+'</h3><span class="chip '+p.status+'">'+(LABEL[p.status]||p.status)+'</span></div>'+
+    '<p>'+p.blurb+'</p>'+
+    '<div class="acts">'+
+      '<a class="act gold'+(hasLink?'':' dim')+'" href="'+(hasLink?p.link:'#')+'"'+(hasLink&&p.link.startsWith('http')?' target="_blank"':'')+'>Open →</a>'+
+      (p.forge?'<a class="act" href="http://localhost:7861" target="_blank">⚒ Forge assets</a>':'')+
+    '</div>';
+  grid.appendChild(c);
+});
+document.getElementById('s-total').textContent=PROJECTS.length;
+document.getElementById('s-live').textContent=PROJECTS.filter(p=>p.status==='live').length;
+document.getElementById('s-active').textContent=PROJECTS.filter(p=>p.status==='live'||p.status==='building').length;
+
+// Lab online indicator
+fetch('http://localhost:7861/api/models').then(r=>r.json()).then(m=>{ if(m&&m.length){ document.getElementById('labDot').classList.add('on'); } }).catch(()=>{});
+
+const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
