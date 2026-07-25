@@ -85,8 +85,19 @@
 .work-card .hood li{color:var(--muted);font-size:.88rem;line-height:1.4}
 .work-card .hood li b{color:var(--rune);font-weight:600}
 
+/* form sections - two-column: services/proof beside the form, not just above it */
+.formsplit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:2.2rem;align-items:start}
+.formsplit .side h3{color:var(--gold2);font-size:1.35rem;margin-bottom:.6rem}
+.formsplit .side>p{color:var(--muted);margin-bottom:1.2rem;font-size:1.02rem}
+.formsplit .proof{margin-top:1.3rem;padding:1.1rem 1.3rem;border-radius:13px;border-left:3px solid var(--teal)}
+.formsplit .proof p{color:var(--text);font-size:.94rem;margin:0;line-height:1.55}
+.formsplit .proof p+p{margin-top:.6rem}
+.formsplit .proof a{color:var(--teal);font-weight:700}
+.formsplit .proof b{color:var(--gold2)}
+@media(max-width:880px){.formsplit{grid-template-columns:1fr}}
+
 /* repairs */
-.repair{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;margin-bottom:1.6rem}
+.repair{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;margin-bottom:0}
 .repair li{list-style:none;padding:1rem 1.1rem;border-radius:13px}
 .repair li b{color:var(--gold2);display:block;margin-bottom:.2rem;font-family:var(--disp);font-weight:500;letter-spacing:.3px}
 .repair li span{color:var(--muted);font-size:.92rem}
@@ -266,13 +277,21 @@
   <p class="eyebrow reveal">Hardware</p>
   <h2 class="sec reveal">Repairs &amp; upgrades</h2>
   <p class="sub reveal">Local drop-off in Wilkes County, or secure mail-in. Honest quotes, no mystery fees, and you see the work.</p>
-  <ul class="repair">
-    <li class="glass reveal"><b>PC performance</b><span>HDD → NVMe clones with zero data loss, RAM/GPU upgrades, thermal repastes.</span></li>
-    <li class="glass reveal"><b>Console restoration</b><span>Deep cleans, fan and thermal fixes, shell swaps for loud, dusty PS5 / Xbox / Switch.</span></li>
-    <li class="glass reveal"><b>Custom builds</b><span>Your parts or mine - clean assembly, tidy cabling, BIOS, and a tuned first boot. Heads up: hardware costs what it costs - I'll lay out real options across your actual budget before a dime gets spent.</span></li>
-    <li class="glass reveal"><b>Handheld modding</b><span>Clean installs of stable custom firmware on classic consoles and handhelds.</span></li>
-  </ul>
-  <div class="repbox glass glowb reveal">
+  <div class="formsplit reveal" style="margin-top:1.7rem">
+    <div class="side">
+      <h3>What I fix</h3>
+      <p>If it plugs in and it's broken, slow, or you just want it better - bring it to me. I diagnose first and quote before a dime moves, every time.</p>
+      <ul class="repair">
+        <li class="glass"><b>PC performance</b><span>HDD → NVMe clones with zero data loss, RAM/GPU upgrades, thermal repastes.</span></li>
+        <li class="glass"><b>Console restoration</b><span>Deep cleans, fan and thermal fixes, shell swaps for loud, dusty PS5 / Xbox / Switch.</span></li>
+        <li class="glass"><b>Custom builds</b><span>Your parts or mine - clean assembly, tidy cabling, BIOS, and a tuned first boot. Hardware costs what it costs - I'll lay out real options across your actual budget before a dime gets spent.</span></li>
+        <li class="glass"><b>Handheld modding</b><span>Clean installs of stable custom firmware on classic consoles and handhelds.</span></li>
+      </ul>
+      <div class="proof glass">
+        <p>I don't have a repair portfolio online yet - what I do have is a track record of finishing what I start. <b>Summit Gaming of Wilkes</b> and <b>Wilkes Senior Resources</b> below are real systems I built and still run, not screenshots. <a href="#work">See the proof ↑</a></p>
+      </div>
+    </div>
+    <div class="repbox glass glowb">
     <h3>Need something fixed? Mail it my way.</h3>
     <p>I stay busy, but I work hard for the money and I don't half-do it. Repairs, upgrades, or just "hey, what should I build?" - all fair game. Fill this out and I'll come back with a straight, itemized quote: parts, labor, return shipping, no mystery fees.</p>
     <form class="reqform" id="reqform">
@@ -303,6 +322,7 @@
       <button type="submit" class="btn" id="rf-submit" data-tip="Sends straight to Cody, no email app needed">Send it to Cody</button>
       <p class="fine" id="rf-status">Sends straight to my inbox. Rather just write me? <a href="mailto:cnoah538191@gmail.com">cnoah538191@gmail.com</a></p>
     </form>
+    </div>
   </div>
 </section>
 
@@ -311,7 +331,19 @@
   <p class="eyebrow reveal">Start a project</p>
   <h2 class="sec reveal">Let's scope it out</h2>
   <p class="sub reveal">Tell me what you're after and roughly what it's worth to you - I'll come back with a plan and honest pricing. Plain English, no pressure, no obligation.</p>
-  <div class="repbox glass glowb reveal">
+  <div class="formsplit reveal" style="margin-top:1.7rem">
+    <div class="side">
+      <h3>What I build</h3>
+      <p>Websites, web apps, custom tools, AI-driven automation - the kind of system a small business needs but usually can't afford a whole dev team for. I scope it, I build it, I ship it, and I'm the one you talk to the whole way through.</p>
+      <div class="proof glass">
+        <p><b>Summit Gaming of Wilkes</b> - a full e-commerce store, real checkout, real customers, built and still run by me.</p>
+        <p><b>Wilkes Senior Resources</b> - a live client site a non-technical director edits herself.</p>
+        <p>Both still running today, not portfolio screenshots. <a href="#work">See them ↑</a></p>
+      </div>
+    </div>
+    <div class="repbox glass glowb">
+    <h3>Send me your pitch</h3>
+    <p>Plain English is fine - I'll turn it into a real plan with honest pricing.</p>
     <form class="reqform" id="pitchform">
       <div class="row">
         <div><label for="pj-name">Your name</label><input id="pj-name" name="name" autocomplete="name" required></div>
@@ -334,6 +366,7 @@
       <button type="submit" class="btn" data-tip="Opens your email with the pitch organized for you">Send my pitch</button>
       <p class="fine">This opens your email with everything organized - just hit send. Rather write directly? <a href="mailto:cnoah538191@gmail.com">cnoah538191@gmail.com</a></p>
     </form>
+    </div>
   </div>
 </section>
 
