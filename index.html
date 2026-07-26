@@ -314,10 +314,21 @@
 
 <script src="js/forge.js?v=3"></script>
 <script>
-/* forge the title letters in, one strike at a time */
+/* forge the title letters in, one strike at a time.
+   Rebuilt (not just re-shown) on bfcache restore - a CSS animation caught
+   mid-flight when you navigate away doesn't reliably resume/finish when the
+   browser restores the page from cache, which left letters visibly stuck
+   mid-strike (rotated, faded) after hitting Back. Fresh elements = a fresh,
+   always-completing animation. */
 (function(){
   var word='GRIMFORGE', t=document.getElementById('title');
-  for(var i=0;i<word.length;i++){ var s=document.createElement('span'); s.textContent=word[i]; s.style.setProperty('--i',i); t.appendChild(s); }
+  if(!t) return;
+  function build(){
+    t.innerHTML='';
+    for(var i=0;i<word.length;i++){ var s=document.createElement('span'); s.textContent=word[i]; s.style.setProperty('--i',i); t.appendChild(s); }
+  }
+  build();
+  addEventListener('pageshow', function(e){ if(e.persisted) build(); });
 })();
 
 /* rising ember/spark canvas */
