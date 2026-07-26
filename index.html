@@ -188,14 +188,47 @@
 .scene-lab .ember{position:absolute;bottom:30%;width:5px;height:5px;border-radius:50%;background:#ffd27a;
   box-shadow:0 0 9px 2px rgba(255,140,50,.85);opacity:0;pointer-events:none;animation:emberrise 1.5s ease-out forwards}
 @keyframes emberrise{0%{opacity:0;transform:translate(0,0) scale(1.1)}15%{opacity:1}100%{opacity:0;transform:translate(var(--ex,0px),calc(-1 * var(--er,90px))) scale(.3)}}
-/* Hire: the forge lights up */
+/* Hire: the forge lights up - stone workshop wall, hanging tools, a hammer that strikes the anvil */
 .scene-hire{background:radial-gradient(120% 95% at 50% 100%,#3a1c0c,#0c0805)}
+.scene-hire .wall{position:absolute;inset:0;opacity:0;
+  background:
+    linear-gradient(180deg,transparent 55%,rgba(0,0,0,.4) 100%),
+    repeating-linear-gradient(0deg,#1c150f 0 38px,#171008 38px 40px),
+    repeating-linear-gradient(90deg,transparent 0 78px,rgba(0,0,0,.25) 78px 80px);
+  animation:wallin 1.2s ease-out forwards}
+@keyframes wallin{to{opacity:.55}}
+.scene-hire .tool{position:absolute;bottom:56%;width:5px;background:#332920;opacity:0;transform-origin:top center;
+  animation:toolin .6s ease-out forwards}
+.scene-hire .tool::after{content:'';position:absolute;left:50%;bottom:-13px;transform:translateX(-50%)}
+.scene-hire .tool.t1{left:16%;height:64px;transform:rotate(-7deg);animation-delay:.15s}
+.scene-hire .tool.t1::after{width:22px;height:13px;background:#3d3022;border-radius:3px}
+.scene-hire .tool.t2{left:80%;height:52px;transform:rotate(9deg);animation-delay:.3s}
+.scene-hire .tool.t2::after{width:17px;height:17px;background:#3d3022;border-radius:50%}
+.scene-hire .tool.t3{left:90%;height:74px;transform:rotate(-4deg);animation-delay:.45s}
+.scene-hire .tool.t3::after{width:19px;height:9px;background:#3d3022;border-radius:2px}
+@keyframes toolin{to{opacity:.8}}
 .scene-hire .fg{position:absolute;left:50%;bottom:22%;width:340px;height:340px;transform:translateX(-50%) scale(.28);transform-origin:center bottom}
 .enter.hire.show .fg{animation:approach 1.55s ease-out forwards}
 .scene-hire .fg::before{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(255,150,50,.6),rgba(255,60,20,.15) 45%,transparent 70%);animation:flick .18s infinite alternate}
 .scene-hire .anvil{position:absolute;left:50%;bottom:20%;width:120px;height:56px;transform:translateX(-50%);background:#140f0a;opacity:0;
   clip-path:polygon(0 42%,22% 42%,28% 0,72% 0,78% 42%,100% 42%,84% 58%,60% 58%,60% 100%,40% 100%,40% 58%,16% 58%);animation:anvilin 1s .35s forwards}
 @keyframes anvilin{to{opacity:.92}}
+.scene-hire .hammer{position:absolute;left:57%;bottom:46%;width:50px;height:18px;z-index:4;opacity:0;
+  background:linear-gradient(90deg,#4a3a26,#2c2115);border-radius:4px;box-shadow:0 0 0 2px #1a1108 inset;
+  transform-origin:2px 9px}
+.scene-hire .hammer::after{content:'';position:absolute;right:-4px;top:-13px;width:5px;height:24px;background:#5a4a34;border-radius:2px}
+.enter.hire.show .hammer{animation:strike 1.55s .2s cubic-bezier(.5,0,.4,1) forwards}
+@keyframes strike{
+  0%{opacity:0;transform:rotate(-62deg) translate(-6px,-30px)}
+  14%{opacity:1}
+  58%{transform:rotate(-62deg) translate(-6px,-30px)}
+  70%{transform:rotate(16deg) translate(2px,4px)}
+  78%{transform:rotate(10deg) translate(2px,2px)}
+  100%{opacity:.95;transform:rotate(13deg) translate(2px,3px)}
+}
+.scene-hire .spark{position:absolute;bottom:31%;width:4px;height:4px;border-radius:50%;background:#ffd27a;
+  box-shadow:0 0 8px 2px rgba(255,150,50,.85);opacity:0;pointer-events:none;animation:sparkfly .75s ease-out forwards}
+@keyframes sparkfly{0%{opacity:0;transform:translate(0,0) scale(1.1)}10%{opacity:1}100%{opacity:0;transform:translate(var(--sx,0px),var(--sy,-60px)) scale(.3)}}
 .enter-label{position:absolute;left:0;right:0;bottom:13%;z-index:6;text-align:center;font-family:var(--disp);letter-spacing:3px;
   color:var(--gold2);font-size:clamp(1rem,3vw,1.5rem);opacity:0;text-shadow:0 2px 20px rgba(255,120,40,.55)}
 .enter.show .enter-label{animation:fadein .7s .65s forwards}
@@ -266,7 +299,9 @@
     <div class="enter-label">Follow the firelight...</div>
   </div>
   <div class="scene scene-hire">
-    <div class="fg"></div><span class="anvil"></span>
+    <span class="wall"></span>
+    <span class="tool t1"></span><span class="tool t2"></span><span class="tool t3"></span>
+    <div class="fg"></div><span class="anvil"></span><span class="hammer"></span>
     <div class="enter-label">To the forge...</div>
   </div>
   <span class="dp left"></span><span class="dp right"></span>
@@ -356,6 +391,18 @@
   var enter=document.getElementById('enter'); if(!enter) return;
   var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   var going=false;
+
+  // Hitting Back after the cutscene played would show the cutscene again -
+  // the browser restores this page from bfcache with the "mid-transition"
+  // classes still applied (they were added right before we navigated away).
+  // Reset it back to a plain, navigable landing page when that happens.
+  addEventListener('pageshow', function(e){
+    if(!e.persisted) return;
+    enter.classList.remove('show','lab','hire','gsap');
+    enter.querySelectorAll('.ember,.spark').forEach(function(el){ el.remove(); });
+    going=false;
+  });
+
   document.querySelectorAll('.door').forEach(function(d){
     d.addEventListener('click',function(e){
       var href=d.getAttribute('href'); if(!href) return;
@@ -376,6 +423,19 @@
           em.style.animationDelay=(Math.random()*1.1)+'s';
           em.style.animationDuration=(1+Math.random()*.9)+'s';
           sc.appendChild(em);
+        }
+      } else {                                        // spark shower timed to the hammer's impact
+        var scH=enter.querySelector('.scene-hire');
+        for(var j=0;j<18;j++){
+          var sp=document.createElement('span'); sp.className='spark';
+          var ang=(Math.random()*130-65)*Math.PI/180;
+          var dist=35+Math.random()*75;
+          sp.style.left=(58+Math.random()*5)+'%';
+          sp.style.setProperty('--sx',(Math.sin(ang)*dist)+'px');
+          sp.style.setProperty('--sy',(-Math.abs(Math.cos(ang))*dist-15)+'px');
+          sp.style.animationDelay=(0.95+Math.random()*.3)+'s';   // syncs with the hammer strike
+          sp.style.animationDuration=(.45+Math.random()*.4)+'s';
+          scH.appendChild(sp);
         }
       }
 
