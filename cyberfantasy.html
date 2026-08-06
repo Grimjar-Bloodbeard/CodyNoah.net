@@ -194,7 +194,6 @@ footer b{color:var(--gold2)}
   <span class="brand">⚒ GRIM<b>FORGE</b></span>
   <div class="nlinks">
     <a href="#kit">Kit</a>
-    <a href="#forge">The Forge</a>
     <a href="world.html">The World</a>
     <span class="pill">🔒 Secure by default</span>
   </div>
@@ -209,7 +208,7 @@ footer b{color:var(--gold2)}
   <h1 class="reveal">Beautiful. Effortless.<br>Secure by nature.</h1>
   <p class="lead reveal">Arcane tech meets clean design. Lightweight, secure, and tuned to the bone - no bloat, and it runs on a potato. This is the look, and the <i>feel</i>, of everything I make.</p>
   <div class="cta reveal">
-    <button class="btn" data-rip onclick="document.getElementById('forge').scrollIntoView({behavior:'smooth'})">⚒ Enter the Forge</button>
+    <button class="btn" data-rip onclick="document.getElementById('kit').scrollIntoView({behavior:'smooth'})">✨ See the Kit</button>
     <a href="world.html" class="btn ghost">Walk the World →</a>
   </div>
 </header>
@@ -252,36 +251,6 @@ footer b{color:var(--gold2)}
 </section>
 
 <!-- THE FORGE -->
-<section class="wrap" id="forge">
-  <p class="eyebrow reveal">On-demand art</p>
-  <h2 class="sec reveal">The Forge.</h2>
-  <p class="sec-sub reveal">Pick what to forge, then hit the button. <b>On my machine this is live</b> — it really drives the local AI and conjures the thing you chose. For visitors, it shows a real render it made earlier. Either way, your choices shape the result — watch the panel below tell you which mode you're in.</p>
-
-  <div class="forge glass glowb reveal">
-    <div class="panel">
-      <label>What are we forging</label>
-      <select id="f-what"><option>NPC — Mountain Smith</option><option>Monster — Rune Wraith</option><option>Item — Ashen Blade</option><option>Location — Neon Grotto</option></select>
-      <label>Style</label>
-      <select id="f-style"><option>Cyber-Fantasy</option><option>Anime</option><option>Painterly</option><option>Semi-real</option></select>
-      <label>Element</label>
-      <select id="f-el"><option>Rune-teal</option><option>Molten gold</option><option>Spell-violet</option></select>
-      <button class="btn" id="f-go" data-rip style="margin-top:1.3rem;width:100%">⚒ Forge it</button>
-      <div id="f-status" style="margin-top:.8rem;font-size:.85rem;color:var(--muted)">◌ checking the forge…</div>
-      <div id="f-stats" style="margin-top:1.1rem"></div>
-    </div>
-    <div class="result" id="f-result">
-      <div class="ph">The forge is cold.<br><span style="opacity:.6">Hit <b>Forge it</b> to conjure.</span></div>
-      <img id="f-img" src="demo_portrait.webp" alt="AI-forged render">
-      <div class="scan"></div>
-      <div class="floading" id="f-load">
-        <img class="hollow" src="loading_hollow.webp" alt="">
-        <div class="fbar"><i id="f-bar"></i></div>
-        <div class="ftime" id="f-time">forging…</div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <footer class="wrap">
   <p><b>GrimForge</b> · Cyber-Fantasy UI · lightweight, secure, runs on a potato.</p>
   <p style="opacity:.6;margin-top:.4rem">Made for people who'd rather build the cool thing than talk about it.</p>
@@ -298,67 +267,6 @@ document.addEventListener('pointerdown',e=>{ const b=e.target.closest('[data-rip
 const io=new IntersectionObserver((es)=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}}),{threshold:.15});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-// The Forge — LIVE when the Studio is running on this machine, honest demo otherwise.
-const STATS={
-  'NPC — Mountain Smith':[['Role','Forge-Keeper'],['HP','48'],['Demeanor','Gruff, fair'],['Reward','Ash Marks']],
-  'Monster — Rune Wraith':[['CR','6'],['HP','82'],['Trait','Phase-flicker'],['Weakness','Cold iron']],
-  'Item — Ashen Blade':[['Type','Longsword +1'],['Dmg','1d8+3 fire'],['Rune','Emberbind'],['Value','1,200 gp']],
-  'Location — Neon Grotto':[['Zone','Sixth Ring'],['Light','Bioluminescent'],['Danger','Moderate'],['Loot','Sap crystals']]
-};
-const WHAT={
-  'NPC — Mountain Smith':['a rugged mountain blacksmith, fantasy npc, character portrait',832,1216],
-  'Monster — Rune Wraith':['a menacing rune wraith, glowing sigils, dark fantasy creature',832,1216],
-  'Item — Ashen Blade':['an ornate ashen longsword etched with glowing runes, fantasy weapon concept, plain dark background',1024,1024],
-  'Location — Neon Grotto':['a mystical glowing crystal grotto cavern, fantasy environment, wide establishing shot',1216,832]
-};
-const FSTYLE={'Cyber-Fantasy':'high fantasy, ancient arcane technology, divine runework, magic-as-technology, intricate ornate detail, ','Anime':'(anime style:1.3), cel shading, flat color, ','Painterly':'digital painting, concept art, ','Semi-real':'semi-realistic, painterly, '};
-const FEL={'Rune-teal':'teal rune-light','Molten gold':'molten gold','Spell-violet':'violet arcane glow'};
-// Demo mode: each choice pulls a fitting real render (not the same image every time)
-function demoSrc(what,style,el){
-  if(/Wraith/i.test(what)) return 'artgen/out/hollow_sonic_00001_.png';
-  if(/Blade/i.test(what))  return 'artgen/out/forge_00004_.png';
-  if(/Grotto/i.test(what)) return (el==='Molten gold')?'artgen/out/grimforge_hero_00001_.png':'artgen/out/scene_00001_.png';
-  return (style==='Anime')?'artgen/out/custom_00001_.png':'demo_portrait.webp'; // NPC / Mountain Smith
-}
-const F={res:document.getElementById('f-result'),img:document.getElementById('f-img'),stats:document.getElementById('f-stats'),status:document.getElementById('f-status')};
-const ST='http://localhost:7861'; let STUDIO=null, MODEL=null;
-
-function demoMode(){ F.status.innerHTML='<span style="color:var(--muted)">&#9676; Demo mode — the live forge runs on the builder’s machine.</span>'; }
-fetch(ST+'/api/models').then(r=>r.json()).then(m=>{
-  if(m&&m.length){ STUDIO=ST; MODEL=m.find(x=>/illustrious|anime|noob/i.test(x))||m[0];
-    F.status.innerHTML='<span class="tag">&#9889; LIVE — this forge is really running</span>'; }
-  else demoMode();
-}).catch(demoMode);
-
-function forgeStats(what,mode){
-  F.stats.innerHTML='<span class="tag">'+(mode==='LIVE'?'FORGED &middot; live':'DEMO &middot; pre-rendered')+'</span>';
-  (STATS[what]||[]).forEach((r,i)=>setTimeout(()=>{const d=document.createElement('div');d.className='statline';
-    d.innerHTML='<span>'+r[0]+'</span><b>'+r[1]+'</b>';F.stats.appendChild(d);},120*(i+1)));
-}
-let _ft0=0,_fiv=0;
-function fStart(){ _ft0=Date.now(); const est=45000;
-  _fiv=setInterval(()=>{ const el=Date.now()-_ft0, pct=Math.min(92,el/est*100);
-    const b=document.getElementById('f-bar'); if(b)b.style.width=pct+'%';
-    const t=document.getElementById('f-time'); if(t)t.textContent='forging… '+Math.round(el/1000)+'s'; },300); }
-function fStop(){ if(_fiv){clearInterval(_fiv);_fiv=0;} }
-document.getElementById('f-go').addEventListener('click',async()=>{
-  const what=document.getElementById('f-what').value, style=document.getElementById('f-style').value, el=document.getElementById('f-el').value;
-  F.img.classList.remove('show'); F.res.classList.add('loading'); F.stats.innerHTML=''; fStart();
-  if(STUDIO){
-    try{
-      const w=WHAT[what]||['fantasy character',832,1216];
-      const prompt='masterpiece, best quality, '+(FSTYLE[style]||'')+w[0]+', '+(FEL[el]||'')+', cinematic lighting, highly detailed';
-      const d=await(await fetch(STUDIO+'/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({model:MODEL,prompt:prompt,negative:'worst quality, low quality, blurry, watermark, text, extra fingers, bad hands',width:w[1],height:w[2],steps:26,cfg:5.5,name:'forge'})})).json();
-      fStop(); F.res.classList.remove('loading');
-      if(d&&d.ok){ F.img.onload=()=>F.img.classList.add('show'); F.img.src=STUDIO+d.url+'?t='+Date.now(); forgeStats(what,'LIVE'); return; }
-    }catch(e){}
-    fStop(); F.res.classList.remove('loading');
-  }
-  setTimeout(()=>{ fStop(); F.res.classList.remove('loading');
-    F.img.onload=()=>F.img.classList.add('show'); F.img.src=demoSrc(what,style,el);
-    if(F.img.complete)F.img.classList.add('show'); forgeStats(what,'DEMO'); }, STUDIO?60:1200);
-});
 </script>
 </body>
 </html>
