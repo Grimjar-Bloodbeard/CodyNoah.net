@@ -78,7 +78,7 @@
   <header class="cs-head">
     <p class="eyebrow reveal">Case study · Real-time systems</p>
     <h1 class="reveal">Live Inventory</h1>
-    <p class="lead reveal">One item, two places to sell it - the shop counter and the website. This keeps them in lockstep in real time: sell it in-store and the site updates in the same breath, sell it online and the register knows. Built for <b>Summit Gaming of Wilkes</b>; now being shaped into a product other small shops can use.</p>
+    <p class="lead reveal">One item, two places to sell it - the shop counter and the website. This keeps them in lockstep in real time: sell it in-store and the site updates in the same breath, sell it online and the register knows. Built for <b>Summit Gaming of Wilkes</b>; rebuilt again on hard-isolated multi-tenant data just to prove the engine could handle it.</p>
     <div class="cs-tags reveal">
       <span>Real-time</span><span>WebSockets</span><span>Node + MySQL</span><span>Self-healing</span><span>Multi-tenant-ready</span>
     </div>
@@ -114,22 +114,8 @@
   </section>
 
   <section>
-    <h2>Where it's going - a SaaS for small shops</h2>
-    <p>Today it runs one store. The core is being reshaped so <b>any</b> small retailer can have live inventory without enterprise pricing - one real-time engine, many shops, each walled off from the others.</p>
-    <div class="saas reveal">
-      <h3>The multi-tenant plan</h3>
-      <ul>
-        <li><b>Isolation at the data layer</b> - every shop is scoped by a tenant key, enforced in one place so no shop can ever see another's numbers.</li>
-        <li><b>Real-time, per shop</b> - each store gets its own broadcast room, so live updates only reach the people who should see them.</li>
-        <li><b>Its own front door</b> - a subdomain per shop, their branding, their catalog.</li>
-        <li><b>Self-serve</b> - sign up, import your catalog, go live - the parts that turn a system into a product.</li>
-      </ul>
-    </div>
-    <div class="saas reveal" style="margin-top:1rem;border-color:rgba(232,178,76,.4);background:rgba(232,178,76,.05)">
-      <h3 style="color:var(--gold2)">Update: it's built - meet StockForge</h3>
-      <p style="color:var(--muted);line-height:1.6;margin:0">The multi-tenant version is now a working product, <b style="color:var(--gold2)">StockForge</b>: real-time stock synced across a register and a customer storefront, hard tenant isolation (one shop can never see another's numbers), a stampede test that proves it never oversells under a thousand simultaneous buyers, catalog upload, and AI photo-to-listing that keeps a human as the final say. Same engine as Summit, rebuilt for many shops.</p>
-    </div>
-    <p style="margin-top:.8rem;font-size:.92rem"><i>Straight truth: it runs <b>live at Summit today</b> as a single shop, and StockForge is <b>demo-ready</b> but not yet publicly hosted. I'd rather show you exactly where the line is than oversell it.</i></p>
+    <h2>Proof of range, not a pitch</h2>
+    <p>Nobody asked me to go past a single store. I rebuilt the same engine so it could run several shops on <b>hard-isolated data</b> - one shop's numbers can never leak into another's - and stress-tested it against a thousand simultaneous buyers with zero oversells. That's not a product I'm selling. That's the standard I hold my own work to.</p>
   </section>
 
   <section>
