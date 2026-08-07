@@ -6,3 +6,6 @@ Thumbs.db
 .env
 .env.*
 backend/*.log
+artgen/_*.log
+artgen/_upload_tmp/
+artgen/out/transform/
