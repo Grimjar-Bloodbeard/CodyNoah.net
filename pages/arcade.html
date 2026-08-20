@@ -3,21 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FT8DFSD29Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FT8DFSD29Q');
+</script>
 <title>The Arcade — GrimForge</title>
-<meta name="description" content="Playable browser games from Cody Noah's GrimForge Lab - Anvil Rhythm, Kobold Dash, Meepo's Launch, and more. Framework-free, built solo.">
+<meta name="description" content="Playable browser games from Cody Noah's GrimForge Lab - Dragonflight, Anvil Rhythm, Kobold Dash, and more. Framework-free, built solo.">
+<meta name="keywords" content="GrimForge arcade, Cody Noah games, browser games portfolio, indie game developer">
+<meta name="author" content="Cody Noah">
+<meta name="theme-color" content="#070a12">
+<link rel="canonical" href="https://codynoah.net/pages/arcade.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:title" content="The Arcade — GrimForge">
-<meta property="og:description" content="Playable browser games from Cody Noah's GrimForge Lab - Anvil Rhythm, Kobold Dash, Meepo's Launch, and more. Framework-free, built solo.">
-<meta property="og:image" content="https://codynoah.net/og-image.jpg">
-<meta property="og:url" content="https://codynoah.net/arcade.html">
+<meta property="og:description" content="Playable browser games from Cody Noah's GrimForge Lab - Dragonflight, Anvil Rhythm, Kobold Dash, and more. Framework-free, built solo.">
+<meta property="og:image" content="https://codynoah.net/images/og-image.jpg">
+<meta property="og:url" content="https://codynoah.net/pages/arcade.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Arcade — GrimForge">
-<meta name="twitter:description" content="Playable browser games from Cody Noah's GrimForge Lab - Anvil Rhythm, Kobold Dash, Meepo's Launch, and more. Framework-free, built solo.">
-<meta name="twitter:image" content="https://codynoah.net/og-image.jpg">
+<meta name="twitter:description" content="Playable browser games from Cody Noah's GrimForge Lab - Dragonflight, Anvil Rhythm, Kobold Dash, and more. Framework-free, built solo.">
+<meta name="twitter:image" content="https://codynoah.net/images/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -63,10 +75,10 @@ footer{padding:2rem 0 3rem;text-align:center;color:var(--muted);border-top:1px s
 </style>
 </head>
 <body>
-<nav><span class="brand">🕹️ THE ARCADE</span><div class="nl"><a href="index.html">Home</a><a href="world.html">The World</a></div></nav>
+<nav><span class="brand">🕹️ THE ARCADE</span><div class="nl"><a href="../index.html">Home</a><a href="world.html">The World</a></div></nav>
 <header class="wrap"><p class="eye">GrimForge · a modern flash-game hub</p><h1>The Arcade</h1><p>Simple to pick up, deep enough to lose an afternoon to. Forged one cabinet at a time.</p></header>
 <div class="wrap grid">
-  <div class="cab glass glowb"><div class="art">🐲</div><div class="body"><span class="chip live">Playable</span><h3>Meepo's Launch</h3><p>Charge, fling the kobold, glide, upgrade, go further. The "one more run" flinger.</p><button class="play" onclick="playGame('arcade/meepos-launch/index.html','Meepo\'s Launch')">▶ Play</button></div></div>
+  <div class="cab glass glowb"><div class="art">🐲</div><div class="body"><span class="chip live">Playable</span><h3>Dragonflight</h3><p>Flap to fly, dodge the spires, bank your coins in the nest before you crash. Five dragons, one crew.</p><button class="play" onclick="playGame('dragonflight.html','Dragonflight')">▶ Play</button></div></div>
   <div class="cab glass glowb"><div class="art">⚒</div><div class="body"><span class="chip live">Playable</span><h3>Anvil Rhythm</h3><p>Rhythm-blacksmithing. Strike the anvil on the beat, chain combos, forge the blade before it shatters.</p><button class="play" onclick="playGame('anvil.html','Anvil Rhythm')">▶ Play</button></div></div>
   <div class="cab glass glowb"><div class="art">🏃</div><div class="body"><span class="chip live">Playable</span><h3>Kobold Dash</h3><p>Endless runner. Meepo runs, you jump the forge hazards and grab gems - how far can you get?</p><button class="play" onclick="playGame('kobold-dash.html','Kobold Dash')">▶ Play</button></div></div>
   <div class="cab glass"><div class="art">⛏</div><div class="body"><span class="chip soon">Soon</span><h3>Deep Delver</h3><p>One-more-turn mining roguelite. Dig deep, mind your light, cash out or get greedy.</p><button class="play dim" disabled>In the forge…</button></div></div>

@@ -11,12 +11,22 @@
   gtag('js', new Date());
   gtag('config', 'G-FT8DFSD29Q');
 </script>
-<title>Dragonflight — GrimForge</title>
-<meta name="robots" content="noindex,nofollow">
+<title>Dragonflight · GrimForge Arcade</title>
+<meta name="description" content="Flap to fly, dodge the spires, and bank your coins in the nest before you crash. Five dragons to fly, one story - built with my daughter. Framework-free.">
+<link rel="canonical" href="https://codynoah.net/pages/dragonflight.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Dragonflight · GrimForge Arcade">
+<meta property="og:description" content="Flap to fly, dodge the spires, and bank your coins in the nest before you crash. Five dragons to fly, one story - built with my daughter. Framework-free.">
+<meta property="og:image" content="https://codynoah.net/images/og-image.jpg">
+<meta property="og:url" content="https://codynoah.net/pages/dragonflight.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dragonflight · GrimForge Arcade">
+<meta name="twitter:description" content="Flap to fly, dodge the spires, and bank your coins in the nest before you crash. Five dragons to fly, one story - built with my daughter. Framework-free.">
+<meta name="twitter:image" content="https://codynoah.net/images/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -104,7 +114,7 @@ body{user-select:none;-webkit-user-select:none}
 </head>
 <body>
 
-<div class="bg"><div class="beam"></div><div class="beam b2"></div><div class="aurora"></div><div class="grid"></div></div>
+<div class="bg"><div class="beam"></div><div class="beam b2"></div><div class="aurora"></div><div class="grid"></div><div id="runes"></div></div>
 
 <nav class="nav">
   <a class="brand" href="../index.html"><img src="../images/logo-grimforge-nav.png" alt="GrimForge Creations"></a>
@@ -183,6 +193,7 @@ body{user-select:none;-webkit-user-select:none}
   <button class="btn ghost" id="roostBack" style="margin-top:1.4rem">← Back</button>
 </div>
 
+<script src="../js/forge.js?v=3"></script>
 <script>
 (function(){
 'use strict';
