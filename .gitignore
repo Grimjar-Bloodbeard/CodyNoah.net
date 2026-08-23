@@ -6,6 +6,11 @@ Thumbs.db
 .env
 .env.*
 backend/*.log
+backend/price-feedback.json
+backend/voted-ips.json
+backend/.vote-salt
+backend/archive/
+backend/resume-downloads.json
 artgen/_*.log
 artgen/_upload_tmp/
 artgen/out/transform/
