@@ -14,6 +14,21 @@
   --text:#e4ebf7; --muted:#8b98b6;
   --glass:rgba(20,28,50,.5); --line:rgba(120,150,220,.18);
   --ui:'Rajdhani',system-ui,sans-serif; --disp:'Cinzel',Georgia,serif;
+
+  /* ---- motion standard: timing + easing tokens, shared everywhere ---- */
+  --t-fast:.18s; --t-base:.32s; --t-slow:.45s;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-smooth:cubic-bezier(.4,0,.2,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  /* opt-in multi-property transition for anything that should feel "alive" */
+  --transition-standard:opacity var(--t-base) var(--ease-smooth),transform var(--t-base) var(--ease-smooth),
+    box-shadow var(--t-base) var(--ease-smooth),filter var(--t-base) var(--ease-smooth);
+
+  /* ---- forge-light standard: the ember/gold glow is already our palette,
+     this just gives it reusable tokens (the "lamp" look, no new colors) ---- */
+  --glow-ember-soft:rgba(255,122,44,.28); --glow-ember-strong:rgba(255,122,44,.5);
+  --glow-gold-soft:rgba(232,178,76,.28); --glow-gold-strong:rgba(232,178,76,.5);
+  --light-pool:radial-gradient(ellipse at center,rgba(255,150,60,.22) 0%,rgba(255,120,40,.07) 45%,transparent 70%);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -54,22 +69,38 @@ h1,h2,h3{font-family:var(--disp);font-weight:700;line-height:1.1}
   animation:spin 7s linear infinite;pointer-events:none}
 @keyframes spin{to{--a:360deg}}
 
+/* ===== lamp glow (reusable "lit up" state - forge-light standard) =====
+   Add .lamp to anything that should feel warm/expensive on hover or while
+   marked .active (e.g. a featured card, an icon, a hero image frame). */
+.lamp{position:relative}
+.lamp::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(circle at 50% 70%,var(--glow-ember-soft),transparent 65%);
+  opacity:0;transition:opacity var(--t-base) var(--ease-smooth)}
+.lamp:hover::after,.lamp.active::after{opacity:1}
+/* optional soft light pool on the ground beneath a .lamp element */
+.lamp .light-pool{position:absolute;bottom:-24px;left:50%;translate:-50% 0;width:70%;height:32px;
+  background:var(--light-pool);filter:blur(10px);opacity:0;pointer-events:none;
+  transition:opacity var(--t-base) var(--ease-smooth)}
+.lamp:hover .light-pool,.lamp.active .light-pool{opacity:1}
+
 /* ===== top nav ===== */
 .nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:1rem;padding:.65rem clamp(1rem,4vw,2.4rem);
   background:linear-gradient(180deg,rgba(7,10,18,.85),rgba(7,10,18,.05));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .brand{font-family:var(--disp);font-weight:700;font-size:1.05rem;letter-spacing:2px;color:var(--gold2);
-  text-shadow:0 0 20px rgba(232,178,76,.4);line-height:1.05}
+  text-shadow:0 0 20px rgba(232,178,76,.4);line-height:1.05;display:flex;align-items:center}
 .brand small{display:block;font-family:var(--ui);font-size:.58rem;letter-spacing:3px;color:var(--muted);font-weight:600}
+.brand img{display:block;height:48px;width:auto;filter:drop-shadow(0 0 14px rgba(232,178,76,.25))}
 .nl{margin-left:auto;display:flex;gap:.25rem;flex-wrap:wrap;align-items:center}
 .nl a{padding:.4rem .8rem;border-radius:9px;color:var(--muted);font-weight:600;transition:.2s}
 .nl a:hover,.nl a.active{color:var(--text);background:rgba(95,224,224,.08)}
 
 /* ===== buttons ===== */
 .btn{font-family:var(--ui);font-weight:700;font-size:1rem;letter-spacing:.4px;padding:.8rem 1.5rem;border-radius:11px;
-  border:none;cursor:pointer;display:inline-block;transition:transform .15s,box-shadow .2s;
+  border:none;cursor:pointer;display:inline-block;
+  transition:transform var(--t-fast) var(--ease-out),box-shadow var(--t-base) var(--ease-smooth),filter var(--t-base) var(--ease-smooth);
   background:linear-gradient(180deg,var(--gold2),var(--gold));color:#120d05;
   box-shadow:0 6px 22px rgba(232,178,76,.32),inset 0 1px 0 rgba(255,255,255,.4)}
-.btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(232,178,76,.5)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px var(--glow-gold-strong);filter:brightness(1.08)}
 .btn.ghost{background:transparent;color:var(--teal);border:1px solid rgba(79,240,224,.5);box-shadow:none}
 .btn.ghost:hover{background:rgba(79,240,224,.08)}
 .btn.violet{background:linear-gradient(180deg,#c88bff,var(--violet));color:#160a26;box-shadow:0 6px 22px rgba(176,107,255,.34)}
@@ -166,8 +197,9 @@ h2.sec{font-size:clamp(1.7rem,5vw,2.6rem);margin-bottom:.4rem;
 @media (max-width:560px){
   .nav{gap:.5rem;padding:.5rem .8rem}
   .brand{font-size:.95rem}
+  .brand img{height:38px}
   .nl{gap:.1rem;width:100%;justify-content:flex-start;margin-left:0}
-  .nl a{padding:.35rem .55rem;font-size:.92rem}
+  .nl a{padding:.4rem .65rem;font-size:.92rem;min-height:44px;display:inline-flex;align-items:center}
   #meepo{width:74px;right:10px}
   .bubble{max-width:min(210px,74vw);font-size:.92rem}
 }

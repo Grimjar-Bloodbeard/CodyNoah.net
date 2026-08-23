@@ -3,8 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FT8DFSD29Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FT8DFSD29Q');
+</script>
 <title>GrimForge — Explore</title>
 <meta name="description" content="Walk the pixel world of GrimForge - Cody Noah's playable showcase of live projects, demos, and tools, built framework-free.">
+<meta name="keywords" content="GrimForge, Cody Noah, interactive portfolio, pixel world showcase, framework-free web development">
+<meta name="author" content="Cody Noah">
+<meta name="theme-color" content="#070a12">
+<link rel="canonical" href="https://codynoah.net/pages/world.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
@@ -12,12 +24,12 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="GrimForge — Explore">
 <meta property="og:description" content="Walk the pixel world of GrimForge - Cody Noah's playable showcase of live projects, demos, and tools, built framework-free.">
-<meta property="og:image" content="https://codynoah.net/og-image.jpg">
-<meta property="og:url" content="https://codynoah.net/world.html">
+<meta property="og:image" content="https://codynoah.net/images/og-image.jpg">
+<meta property="og:url" content="https://codynoah.net/pages/world.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="GrimForge — Explore">
 <meta name="twitter:description" content="Walk the pixel world of GrimForge - Cody Noah's playable showcase of live projects, demos, and tools, built framework-free.">
-<meta name="twitter:image" content="https://codynoah.net/og-image.jpg">
+<meta name="twitter:image" content="https://codynoah.net/images/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -55,42 +67,50 @@ html,body{height:100%;width:100%;overflow:hidden;position:fixed;inset:0;backgrou
   text-shadow:0 1px 3px #000;transition:opacity .4s;}
 .hint b{color:var(--rune);}
 
-.prompt{position:fixed;left:50%;bottom:6.5rem;transform:translateX(-50%) translateY(10px);z-index:16;
+.prompt{position:fixed;left:50%;bottom:6.5rem;transform:translateX(-50%) translateY(10px) scale(.9);z-index:16;
   font-family:var(--font-pixel);font-size:.72rem;color:var(--ink);
   background:linear-gradient(180deg,var(--gold-bright),var(--gold));
   padding:.6rem .9rem;border-radius:9px;box-shadow:0 0 20px rgba(232,178,76,.5);
-  opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;white-space:nowrap;}
-.prompt.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;cursor:pointer;}
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .32s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;}
+.prompt.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1);pointer-events:auto;cursor:pointer;
+  animation:promptpulse 1.6s ease-in-out infinite;}
+@keyframes promptpulse{0%,100%{box-shadow:0 0 20px rgba(232,178,76,.5)}50%{box-shadow:0 0 32px rgba(232,178,76,.85)}}
 
 .controls{position:fixed;inset:auto 0 1.2rem 0;z-index:18;display:flex;justify-content:flex-end;
   align-items:flex-end;padding:0 1.2rem;pointer-events:none;}
 .dpad{display:none;position:relative;width:150px;height:150px;}
 .dpad button,.act{pointer-events:auto;border:2px solid var(--ring);background:rgba(11,10,20,.72);
   color:var(--gold-bright);font-family:var(--font-body);cursor:pointer;backdrop-filter:blur(2px);
-  display:flex;align-items:center;justify-content:center;touch-action:none;}
+  display:flex;align-items:center;justify-content:center;touch-action:none;transition:transform .12s ease,background .12s ease;}
 .dpad button{position:absolute;width:50px;height:50px;border-radius:10px;font-size:1.4rem;}
-.dpad button:active,.act:active{background:rgba(232,178,76,.25);}
+.dpad button:active,.act:active{background:rgba(232,178,76,.25);transform:scale(.88);}
 #btnU{top:0;left:50px;} #btnD{bottom:0;left:50px;} #btnL{left:0;top:50px;} #btnR{right:0;top:50px;}
 .act{width:64px;height:64px;border-radius:50%;border-color:var(--rune);color:var(--rune);font-size:1.6rem;}
 @media (hover:hover) and (pointer:fine){ .controls{display:none;} }
 @media (max-width:600px){
   .brand{font-size:.72rem;}
-  .menu button{font-size:.88rem;padding:.18rem .4rem;}
+  .menu button{font-size:.88rem;padding:.18rem .4rem;min-height:44px;display:inline-flex;align-items:center;}
   .dpad{width:132px;height:132px;}
   .dpad button{width:44px;height:44px;}
   #btnU{left:44px;} #btnD{left:44px;} #btnL{top:44px;} #btnR{top:44px;}
   .act{width:56px;height:56px;}
 }
+@media (prefers-reduced-motion: reduce){
+  .prompt{animation:none;}
+  .prompt,.scrim,.panel,.dpad button,.act{transition:none;}
+}
 
 .scrim{position:fixed;inset:0;z-index:40;background:rgba(6,5,12,.72);backdrop-filter:blur(3px);
-  display:none;align-items:center;justify-content:center;padding:1.2rem;}
-.scrim.open{display:flex;}
+  display:flex;align-items:center;justify-content:center;padding:1.2rem;
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease,visibility 0s .25s;}
+.scrim.open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .25s ease,visibility 0s;}
 .panel{max-width:640px;width:100%;max-height:86vh;overflow-y:auto;
   background:linear-gradient(160deg,rgba(31,22,13,.98),rgba(11,10,20,.98));
   border:1px solid var(--ring);border-radius:16px;padding:1.6rem 1.5rem;
   box-shadow:0 0 0 1px rgba(0,0,0,.4),0 20px 60px rgba(0,0,0,.6);
-  transform:translateY(16px);transition:transform .2s;}
-.scrim.open .panel{transform:translateY(0);}
+  transform:translateY(22px) scale(.96);opacity:0;
+  transition:transform .34s cubic-bezier(.34,1.2,.4,1),opacity .28s ease;}
+.scrim.open .panel{transform:translateY(0) scale(1);opacity:1;}
 .panel .eyebrow{font-family:var(--font-pixel);font-size:.58rem;letter-spacing:.2em;
   text-transform:uppercase;color:var(--rune);margin-bottom:.7rem;}
 .panel h2{font-family:var(--font-pixel);font-size:1.1rem;color:var(--gold-bright);
@@ -111,7 +131,7 @@ html,body{height:100%;width:100%;overflow:hidden;position:fixed;inset:0;backgrou
 <canvas id="world"></canvas>
 
 <header class="topbar">
-  <a href="index.html" class="brand" style="text-decoration:none" title="Back to GrimForge home"><span class="anvil">⚒</span> The Lab</a>
+  <a href="../index.html" class="brand" style="text-decoration:none" title="Back to GrimForge home"><span class="anvil">⚒</span> The Lab</a>
   <nav class="menu" id="menu" aria-label="Jump to">
     <button data-go="repairs">Repairs</button>
     <button data-go="builds">Builds</button>
@@ -396,7 +416,9 @@ html,body{height:100%;width:100%;overflow:hidden;position:fixed;inset:0;backgrou
     // jumping fish (above water)
     for(var q=0;q<fish.length;q++){var fi=fish[q]; ctx.fillStyle='#d98a3a'; ctx.fillRect(sx(fi.x),sy(fi.y),2,1); }
     // particles
-    for(var j=parts.length-1;j>=0;j--){var e=parts[j];e.x+=e.vx;e.y+=e.vy;e.vy+=(e.g===0?0:0.03);e.age++;
+    for(var j=parts.length-1;j>=0;j--){var e=parts[j];
+      e.vx+=(Math.random()-.5)*0.04; if(e.vx>.8)e.vx=.8; else if(e.vx<-.8)e.vx=-.8;   // gentle per-frame wander, clamped so it stays organic not chaotic
+      e.x+=e.vx;e.y+=e.vy;e.vy+=(e.g===0?0:0.03);e.age++;
       if(e.age>=e.life){parts.splice(j,1);continue;}
       ctx.fillStyle='rgba('+e.c+','+(1-e.age/e.life).toFixed(2)+')'; ctx.fillRect(sx(e.x),sy(e.y),e.s,e.s);}
     // vignette

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FT8DFSD29Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FT8DFSD29Q');
+</script>
+<title>Case Study: StockForge - a safe-to-show twin of a live system · Cody Noah</title>
+<meta name="description" content="How I rebuilt Summit Gaming's real-time inventory engine as its own isolated system on fake data, so anyone can watch the real thing run without ever touching a real customer's database - plus the barcode-first offline-capable counter mode built and proven there first.">
+<meta name="keywords" content="Cody Noah, StockForge, tenant isolation architecture, real-time inventory system, offline-first web app, case study">
+<meta name="author" content="Cody Noah">
+<meta name="theme-color" content="#070a12">
+<link rel="canonical" href="https://codynoah.net/pages/stockforge.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Case Study: StockForge - a safe-to-show twin of a live system · Cody Noah">
+<meta property="og:description" content="How I rebuilt Summit Gaming's real-time inventory engine as its own isolated system on fake data, so anyone can watch the real thing run without ever touching a real customer's database - plus the barcode-first offline-capable counter mode built and proven there first.">
+<meta property="og:image" content="https://codynoah.net/images/og-image.jpg">
+<meta property="og:url" content="https://codynoah.net/pages/stockforge.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Case Study: StockForge - a safe-to-show twin of a live system · Cody Noah">
+<meta name="twitter:description" content="How I rebuilt Summit Gaming's real-time inventory engine as its own isolated system on fake data, so anyone can watch the real thing run without ever touching a real customer's database - plus the barcode-first offline-capable counter mode built and proven there first.">
+<meta name="twitter:image" content="https://codynoah.net/images/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/forge.css?v=2">
+<style>
+.cs{max-width:820px;margin:0 auto;padding:0 clamp(1rem,4vw,2rem) 4rem}
+.cs-head{padding:clamp(2rem,7vh,3.5rem) 0 1.4rem}
+.cs-head h1{font-size:clamp(2rem,6vw,3.2rem);background:linear-gradient(180deg,#fff 10%,var(--gold) 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cs-head .lead{color:var(--text);font-size:1.15rem;margin-top:.6rem;max-width:62ch;line-height:1.5}
+.cs-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+.cs-tags span{font-size:.72rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--rune);border:1px solid var(--line);border-radius:6px;padding:.2rem .6rem;background:rgba(95,224,214,.06)}
+.cs section{padding:1.7rem 0;border-top:1px solid var(--line)}
+.cs h2{font-size:1.35rem;color:var(--gold2);margin-bottom:.7rem}
+.cs p{color:var(--muted);line-height:1.6;margin-bottom:.7rem}
+.cs p b{color:var(--text)}
+/* pipeline diagram */
+.pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:.5rem;margin:1.2rem 0}
+.step{flex:1 1 120px;min-width:120px;background:rgba(7,10,18,.5);border:1px solid var(--line);border-radius:12px;padding:.7rem .6rem;text-align:center;position:relative}
+.step .ic{font-size:1.3rem;display:block;margin-bottom:.2rem}
+.step b{color:var(--gold2);font-size:.85rem;font-family:var(--disp);font-weight:500;display:block}
+.step small{color:var(--muted);font-size:.72rem}
+.step.rt{border-color:rgba(79,240,224,.5);background:rgba(79,240,224,.08)}
+.step.iso{border-color:rgba(176,107,255,.5);background:rgba(176,107,255,.07)}
+.arrow{align-self:center;color:var(--gold);font-weight:700;font-size:1.1rem}
+@media(max-width:640px){.pipe{flex-direction:column}.arrow{transform:rotate(90deg)}}
+.dec{margin-bottom:1rem}
+.dec b{color:var(--gold2);font-family:var(--disp);font-weight:500;font-size:1.05rem}
+.impact{text-align:center;padding:1.4rem;border-radius:16px;margin:.5rem 0}
+.impact .big{font-family:var(--disp);font-size:clamp(1.4rem,5vw,2rem);color:var(--gold2)}
+.status{border:1px solid rgba(232,178,76,.4);border-radius:14px;padding:1.1rem 1.2rem;background:rgba(232,178,76,.05);margin-top:.4rem}
+.status h3{color:var(--gold2);font-size:1rem;font-family:var(--disp);font-weight:600;margin-bottom:.5rem;letter-spacing:.5px}
+.protect{border-left:2px solid rgba(176,107,255,.5);padding-left:1rem;color:var(--text);font-style:italic}
+.cs-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.6rem}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="beam"></div><div class="beam b2"></div>
+  <div class="aurora"></div><div class="grid"></div>
+  <div id="runes"></div>
+</div>
+
+<nav class="nav">
+  <a class="brand" href="../index.html"><img src="../images/logo-grimforge-nav.png" alt="GrimForge Creations"></a>
+  <div class="nl">
+    <a href="hire.html">Hire</a>
+    <a href="resume.html">Résumé</a>
+    <a href="../index.html">Home</a>
+  </div>
+</nav>
+
+<main class="cs">
+  <header class="cs-head">
+    <p class="eyebrow reveal">Case study · Backend engineering, safe to show</p>
+    <h1 class="reveal">StockForge</h1>
+    <p class="lead reveal">A standalone twin of Summit Gaming's real-time inventory engine, running on its own fake seeded shops instead of Summit's real database. It exists so I can show someone exactly how the real thing behaves - live, poke at it yourself - without ever pointing them at a real customer's data. It's also become my testbed: new e-commerce features get built and proven here first, before they ever touch Summit's live system.</p>
+    <div class="cs-tags reveal">
+      <span>Node + MySQL</span><span>Tenant isolation</span><span>Offline-first</span><span>Feature-flagged</span><span>In progress</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>The problem</h2>
+    <p>Summit's real-time inventory engine (see the <a href="live-inventory.html" style="color:var(--rune)">Live Inventory case study</a>) is real client work, running on a real store's real data - not something I can just hand someone a login to. But "trust me, it's good" isn't proof of anything. I wanted a way to let someone actually <b>use the real engine</b> - scan an item, watch the stock sync live - without it ever being able to touch Summit's actual database. The honest answer was to rebuild it as its own system, on its own fake shops, isolated hard enough that "fake" and "real" data structurally cannot mix.</p>
+  </section>
+
+  <section>
+    <h2>How tenant isolation actually works</h2>
+    <p>The danger of any shared-database system is always the same shape: one forgotten tenant filter, buried in one route, leaking one shop's numbers into another's screen - or in this case, letting a demo visitor's poking-around ever reach real data. The fix isn't "remember to add the filter everywhere" - people forget. It's making the filter <b>impossible to skip</b>.</p>
+    <div class="pipe reveal">
+      <div class="step iso"><span class="ic">🔑</span><b>One data gateway</b><small>TenantRepo, bound to one shop</small></div>
+      <span class="arrow">→</span>
+      <div class="step"><span class="ic">🚫</span><b>No raw SQL</b><small>routes never touch tables directly</small></div>
+      <span class="arrow">→</span>
+      <div class="step rt"><span class="ic">📡</span><b>Per-shop live rooms</b><small>Socket.IO, not a global broadcast</small></div>
+    </div>
+    <p class="loop reveal" style="text-align:center;font-size:.85rem;color:var(--rune)">Every read, write, and stock change funnels through the ONE class that forces the tenant filter - a route literally cannot query another shop's data by accident.</p>
+  </section>
+
+  <section>
+    <h2>The engineering decisions</h2>
+    <div class="dec"><b>1. One choke point, not a convention.</b><p>Every tenant table read/write runs through a single repo class scoped to the caller's shop at construction time. There is no code path that skips it - "don't forget the filter" became "there's nothing to forget."</p></div>
+    <div class="dec"><b>2. Real-time stays per-shop.</b><p>Summit broadcasts stock changes to everyone connected - correct for one store, a data leak for many. Here, every socket joins a room named for its tenant on connect; a stock change only ever reaches that one room.</p></div>
+    <div class="dec"><b>3. Feature flags as an honest kill switch.</b><p>Every shop's enabled features live as one list - unset means "show everything" (so the default demo never regresses), an explicit list restricts to just those, enforced server-side on the actual mutating routes, not just hidden in the UI. That's what lets a half-finished feature exist in the codebase without ever being reachable until it's actually ready to show.</p></div>
+    <div class="dec"><b>4. Offline is a real state, not an edge case.</b><p>The newest piece - a barcode-first counter screen - assumes the shop wifi <i>will</i> drop mid-sale. Scans resolve from a locally cached catalog with zero network round-trip; a sale made offline queues in IndexedDB, replays safely on reconnect (a retried request can't double-sell the same scan), and the screen never just... stops working because a connection blinked.</p></div>
+    <div class="dec"><b>5. Small attack surface on purpose.</b><p>Hand-rolled sessions (HMAC-signed cookies, Node's built-in scrypt) and a hand-rolled security header set instead of a dozen npm packages. Fewer dependencies means fewer supply-chain surprises and a codebase I can actually audit end-to-end myself.</p></div>
+  </section>
+
+  <section>
+    <h2>Proof of range</h2>
+    <p>Nobody's paying for this yet, so I stress-test it myself: a seeded catalog of <b>1,500+ SKUs</b> under one tenant to make sure search, stock math, and the register flow hold up past toy-demo scale, plus a from-scratch typo-tolerant search layer (partial matches, misspellings, special characters) that the original single-shop version never needed. It's the same standard I hold client work to, pointed at something nobody's asked me to build yet.</p>
+  </section>
+
+  <section>
+    <div class="impact glass glowb reveal">
+      <p style="color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-size:.75rem;font-weight:700;margin-bottom:.4rem">Where it stands</p>
+      <p class="big">a real customer's private system → something anyone can safely watch run</p>
+      <p style="margin:.4rem 0 0">On my own time, deliberately: whatever gets built and proven here is what's actually ready when it moves into Summit's live system - not built live, under a real customer, for the first time.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What's actually next</h2>
+    <div class="status glass reveal">
+      <h3>⚒ On the anvil</h3>
+      <p style="margin:0">Whatever Summit's real backend needs next gets prototyped here first, on fake data, until it's boring and reliable - then it moves over. Right now that's the barcode-first counter workflow above; next up is whatever the real store actually runs into.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What's protected</h2>
+    <p class="protect">Same policy as everything else here: this is the <b>shape</b> of the system and the decisions behind it, not the source. The isolation layer and the offline-sync protocol stay private - it's the reusable core I carry into every future build, not something I hand out. Happy to walk through the real thing live if you're evaluating me.</p>
+    <div class="cs-actions">
+      <a class="btn ghost" href="hire.html#work" data-tip="More live projects">← Back to work</a>
+      <a class="btn ghost" href="live-inventory.html" data-tip="The single-shop engine this grew from">Where it started →</a>
+      <a class="btn" href="hire.html#contact" data-tip="Ask me about StockForge">Ask me about it →</a>
+    </div>
+  </section>
+</main>
+
+<script src="../js/forge.js?v=3"></script>
+</body>
+</html>

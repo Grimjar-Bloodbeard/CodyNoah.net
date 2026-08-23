@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FT8DFSD29Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FT8DFSD29Q');
+</script>
 <title>GrimForge — Command Deck</title>
 <meta name="description" content="The GrimForge Lab command deck - Cody Noah's local tools and project status, one glance at the workshop.">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -12,12 +20,12 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="GrimForge — Command Deck">
 <meta property="og:description" content="The GrimForge Lab command deck - Cody Noah's local tools and project status, one glance at the workshop.">
-<meta property="og:image" content="https://codynoah.net/og-image.jpg">
-<meta property="og:url" content="https://codynoah.net/dashboard.html">
+<meta property="og:image" content="https://codynoah.net/images/og-image.jpg">
+<meta property="og:url" content="https://codynoah.net/pages/dashboard.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="GrimForge — Command Deck">
 <meta name="twitter:description" content="The GrimForge Lab command deck - Cody Noah's local tools and project status, one glance at the workshop.">
-<meta name="twitter:image" content="https://codynoah.net/og-image.jpg">
+<meta name="twitter:image" content="https://codynoah.net/images/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -49,13 +57,8 @@ body::after{content:'';position:fixed;inset:0;z-index:-2;opacity:.05;pointer-eve
 .glass{background:var(--glass);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2)}
 .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1rem,4vw,2.4rem)}
 
-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:1rem;padding:.7rem clamp(1rem,4vw,2.4rem);
-  background:linear-gradient(180deg,rgba(7,10,18,.9),rgba(7,10,18,.1));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .brand{font-family:var(--disp);font-weight:700;font-size:1.2rem;letter-spacing:2px;color:var(--gold2);text-shadow:0 0 22px rgba(232,178,76,.4)}
 .brand b{color:var(--teal)}
-.portals{margin-left:auto;display:flex;gap:.4rem;flex-wrap:wrap}
-.portals a{padding:.4rem .8rem;border-radius:9px;color:var(--muted);font-weight:600;border:1px solid transparent;transition:.2s}
-.portals a:hover{color:var(--text);background:rgba(95,224,214,.08);border-color:var(--line)}
 .lab-dot{width:8px;height:8px;border-radius:50%;background:#555;display:inline-block;margin-right:.35rem;vertical-align:middle}
 .lab-dot.on{background:var(--teal);box-shadow:0 0 10px var(--teal)}
 
@@ -94,40 +97,114 @@ h2.sec{font-size:1.4rem;letter-spacing:2px;text-transform:uppercase;color:var(--
 .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
 .reveal.in{opacity:1;transform:none}
 footer{padding:3rem 0 4rem;text-align:center;color:var(--muted);border-top:1px solid var(--line);margin-top:3rem}
+
+/* ===== sidebar shell: persistent on desktop, drawer on mobile ===== */
+.shell{display:flex;align-items:stretch;min-height:100vh}
+.side{position:sticky;top:0;align-self:flex-start;height:100vh;width:230px;flex:none;
+  padding:1.4rem 1.1rem;display:flex;flex-direction:column;gap:.3rem;overflow-y:auto;
+  background:var(--glass);border-right:1px solid var(--line);
+  backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2)}
+.side-brand{font-family:var(--disp);font-weight:700;font-size:1.1rem;letter-spacing:2px;color:var(--gold2);
+  text-shadow:0 0 20px rgba(232,178,76,.4);margin-bottom:.6rem}
+.side-brand b{color:var(--teal)}
+.side-label{font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin:.9rem 0 .3rem}
+.side-label:first-of-type{margin-top:0}
+.side-filter{position:relative;display:flex;align-items:center;justify-content:space-between;gap:.5rem;width:100%;min-height:44px;
+  padding:.5rem .7rem;border-radius:9px;border:1px solid transparent;background:none;color:var(--muted);
+  font-family:var(--ui);font-weight:600;font-size:.95rem;cursor:pointer;text-align:left;overflow:hidden;
+  transition:color .18s,background .18s,border-color .18s,transform .18s cubic-bezier(.34,1.56,.64,1)}
+.side-filter::before{content:'';position:absolute;left:0;top:.35rem;bottom:.35rem;width:3px;border-radius:3px;
+  background:var(--gold2);box-shadow:0 0 10px var(--gold);transform:scaleY(0);transition:transform .22s cubic-bezier(.34,1.56,.64,1)}
+.side-filter:hover{color:var(--text);background:rgba(95,224,214,.08);transform:translateX(2px)}
+.side-filter.active{color:var(--text);background:rgba(232,178,76,.12);border-color:rgba(232,178,76,.35);
+  box-shadow:inset 0 0 24px rgba(232,178,76,.08)}
+.side-filter.active::before{transform:scaleY(1)}
+.side-filter .cnt{font-size:.78rem;color:var(--muted);background:rgba(255,255,255,.06);border-radius:6px;padding:.05rem .45rem;flex:none;transition:.18s}
+.side-filter.active .cnt{color:var(--gold2);background:rgba(232,178,76,.14)}
+.side-link{display:flex;align-items:center;gap:.4rem;min-height:44px;padding:.5rem .7rem;border-radius:9px;
+  color:var(--muted);font-weight:600;text-decoration:none;transition:color .18s,background .18s,transform .18s}
+.side-link:hover{color:var(--text);background:rgba(95,224,214,.08);transform:translateX(2px)}
+.main{flex:1;min-width:0}
+.mbar{display:none}
+.backdrop{display:none}
+.menubtn{position:relative}
+.menubtn .bars{width:18px;height:14px;position:relative}
+.menubtn .bars span{position:absolute;left:0;right:0;height:2px;border-radius:2px;background:var(--text);
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .18s,top .28s cubic-bezier(.34,1.56,.64,1)}
+.menubtn .bars span:nth-child(1){top:0}
+.menubtn .bars span:nth-child(2){top:6px}
+.menubtn .bars span:nth-child(3){top:12px}
+.menubtn.open .bars span:nth-child(1){top:6px;transform:rotate(45deg)}
+.menubtn.open .bars span:nth-child(2){opacity:0}
+.menubtn.open .bars span:nth-child(3){top:6px;transform:rotate(-45deg)}
+@media(max-width:879px){
+  .shell{display:block}
+  .side{position:fixed;top:0;left:0;bottom:0;height:auto;z-index:60;
+    transform:translateX(-100%) scale(.98);opacity:.6;
+    transition:transform .34s cubic-bezier(.34,1.1,.4,1),opacity .3s ease;box-shadow:0 0 50px rgba(0,0,0,.55)}
+  .side.open{transform:translateX(0) scale(1);opacity:1}
+  .backdrop{display:block;position:fixed;inset:0;background:rgba(4,6,12,.6);backdrop-filter:blur(0px);
+    opacity:0;pointer-events:none;transition:opacity .3s,backdrop-filter .3s;z-index:55}
+  .backdrop.show{opacity:1;pointer-events:auto;backdrop-filter:blur(2px)}
+  .mbar{display:flex;position:sticky;top:0;z-index:50;align-items:center;gap:.8rem;padding:.6rem 1rem;
+    background:linear-gradient(180deg,rgba(7,10,18,.92),rgba(7,10,18,.2));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .menubtn{width:44px;height:44px;display:grid;place-items:center;border-radius:9px;border:1px solid var(--line);
+    background:rgba(6,10,20,.5);cursor:pointer;flex:none;transition:border-color .18s,background .18s}
+  .menubtn:hover{border-color:rgba(232,178,76,.5)}
+  .mbar .brand{font-size:1.05rem}
+}
+@media(prefers-reduced-motion:reduce){.side,.backdrop,.side-filter,.side-link,.menubtn .bars span{transition:none!important}}
 </style>
 </head>
 <body>
 
-<nav>
-  <span class="brand">⚒ GRIM<b>FORGE</b></span>
-  <div class="portals">
-    <a href="world.html">🎮 World</a>
-    <a href="cyberfantasy.html">✨ UI Kit</a>
-  </div>
-</nav>
+<div class="backdrop" id="backdrop"></div>
+<div class="shell">
+  <aside class="side" id="side">
+    <span class="side-brand">⚒ GRIM<b>FORGE</b></span>
+    <p class="side-label">Filter</p>
+    <button class="side-filter active" data-status="all">All <span class="cnt" id="cnt-all">–</span></button>
+    <button class="side-filter" data-status="live">Live <span class="cnt" id="cnt-live">–</span></button>
+    <button class="side-filter" data-status="building">Building <span class="cnt" id="cnt-building">–</span></button>
+    <button class="side-filter" data-status="handoff">Handoff <span class="cnt" id="cnt-handoff">–</span></button>
+    <button class="side-filter" data-status="paused">Paused <span class="cnt" id="cnt-paused">–</span></button>
+    <p class="side-label">Quick Links</p>
+    <a class="side-link" href="world.html">🎮 World</a>
+    <a class="side-link" href="cyberfantasy.html">✨ UI Kit</a>
+  </aside>
 
-<header class="hero wrap">
-  <p class="sub reveal">Command Deck</p>
-  <h1 class="reveal">Everything you're building, in one place.</h1>
-  <p class="reveal">Every project, its status, and its live link, all in one place. This is the home base.</p>
-  <div class="stats reveal">
-    <div><b id="s-total">–</b><span>Projects</span></div>
-    <div><b id="s-live">–</b><span>Live</span></div>
-    <div><b id="s-active">–</b><span>Active</span></div>
-  </div>
-</header>
+  <div class="main">
+    <div class="mbar">
+      <button class="menubtn" id="menubtn" aria-label="Open menu" aria-expanded="false" aria-controls="side">
+        <span class="bars"><span></span><span></span><span></span></span>
+      </button>
+      <span class="brand">⚒ GRIM<b>FORGE</b></span>
+    </div>
 
-<div class="wrap">
-  <div class="launch">
-    <a class="tile glass glowb reveal" href="world.html"><span class="ic">🎮</span><h3>The World</h3><p>Walk the explorable pixel world.</p></a>
-    <a class="tile glass reveal" href="cyberfantasy.html"><span class="ic">✨</span><h3>Cyber-Fantasy UI</h3><p>The design kit.</p></a>
-  </div>
+    <header class="hero wrap">
+      <p class="sub reveal">Command Deck</p>
+      <h1 class="reveal">Everything you're building, in one place.</h1>
+      <p class="reveal">Every project, its status, and its live link, all in one place. This is the home base.</p>
+      <div class="stats reveal">
+        <div><b id="s-total">–</b><span>Projects</span></div>
+        <div><b id="s-live">–</b><span>Live</span></div>
+        <div><b id="s-active">–</b><span>Active</span></div>
+      </div>
+    </header>
 
-  <h2 class="sec reveal">Projects</h2>
-  <div class="grid" id="grid"></div>
+    <div class="wrap">
+      <div class="launch">
+        <a class="tile glass glowb reveal" href="world.html"><span class="ic">🎮</span><h3>The World</h3><p>Walk the explorable pixel world.</p></a>
+        <a class="tile glass reveal" href="cyberfantasy.html"><span class="ic">✨</span><h3>Cyber-Fantasy UI</h3><p>The design kit.</p></a>
+      </div>
+
+      <h2 class="sec reveal" id="sec-title">Projects</h2>
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <footer class="wrap"><p>GrimForge Command Deck · Cody Noah · Wilkes County, NC</p></footer>
+  </div>
 </div>
-
-<footer class="wrap"><p>GrimForge Command Deck · Cody Noah · Wilkes County, NC</p></footer>
 
 <script>
 const PROJECTS=[
@@ -136,15 +213,18 @@ const PROJECTS=[
   {name:'Wilkes Senior Resources',status:'live',blurb:'Accessible site I built for a local senior center - live on cloud infra. On hold pending real feature work.',link:'https://wilkesseniorresources.org',forge:false},
   {name:'Forgeheart',status:'building',blurb:'Self-hosted local AI command center - real-time chat with tool-delegating agents, an AI image/video studio, a 3D spatial UI, a desktop app with multi-monitor overlay. My daily driver, still growing.',link:'#',forge:false},
   {name:'Digital Mirror',status:'building',blurb:'Privacy-awareness tool - real breach lookups, an honest severity score, a shareable dossier. Runs locally in demo mode; not yet publicly deployed, still in active v2 work.',link:'#',forge:false},
-  {name:'GrimForge Repairs',status:'building',blurb:'Mail-in hardware repair + PC/console upgrade service - the near-term revenue engine funding the software. The intake form on hire.html is a stopgap, not the real branded shop.',link:'#',forge:false},
-  {name:'Gather',status:'paused',blurb:'Big privacy-first social-coordination app, spec stage. Multi-month; funded later by repairs.',link:'#',forge:false},
-  {name:'Decision Maker (Deciduel)',status:'paused',blurb:'AI decision tool with switchable personalities. A clean demo, not yet publish-ready.',link:'#',forge:false},
-  {name:'World Ash (D&D)',status:'paused',blurb:'Unified TTRPG campaign + an owned book renderer that dropped the GMBinder dependency. Back-burnered.',link:'#',forge:false}
+  {name:'GrimForge Repairs',status:'building',blurb:'Mail-in hardware repair + PC/console upgrade service - the near-term revenue engine funding the software. The intake form on hire.html is a stopgap, not the real branded shop.',link:'#',forge:false,show:false},
+  {name:'Gather',status:'paused',blurb:'Big privacy-first social-coordination app, spec stage. Multi-month; funded later by repairs.',link:'#',forge:false,show:false},
+  {name:'Decision Maker (Deciduel)',status:'paused',blurb:'AI decision tool with switchable personalities. A clean demo, not yet publish-ready.',link:'#',forge:false,show:false},
+  {name:'World Ash (D&D)',status:'paused',blurb:'Unified TTRPG campaign + an owned book renderer that dropped the GMBinder dependency. Back-burnered - turned out too complex for the group that was playing it.',link:'#',forge:false,show:false}
 ];
+// Only show what's worth putting in front of someone right now - not everything
+// on the bench. Flip show:true when one of these is ready to stand next to the rest.
+const VISIBLE=PROJECTS.filter(p=>p.show!==false);
 const LABEL={live:'Live',building:'Building',handoff:'Handoff',paused:'Paused'};
 const grid=document.getElementById('grid');
-PROJECTS.forEach(p=>{
-  const c=document.createElement('div'); c.className='card glass reveal';
+VISIBLE.forEach(p=>{
+  const c=document.createElement('div'); c.className='card glass reveal'; c.dataset.status=p.status;
   const hasLink=p.link&&p.link!=='#';
   c.innerHTML='<div class="top"><h3>'+p.name+'</h3><span class="chip '+p.status+'">'+(LABEL[p.status]||p.status)+'</span></div>'+
     '<p>'+p.blurb+'</p>'+
@@ -153,9 +233,38 @@ PROJECTS.forEach(p=>{
     '</div>';
   grid.appendChild(c);
 });
-document.getElementById('s-total').textContent=PROJECTS.length;
-document.getElementById('s-live').textContent=PROJECTS.filter(p=>p.status==='live').length;
-document.getElementById('s-active').textContent=PROJECTS.filter(p=>p.status==='live'||p.status==='building').length;
+document.getElementById('s-total').textContent=VISIBLE.length;
+document.getElementById('s-live').textContent=VISIBLE.filter(p=>p.status==='live').length;
+document.getElementById('s-active').textContent=VISIBLE.filter(p=>p.status==='live'||p.status==='building').length;
+
+// sidebar filter counts (derived from the same VISIBLE list, no separate data to keep in sync)
+document.getElementById('cnt-all').textContent=VISIBLE.length;
+Object.keys(LABEL).forEach(function(s){
+  var el=document.getElementById('cnt-'+s); if(el) el.textContent=VISIBLE.filter(function(p){return p.status===s;}).length;
+});
+
+var filters=document.querySelectorAll('.side-filter');
+var cards=document.querySelectorAll('#grid .card');
+filters.forEach(function(btn){
+  btn.addEventListener('click',function(){
+    filters.forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    var status=btn.dataset.status;
+    cards.forEach(function(c){ c.style.display=(status==='all'||c.dataset.status===status)?'':'none'; });
+    closeDrawer();
+  });
+});
+
+// mobile drawer: open/close via the hamburger, backdrop click, Escape, or picking a link/filter
+var side=document.getElementById('side'), backdrop=document.getElementById('backdrop'), menubtn=document.getElementById('menubtn');
+function openDrawer(){ side.classList.add('open'); backdrop.classList.add('show'); menubtn.classList.add('open'); menubtn.setAttribute('aria-expanded','true'); }
+function closeDrawer(){ side.classList.remove('open'); backdrop.classList.remove('show'); menubtn.classList.remove('open'); menubtn.setAttribute('aria-expanded','false'); }
+if(menubtn){
+  menubtn.addEventListener('click',function(){ side.classList.contains('open')?closeDrawer():openDrawer(); });
+  backdrop.addEventListener('click',closeDrawer);
+  addEventListener('keydown',function(e){ if(e.key==='Escape') closeDrawer(); });
+  document.querySelectorAll('.side-link').forEach(function(a){ a.addEventListener('click',closeDrawer); });
+}
 
 const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));

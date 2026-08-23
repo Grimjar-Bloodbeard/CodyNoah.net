@@ -3,8 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FT8DFSD29Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FT8DFSD29Q');
+</script>
 <title>Hire the Smith - Cody Noah · GrimForge Creations</title>
 <meta name="description" content="Cody Noah - independent developer in Wilkes County, NC. AI-driven custom software, live e-commerce and accessible sites, plus PC/console repair and builds. Real, running proof.">
+<meta name="keywords" content="hire Cody Noah, GrimForge Creations, freelance developer Wilkes County NC, custom software development, PC repair, console repair">
+<meta name="author" content="Cody Noah">
+<meta name="theme-color" content="#070a12">
+<link rel="canonical" href="https://codynoah.net/pages/hire.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
@@ -12,16 +24,35 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hire the Smith - Cody Noah · GrimForge Creations">
 <meta property="og:description" content="Cody Noah - independent developer in Wilkes County, NC. AI-driven custom software, live e-commerce and accessible sites, plus PC/console repair and builds. Real, running proof.">
-<meta property="og:image" content="https://codynoah.net/og-image.jpg">
-<meta property="og:url" content="https://codynoah.net/hire.html">
+<meta property="og:image" content="https://codynoah.net/images/og-image.jpg">
+<meta property="og:url" content="https://codynoah.net/pages/hire.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Hire the Smith - Cody Noah · GrimForge Creations">
 <meta name="twitter:description" content="Cody Noah - independent developer in Wilkes County, NC. AI-driven custom software, live e-commerce and accessible sites, plus PC/console repair and builds. Real, running proof.">
-<meta name="twitter:image" content="https://codynoah.net/og-image.jpg">
+<meta name="twitter:image" content="https://codynoah.net/images/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/forge.css?v=2">
+<link rel="stylesheet" href="../css/forge.css?v=2">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "GrimForge Creations",
+  "url": "https://codynoah.net/pages/hire.html",
+  "founder": {
+    "@type": "Person",
+    "name": "Cody Noah",
+    "sameAs": [
+      "https://github.com/Grimjar-Bloodbeard",
+      "https://www.tiktok.com/@grimjarbloodbeard",
+      "https://www.facebook.com/Grimjar.bloodbeard"
+    ]
+  },
+  "description": "Independent software development, AI-driven custom builds, live e-commerce and accessible sites, plus PC/console repair and builds.",
+  "areaServed": { "@type": "AdministrativeArea", "name": "Wilkes County, NC" }
+}
+</script>
 <style>
 /* ---- hire page specifics ---- */
 .hero{text-align:center;padding:clamp(2.6rem,9vh,5.5rem) 0 2.4rem}
@@ -40,7 +71,7 @@
 .about .frame figcaption{position:absolute;left:0;right:0;bottom:0;padding:.8rem 1rem;font-family:var(--disp);color:var(--gold2);font-size:.95rem;letter-spacing:1px}
 .about p{color:var(--muted);margin-bottom:1rem}
 .about p b{color:var(--text)}
-.about .hon{border-left:2px solid rgba(176,107,255,.5);padding-left:1rem;color:var(--text);font-style:italic}
+.hon{border-left:2px solid rgba(176,107,255,.5);padding-left:1rem;color:var(--text);font-style:italic}
 @media(max-width:820px){.about{grid-template-columns:1fr}.about .frame{max-width:340px;margin:0 auto}}
 
 /* skills */
@@ -53,14 +84,18 @@
 .skill .tags span{font-size:.7rem;font-weight:600;color:var(--rune);border:1px solid var(--line);border-radius:6px;padding:.12rem .5rem;background:rgba(95,224,214,.05)}
 
 /* work cards with a branded "live preview" header */
-.work-card{border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,box-shadow .3s}
-.work-card:hover{transform:translateY(-4px)}
+.work-card{border-radius:16px;overflow:hidden;display:flex;flex-direction:column;
+  transition:transform var(--t-fast) var(--ease-out),box-shadow var(--t-base) var(--ease-smooth),filter var(--t-base) var(--ease-smooth)}
+.work-card:hover{transform:translateY(-4px);filter:brightness(1.06);box-shadow:0 14px 36px rgba(0,0,0,.4)}
 .prev{position:relative;height:150px;overflow:hidden;background-size:cover;background-position:top center;
   display:grid;place-items:center;border-bottom:1px solid var(--line)}
 .prev.summit{background:radial-gradient(120% 120% at 20% 0%,#12324a,#0a0f1c)}
 .prev.senior{background:radial-gradient(120% 120% at 80% 0%,#183a2a,#0a0f1c)}
 .prev.mirror{background:radial-gradient(120% 120% at 50% 0%,#2a1846,#0a0f1c)}
 .prev .glyph{font-size:2.6rem;filter:drop-shadow(0 4px 14px rgba(0,0,0,.5));opacity:.92}
+.prev .logo{max-width:72%;max-height:72%;object-fit:contain;filter:drop-shadow(0 4px 14px rgba(0,0,0,.5))}
+.prev.summit .logo{width:78px;height:78px;max-width:none;max-height:none;object-fit:cover;border-radius:50%;
+  box-shadow:0 4px 20px rgba(0,0,0,.5),0 0 0 2px rgba(255,255,255,.1)}
 .prev .shine{position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.13) 50%,transparent 60%);
   transform:translateX(-120%);transition:transform .7s}
 .work-card:hover .prev .shine{transform:translateX(120%)}
@@ -95,6 +130,40 @@
 .formsplit .proof a{color:var(--teal);font-weight:700}
 .formsplit .proof b{color:var(--gold2)}
 @media(max-width:880px){.formsplit{grid-template-columns:1fr}}
+
+/* pricing */
+.philosophy{max-width:64ch;margin:0 auto 1.8rem;text-align:center;color:var(--muted);font-size:1.02rem;line-height:1.6}
+.philosophy b{color:var(--text)}
+.price{padding:1.5rem 1.4rem;border-radius:16px;display:flex;flex-direction:column}
+.price .for{color:var(--muted);font-size:.84rem;text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:.3rem}
+.price h3{font-size:1.15rem;color:var(--text)}
+.price .amt{font-family:var(--disp);font-size:2rem;color:var(--gold2);margin:.3rem 0 1rem;
+  filter:drop-shadow(0 0 14px rgba(232,178,76,.3))}
+.price .amt small{font-family:var(--ui);font-size:.95rem;color:var(--muted);font-weight:600}
+.price ul{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.2rem;flex:1}
+.price li{color:var(--muted);font-size:.9rem;padding-left:1.15rem;position:relative;line-height:1.4}
+.price li::before{content:'⚒';position:absolute;left:0;top:.1rem;color:var(--ember);font-size:.72rem}
+.price.custom{border-color:rgba(176,107,255,.35)}
+.price.custom li::before{color:var(--violet)}
+
+/* anonymous price poll - no accounts, no names, just tallies */
+.poll{margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line)}
+.poll-q{font-size:.76rem;color:var(--muted);margin-bottom:.55rem;text-align:center}
+.poll-btns{display:flex;gap:.4rem}
+.poll-btns button{flex:1;min-height:38px;font-family:var(--ui);font-size:.76rem;font-weight:700;
+  padding:.4rem .3rem;border-radius:8px;border:1px solid var(--line);background:rgba(6,10,20,.4);
+  color:var(--muted);cursor:pointer;transition:.18s}
+.poll-btns button:hover{border-color:var(--teal);color:var(--text)}
+.poll-result{display:none;flex-direction:column;gap:.4rem;margin-top:.7rem}
+.poll-result.show{display:flex}
+.poll-btns.hide{display:none}
+.poll-live-label{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;text-align:center;margin-bottom:.1rem}
+.poll-bar{display:flex;align-items:center;gap:.5rem;font-size:.76rem;color:var(--muted)}
+.poll-bar .lbl{width:56px;flex:none}
+.poll-bar .track{flex:1;height:6px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden}
+.poll-bar .fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold2));transition:width .4s ease}
+.poll-bar .pct{width:34px;text-align:right;flex:none;font-variant-numeric:tabular-nums}
+.poll-thanks{font-size:.74rem;color:var(--rune);text-align:center;margin-top:.2rem}
 
 /* repairs */
 .repair{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;margin-bottom:0}
@@ -132,13 +201,14 @@
 </div>
 
 <nav class="nav">
-  <a class="brand" href="index.html">GRIMFORGE CREATIONS<small>by Cody Noah</small></a>
+  <a class="brand" href="../index.html"><img src="../images/logo-grimforge-nav.png" alt="GrimForge Creations"></a>
   <div class="nl">
+    <a href="#pricing">Pricing</a>
     <a href="#about">About</a>
     <a href="#work">Work</a>
     <a href="#case-studies">Case Studies</a>
-    <a href="#repairs">Repairs</a>
     <a href="#contact">Contact</a>
+    <a href="#repairs">Repairs</a>
     <a href="resume.html" class="tip-below" style="color:var(--gold2)" data-tip="Résumé + projects for employers">📄 Résumé</a>
     <a href="world.html" style="color:var(--violet)" class="tip-below" data-tip="My pixel world, arcade &amp; games">⚔ The Lab</a>
   </div>
@@ -147,64 +217,87 @@
 <header class="hero wrap">
   <p class="eye reveal">⚒ The professional side of the forge · Wilkes County, NC</p>
   <h1 class="reveal">Hire the smith.</h1>
-  <p class="lead reveal">I'm Cody Noah - I use AI as a power tool to architect and ship custom software solo. Hardware repair and custom builds round out the shop. The proof isn't a slideshow. It's <b>live software that real people use right now.</b></p>
+  <p class="lead reveal">I'm Cody Noah - if you can picture it for your business, tell me and I'll tell you honestly what it takes. I use AI as a power tool to architect and ship custom software solo. The proof isn't a slideshow. It's <b>live software that real people use right now.</b></p>
   <div class="cta reveal">
     <a href="#work" class="btn" data-tip="Jump to my live projects below">See what's live</a>
-    <a href="#start" class="btn ghost" data-tip="Scope your project + budget in 30 seconds">Start a project</a>
+    <a href="#pricing" class="btn ghost" data-tip="Three simple packages, real numbers">See pricing</a>
   </div>
   <p class="reveal" style="margin-top:1rem;color:var(--muted);font-size:.96rem">Hiring for a role? <a href="resume.html" style="color:var(--gold2);font-weight:700">See my résumé + projects →</a> · <a href="https://github.com/Grimjar-Bloodbeard" target="_blank" rel="noopener" style="color:var(--rune);font-weight:700">Code on GitHub ↗</a></p>
 </header>
+
+<!-- PRICING -->
+<section class="wrap" id="pricing">
+  <p class="eyebrow reveal">Simple packages</p>
+  <h2 class="sec reveal">What it actually costs</h2>
+  <p class="philosophy reveal">I like working with people who already have a direction. Still deciding what your online presence should be? I'm happy to help you think it through - but that decision stays <b>yours</b>. My job is to build it well once we know what we're building.</p>
+  <div class="grid g3">
+    <div class="price glass reveal">
+      <p class="for">Simple online presence</p>
+      <h3>Starter Site</h3>
+      <p class="amt">$349</p>
+      <ul>
+        <li>3 pages - Home, About/Services, Contact</li>
+        <li>Mobile-friendly layout</li>
+        <li>Basic logo cleanup or a simple mark</li>
+        <li>Contact form</li>
+        <li>30 days of small fixes after launch</li>
+      </ul>
+      <a href="#start" class="btn ghost">Get started →</a>
+      <div class="poll" data-pkg="starter">
+        <p class="poll-q">Anonymous - how does this price feel?</p>
+        <div class="poll-btns"><button data-r="low">Too low</button><button data-r="fair">Fair</button><button data-r="high">Too high</button></div>
+        <div class="poll-result"></div>
+        <p class="poll-thanks" hidden>Thanks - that's genuinely useful to me.</p>
+      </div>
+    </div>
+    <div class="price glass glowb reveal">
+      <p class="for">Most local shops &amp; service businesses</p>
+      <h3>Local Business Site</h3>
+      <p class="amt">$699</p>
+      <ul>
+        <li>Up to 5 pages, clean professional design</li>
+        <li>Logo or light brand refresh</li>
+        <li>Contact form + gallery or services section</li>
+        <li>Google Business profile guidance + basic SEO</li>
+        <li>60 days of support after launch</li>
+      </ul>
+      <a href="#start" class="btn ghost">Get started →</a>
+      <div class="poll" data-pkg="local">
+        <p class="poll-q">Anonymous - how does this price feel?</p>
+        <div class="poll-btns"><button data-r="low">Too low</button><button data-r="fair">Fair</button><button data-r="high">Too high</button></div>
+        <div class="poll-result"></div>
+        <p class="poll-thanks" hidden>Thanks - that's genuinely useful to me.</p>
+      </div>
+    </div>
+    <div class="price custom glass reveal">
+      <p class="for">A clear vision, or something bigger</p>
+      <h3>Custom Project</h3>
+      <p class="amt">From $1,200<small>+</small></p>
+      <ul>
+        <li>Booking systems, light e-commerce, integrations</li>
+        <li>Scoped only after a real conversation</li>
+        <li>Written scope before a dime moves</li>
+        <li>Same clean hand-off, no lock-in</li>
+      </ul>
+      <a href="#start" class="btn violet">Let's talk →</a>
+      <div class="poll" data-pkg="custom">
+        <p class="poll-q">Anonymous - how does this price feel?</p>
+        <div class="poll-btns"><button data-r="low">Too low</button><button data-r="fair">Fair</button><button data-r="high">Too high</button></div>
+        <div class="poll-result"></div>
+        <p class="poll-thanks" hidden>Thanks - that's genuinely useful to me.</p>
+      </div>
+    </div>
+  </div>
+  <p class="sub reveal" style="margin-top:1.4rem;text-align:center;max-width:60ch;margin-left:auto;margin-right:auto">Every package hands off clean - I build it, deploy it, and give you the keys. You host it (plenty of good options under $20/month), or we can talk through a local self-hosted setup. I don't lock you into paying me monthly for hosting. The poll above is completely anonymous - no names, no accounts, just tallies I can actually see and respond to. Those numbers stay up whether they're flattering or not - if a price ever tests high and the rating dips, that's exactly the moment I'd want you to see it, not the moment to hide it.</p>
+</section>
 
 <!-- HOW I ACTUALLY WORK -->
 <section class="wrap" id="how-i-work">
   <p class="eyebrow reveal">The honest version</p>
   <h2 class="sec reveal">How I actually work</h2>
   <p class="sub reveal">I don't read every line as the AI writes it - nobody does, at that speed. What I do instead: the code comes out clean and understandable every time, because that's how I've set the process up. So when something breaks - and things break - I can open it up, actually read it, and fix it myself.</p>
-  <p class="sub reveal">That's the real bar. A tool that writes fast code is worthless if nobody can debug what it made. A lot of "AI-built" sites out there are a black box to the person who shipped them - one bad prompt from unfixable. Mine isn't. I can walk you through any system on this site, live, and I own it when it breaks.</p>
-</section>
-
-<!-- START A PROJECT -->
-<section class="wrap" id="start">
-  <p class="eyebrow reveal">Start a project</p>
-  <h2 class="sec reveal">Let's scope it out</h2>
-  <p class="sub reveal">Tell me what you're after and roughly what it's worth to you - I'll come back with a plan and honest pricing. Plain English, no pressure, no obligation.</p>
-  <div class="formsplit reveal" style="margin-top:1.7rem">
-    <div class="side">
-      <h3>What I build</h3>
-      <p>Websites, web apps, custom tools, AI-driven automation - built for what a small business actually needs and can afford. I scope it, I build it, I ship it, and I'm the one you talk to the whole way through.</p>
-      <div class="proof glass">
-        <p><b>Summit Gaming of Wilkes</b> - a full e-commerce store, real checkout, real customers, built and still run by me.</p>
-        <p><b>Wilkes Senior Resources</b> - a live client site a non-technical director edits herself.</p>
-        <p>Both still running today, not portfolio screenshots. <a href="#work">See them below ↓</a></p>
-      </div>
-    </div>
-    <div class="repbox glass glowb">
-    <h3>Send me your pitch</h3>
-    <p>Plain English is fine - I'll turn it into a real plan with honest pricing.</p>
-    <form class="reqform" id="pitchform">
-      <div class="row">
-        <div><label for="pj-name">Your name</label><input id="pj-name" name="name" autocomplete="name" required></div>
-        <div><label for="pj-email">Email</label><input id="pj-email" name="email" type="email" autocomplete="email" required></div>
-      </div>
-      <div class="row">
-        <div><label for="pj-type">What kind of project?</label>
-          <select id="pj-type" name="type">
-            <option>Website</option>
-            <option>Web app or custom system</option>
-            <option>Tool or automation</option>
-            <option>AI integration</option>
-            <option>Not sure yet</option>
-          </select>
-        </div>
-        <div><label for="pj-budget">Budget / what you can spend</label><input id="pj-budget" name="budget" placeholder="e.g. $500, ~$2k, or not sure"></div>
-      </div>
-      <div><label for="pj-timeline">Timeline</label><input id="pj-timeline" name="timeline" placeholder="e.g. no rush, a few weeks, ASAP"></div>
-      <div><label for="pj-details">What do you need it to do?</label><textarea id="pj-details" name="details" placeholder="What it should do, who it's for, anything you've already got in mind..."></textarea></div>
-      <button type="submit" class="btn" data-tip="Opens your email with the pitch organized for you">Send my pitch</button>
-      <p class="fine">This opens your email with everything organized - just hit send. Rather write directly? <a href="mailto:cnoah538191@gmail.com">cnoah538191@gmail.com</a></p>
-    </form>
-    </div>
-  </div>
+  <p class="sub reveal">Here's how it actually works: I run ideas through a few different AI models first - brainstorming, design, figuring out what's actually worth building and where to put my focus. Once I know what I'm building, Claude is my dedicated, paid developer - that's who does the dev work, most of the time. I'm also building my own local models to push the process further. I never stop looking for ways to improve it.</p>
+  <p class="sub hon reveal">Straight truth: when I find something - a real security upgrade, a fix - I push it out to everyone I've built for, past clients included, free. Just because it's the right thing to do, and that's the standard I hold my work to. Outdated doesn't have to mean unsafe, not if you build with that in mind from the start.</p>
 </section>
 
 <!-- ABOUT -->
@@ -216,9 +309,10 @@
       <p>I'm an <b>independent developer and hardware tinkerer</b> in Wilkes County, North Carolina - a decade in manufacturing, precision machining, and welding before I ever shipped a line of code. That background didn't get left at the door; it's why I build things meant to survive contact with the real world, not just look good in a demo. Self-taught, moving fast, and happiest with a problem in front of me.</p>
       <p class="hon reveal">Straight truth: the sites below, I built because I wanted to - not because anyone signed a check. A local game shop and a local senior center both run on things I made, and the education has been worth more to me than an invoice. That's starting to change. The habit of shipping real work isn't.</p>
       <p>I forge with <b>modern power tools</b> - AI, automation, and a stubborn streak that doesn't know how to quit - and I'm not shy about it. The craft isn't pretending I hand-chiseled every line. It's knowing <b>what</b> to build, wiring it together clean, and making it survive contact with real users.</p>
+      <p class="hon reveal">One more honest note: the forge is a metaphor, not a résumé line. Real years with metal - welding, machining - but I've never worked an actual smith's forge. I just like the aesthetic and the mindset enough to build a brand around it.</p>
     </div>
     <figure class="frame glass glowb reveal">
-      <img src="forge_hero.webp" alt="The GrimForge workshop" onerror="this.src='meepo.webp'">
+      <img src="../images/forge_hero.webp" alt="The GrimForge workshop" onerror="this.src='../images/meepo.webp'">
       <figcaption>GrimForge · the one-smith workshop</figcaption>
     </figure>
   </div>
@@ -246,8 +340,8 @@
   <p class="sub reveal">The proof's in what's live. Go click on them.</p>
   <div class="grid g3">
 
-    <article class="work-card glass glowb reveal">
-      <div class="prev summit"><span class="glyph">🎮</span><span class="shine"></span><span class="pill live">Live</span></div>
+    <article class="work-card glass glowb lamp reveal">
+      <div class="prev summit"><img class="logo" src="../images/logo-summit.webp" alt="Summit Gaming and Collectibles logo"><span class="shine"></span><span class="pill live">Live</span></div>
       <div class="body">
         <h3>Summit Gaming of Wilkes</h3>
         <p>A full e-commerce store - retro games, trading cards, real Square checkout, real customers. I built it end to end and I keep it running: inventory sync, webhooks, receipts, the works.</p>
@@ -266,24 +360,25 @@
       </div>
     </article>
 
-    <article class="work-card glass reveal">
-      <div class="prev senior"><span class="glyph">🏛️</span><span class="shine"></span><span class="pill live">Live</span></div>
+    <article class="work-card glass lamp reveal">
+      <div class="prev senior"><img class="logo" src="../images/logo-wilkes-senior.png" alt="Wilkes Senior Resources logo"><span class="shine"></span><span class="pill live">Live</span></div>
       <div class="body">
         <h3>Wilkes Senior Resources</h3>
         <p>An accessible, easy-to-run site I built for a local senior center - designed for 55+ visitors and a non-technical director who needs to edit it without calling me.</p>
         <details class="hood">
           <summary>⚙ Under the hood</summary>
           <ul>
-            <li>Pages the <b>director edits herself</b>, live - zero code</li>
-            <li><b>Accessibility built in</b> for 55+ visitors</li>
-            <li>Runs on <b>cloud infrastructure</b> - always on, nothing for staff to maintain</li>
+            <li>A <b>content system built for one non-technical person</b> - the director updates pages, hours, and announcements herself, live, with zero code and zero calling me</li>
+            <li><b>Accessibility built in from day one</b> - large readable type, high contrast, simple navigation, nothing that assumes comfort with a modern app</li>
+            <li><b>Real cloud infrastructure</b> - no server humming in a closet, nobody on staff has to think about backups or updates, it just stays on</li>
+            <li><b>One point of contact</b> if something ever looks off - me directly, not a support ticket queue</li>
           </ul>
         </details>
         <a class="more" href="https://wilkesseniorresources.org" target="_blank" rel="noopener">See the live site →</a>
       </div>
     </article>
 
-    <article class="work-card glass reveal">
+    <article class="work-card glass lamp reveal">
       <div class="prev mirror"><span class="glyph">🪞</span><span class="shine"></span><span class="pill tool">Tool</span></div>
       <div class="body">
         <h3>Digital Mirror</h3>
@@ -303,7 +398,7 @@
   <p class="sub reveal">Two systems taken apart - the decisions, the trade-offs, the failure modes I designed for. The engineering, not just the screenshot. (The recipe stays mine.)</p>
   <div class="grid reveal" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem;margin-top:1.2rem">
 
-    <a class="work-card glass glowb" href="live-inventory.html" style="text-decoration:none">
+    <a class="work-card glass glowb lamp" href="live-inventory.html" style="text-decoration:none">
       <div class="prev summit"><span class="glyph">📡</span><span class="shine"></span><span class="pill live">Real-time</span></div>
       <div class="body">
         <h3>Live Inventory</h3>
@@ -312,7 +407,7 @@
       </div>
     </a>
 
-    <a class="work-card glass" href="sonic-scan.html" style="text-decoration:none">
+    <a class="work-card glass lamp" href="sonic-scan.html" style="text-decoration:none">
       <div class="prev mirror"><span class="glyph">👁️</span><span class="shine"></span><span class="pill tool">AI / vision</span></div>
       <div class="body">
         <h3>Sonic Scan</h3>
@@ -321,6 +416,54 @@
       </div>
     </a>
 
+  </div>
+</section>
+
+<!-- START A PROJECT -->
+<section class="wrap" id="start">
+  <p class="eyebrow reveal">Not sure yet, or need something specific?</p>
+  <h2 class="sec reveal">Let's talk it through</h2>
+  <p class="sub reveal">That's normal - most people start here. Tell me roughly what you're after, even "not sure yet" is a fine answer, and I'll come back with honest recommendations and real pricing. The final direction stays yours; I just help you build it cleanly.</p>
+  <div class="formsplit reveal" style="margin-top:1.7rem">
+    <div class="side">
+      <h3>What I build</h3>
+      <p>Websites, web apps, custom tools, AI-driven automation - the three packages above cover most of it. If yours doesn't fit neatly into one, that's exactly what this form is for. I scope it, I build it, I ship it, and I'm the one you talk to the whole way through.</p>
+      <div class="proof glass">
+        <p><b>Summit Gaming of Wilkes</b> - a full e-commerce store, real checkout, real customers, built and still run by me.</p>
+        <p><b>Wilkes Senior Resources</b> - a live client site a non-technical director edits herself.</p>
+        <p>Both still running today, not portfolio screenshots. <a href="#work">See them below ↓</a></p>
+      </div>
+      <div class="proof glass" style="margin-top:1rem;border-left-color:var(--violet)">
+        <p><b>Want to see it before you decide?</b> Describe what you want below and I'll take a real swing at a quick demo, free - keep it specific and I can usually turn one around in a couple hours.</p>
+        <p>Sometimes it comes out exactly right, real working proof before you spend anything. Sometimes it doesn't land, and you'll see that too. I'd rather show you an honest attempt than promise you a guaranteed one.</p>
+      </div>
+    </div>
+    <div class="repbox glass glowb">
+    <h3>Send me your pitch</h3>
+    <p>Plain English is fine - I'll turn it into a real plan with honest pricing.</p>
+    <form class="reqform" id="pitchform">
+      <div class="row">
+        <div><label for="pj-name">Your name</label><input id="pj-name" name="name" autocomplete="name" required></div>
+        <div><label for="pj-email">Email</label><input id="pj-email" name="email" type="email" autocomplete="email" required></div>
+      </div>
+      <div class="row">
+        <div><label for="pj-type">What kind of project?</label>
+          <select id="pj-type" name="type">
+            <option>Starter Site</option>
+            <option>Local Business Site</option>
+            <option>Custom Project</option>
+            <option>Free demo first</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+        <div><label for="pj-budget">Budget / what you can spend</label><input id="pj-budget" name="budget" placeholder="e.g. $500, ~$2k, or not sure"></div>
+      </div>
+      <div><label for="pj-timeline">Timeline</label><input id="pj-timeline" name="timeline" placeholder="e.g. no rush, a few weeks, ASAP"></div>
+      <div><label for="pj-details">What do you need it to do?</label><textarea id="pj-details" name="details" placeholder="What it should do, who it's for, anything you've already got in mind..."></textarea></div>
+      <button type="submit" class="btn" data-tip="Opens your email with the pitch organized for you">Send my pitch</button>
+      <p class="fine">This opens your email with everything organized - just hit send. Rather write directly? <a href="mailto:cnoah538191@gmail.com">cnoah538191@gmail.com</a></p>
+    </form>
+    </div>
   </div>
 </section>
 
@@ -385,7 +528,7 @@
   <p class="sub reveal" style="margin:0 auto 1rem">Wilkes County, North Carolina. No bots, no phone-tree - you talk to the person who does the work.</p>
   <a class="mail reveal" href="mailto:cnoah538191@gmail.com">cnoah538191@gmail.com</a>
   <div class="cta reveal" style="margin-top:1.4rem">
-    <a href="index.html" class="btn ghost">← Back to the gate</a>
+    <a href="../index.html" class="btn ghost">← Back to the gate</a>
     <a href="world.html" class="btn violet">⚔ Enter the Lab</a>
   </div>
 </section>
@@ -399,7 +542,7 @@
 <div id="meepo" title="Poke me!" data-tips='["Oi! I&apos;m <b>Meepo</b>. This is the serious side - the <b>Lab</b> is where the fun hides.","Summit&apos;s an actual store with actual customers. Go <b>click it</b>, I dare you.","Cody didn&apos;t get paid for these. Built &apos;em to learn. Respect.","Need a repair? That gold button doesn&apos;t bite.","Every line forged with power tools. AI and all. No pretending here."]'>
 </div>
 
-<script src="js/forge.js?v=3"></script>
+<script src="../js/forge.js?v=3"></script>
 <script>
 /* Repairs intake -> POSTs straight to the intake backend. Falls back to a
    pre-filled mailto if the request fails, so a submission never gets lost. */
@@ -451,6 +594,73 @@
       + '\nBudget: ' + v('pj-budget') + '\nTimeline: ' + v('pj-timeline')
       + '\n\nWhat they need:\n' + v('pj-details') + '\n';
     window.location.href = 'mailto:cnoah538191@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  });
+})();
+
+/* Anonymous price poll - fails silently if the backend isn't reachable, since
+   this is a nice-to-have, not a core function of the page. Results are shown
+   up front, before you vote, not just after - seeing where everyone else
+   landed before you weigh in is the point, not something to hide. */
+(function () {
+  var polls = document.querySelectorAll('.poll'); if (!polls.length) return;
+  var LS_KEY = 'gf-price-vote';
+  var voted = {};
+  try { voted = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch (e) {}
+
+  function renderResult(poll, tallies) {
+    var total = tallies.low + tallies.fair + tallies.high;
+    var result = poll.querySelector('.poll-result');
+    var order = [['low', 'Too low'], ['fair', 'Fair'], ['high', 'Too high']];
+    result.innerHTML = '<p class="poll-live-label">Current results</p>' + order.map(function (o) {
+      var n = tallies[o[0]] || 0;
+      var pct = total ? Math.round(n / total * 100) : 0;
+      return '<div class="poll-bar"><span class="lbl">' + o[1] + '</span>' +
+        '<span class="track"><span class="fill" style="width:' + pct + '%"></span></span>' +
+        '<span class="pct">' + pct + '%</span></div>';
+    }).join('') + '<p style="font-size:.72rem;color:var(--muted);text-align:center;margin-top:.2rem">' +
+      total + (total === 1 ? ' vote' : ' votes') + '</p>';
+    result.classList.add('show');
+  }
+
+  polls.forEach(function (poll) {
+    var pkg = poll.dataset.pkg;
+
+    // Show the current tallies right away, voted or not.
+    fetch('/api/price-feedback').then(function (r) { return r.json(); })
+      .then(function (all) { renderResult(poll, all[pkg]); }).catch(function () {});
+
+    if (voted[pkg]) {
+      poll.querySelector('.poll-btns').classList.add('hide');
+      return;
+    }
+    poll.querySelectorAll('.poll-btns button').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var reaction = btn.dataset.r;
+        fetch('/api/price-feedback', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pkg: pkg, reaction: reaction })
+        }).then(function (r) { return r.json(); })
+          .then(function (res) {
+            // Server is the real gate (one vote per package per device, forever) - localStorage
+            // here is just a UX shortcut so a return visit skips straight to the result view.
+            if (res.ok) {
+              voted[pkg] = true;
+              try { localStorage.setItem(LS_KEY, JSON.stringify(voted)); } catch (e) {}
+              poll.querySelector('.poll-btns').classList.add('hide');
+              renderResult(poll, res.feedback[pkg]);
+              poll.querySelector('.poll-thanks').textContent = "Thanks - that's genuinely useful to me.";
+              poll.querySelector('.poll-thanks').hidden = false;
+            } else if (res.error === 'already-voted' && res.feedback) {
+              voted[pkg] = true;
+              try { localStorage.setItem(LS_KEY, JSON.stringify(voted)); } catch (e) {}
+              poll.querySelector('.poll-btns').classList.add('hide');
+              renderResult(poll, res.feedback[pkg]);
+              poll.querySelector('.poll-thanks').textContent = 'Already counted a vote from this network on this one.';
+              poll.querySelector('.poll-thanks').hidden = false;
+            }
+          }).catch(function () {});
+      });
+    });
   });
 })();
 </script>

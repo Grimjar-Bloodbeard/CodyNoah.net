@@ -3,21 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FT8DFSD29Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FT8DFSD29Q');
+</script>
 <title>GrimForge Creations · by Cody Noah</title>
-<meta name="description" content="GrimForge Creations - the one-smith workshop of Cody Noah. Two ways in: explore the Lab, or hire the smith. Real, live software from Wilkes County, NC.">
+<meta name="description" content="GrimForge Creations - the one-smith workshop of Cody Noah. If you can picture it for your business, I can probably build it. Real, live software from Wilkes County, NC.">
+<meta name="keywords" content="Cody Noah, GrimForge Creations, Wilkes County NC software developer, independent developer, custom software, AI-driven development, PC repair, console repair, Wilkesboro NC">
+<meta name="author" content="Cody Noah">
+<meta name="theme-color" content="#070a12">
+<link rel="canonical" href="https://codynoah.net/">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:title" content="GrimForge Creations · by Cody Noah">
-<meta property="og:description" content="GrimForge Creations - the one-smith workshop of Cody Noah. Two ways in: explore the Lab, or hire the smith. Real, live software from Wilkes County, NC.">
-<meta property="og:image" content="https://codynoah.net/og-image.jpg">
+<meta property="og:description" content="GrimForge Creations - the one-smith workshop of Cody Noah. If you can picture it for your business, I can probably build it. Real, live software from Wilkes County, NC.">
+<meta property="og:image" content="https://codynoah.net/images/og-image.jpg">
 <meta property="og:url" content="https://codynoah.net/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="GrimForge Creations · by Cody Noah">
-<meta name="twitter:description" content="GrimForge Creations - the one-smith workshop of Cody Noah. Two ways in: explore the Lab, or hire the smith. Real, live software from Wilkes County, NC.">
-<meta name="twitter:image" content="https://codynoah.net/og-image.jpg">
+<meta name="twitter:description" content="GrimForge Creations - the one-smith workshop of Cody Noah. If you can picture it for your business, I can probably build it. Real, live software from Wilkes County, NC.">
+<meta name="twitter:image" content="https://codynoah.net/images/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -28,7 +40,7 @@
   "@type": "Person",
   "name": "Cody Noah",
   "url": "https://codynoah.net",
-  "image": "https://codynoah.net/demo_portrait.webp",
+  "image": "https://codynoah.net/images/demo_portrait.webp",
   "jobTitle": "Independent Software Developer",
   "description": "Independent developer in Wilkes County, NC. AI-driven custom software, live e-commerce and accessible sites, plus PC/console repair and builds.",
   "address": {
@@ -38,21 +50,185 @@
     "addressCountry": "US"
   },
   "sameAs": [
-    "https://github.com/Grimjar-Bloodbeard"
+    "https://github.com/Grimjar-Bloodbeard",
+    "https://www.tiktok.com/@grimjarbloodbeard",
+    "https://www.facebook.com/Grimjar.bloodbeard"
   ],
   "worksFor": {
     "@type": "Organization",
-    "name": "GrimForge Creations"
+    "@id": "https://codynoah.net/#organization",
+    "name": "GrimForge Creations",
+    "url": "https://codynoah.net",
+    "founder": { "@type": "Person", "name": "Cody Noah" },
+    "sameAs": [
+      "https://github.com/Grimjar-Bloodbeard",
+      "https://www.tiktok.com/@grimjarbloodbeard",
+      "https://www.facebook.com/Grimjar.bloodbeard"
+    ]
   }
 }
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "GrimForge Creations",
+  "alternateName": "Cody Noah",
+  "url": "https://codynoah.net"
+}
+</script>
 <style>
+/* ===== forge gate entrance (5.0s, plays once per session) =====
+   Storyboard, absolute time from page load:
+   0.00-0.80s  Dark approach   - tree trunk + gate resolve from black
+   0.80-1.90s  Gate opens      - leaves part, warm light spills out
+   1.90-2.80s  Interior reveal - anvil + glowing iron settle in, breathing heat
+   2.80-3.90s  The strike      - hammer rises then strikes, flash, CSS sparks
+   3.90-5.00s  Transition out  - scene fades, hands off to the page
+   Reduced motion: skips straight to a 700ms plain fade, no gate/hammer/sparks.
+   Perf note: only opacity/transform/background-color are animated here (all
+   compositor-cheap) - no filter:blur/brightness on large elements, and the
+   background embers canvas is paused for the duration (see script below). */
+.forge-gate-intro{position:fixed;inset:0;z-index:500;background:#030402;opacity:1;overflow:hidden;cursor:pointer}
+.forge-gate-intro.hidden{display:none}
+.forge-gate-intro.play{animation:fgiOut 700ms ease-in 4300ms both}
+@keyframes fgiOut{to{opacity:0}}
+.forge-gate-intro.reduced{animation:fgiReducedOut 700ms ease-out both}
+.forge-gate-intro.reduced .fgi-trunk,.forge-gate-intro.reduced .fgi-gate-arch,
+.forge-gate-intro.reduced .fgi-gate-leaf,.forge-gate-intro.reduced .fgi-light,
+.forge-gate-intro.reduced .fgi-interior,.forge-gate-intro.reduced .fgi-flash{display:none}
+@keyframes fgiReducedOut{0%{opacity:1}100%{opacity:0}}
+
+.fgi-trunk{position:absolute;inset:-6%;opacity:0;z-index:1;
+  background:radial-gradient(58% 42% at 50% 36%,rgba(130,86,42,.16),transparent 62%),
+    repeating-linear-gradient(90deg,#1c130c 0 46px,#140d08 46px 52px,#1c130c 52px 96px),
+    linear-gradient(180deg,#221a10,#0a0704)}
+.forge-gate-intro.play .fgi-trunk{animation:fgiTrunkIn 900ms ease-out 0ms both,fgiTrunkFlicker 3.4s ease-in-out 900ms infinite}
+@keyframes fgiTrunkIn{to{opacity:1}}
+@keyframes fgiTrunkFlicker{0%,100%{opacity:1}30%{opacity:.94}52%{opacity:1}77%{opacity:.96}}
+
+.fgi-gate-arch{position:absolute;left:50%;bottom:0;top:8%;width:min(62vw,460px);transform:translateX(-50%);z-index:2;
+  border:10px solid #241a10;border-bottom:none;border-radius:130px 130px 0 0;
+  box-shadow:0 0 60px rgba(0,0,0,.6) inset;opacity:0}
+.forge-gate-intro.play .fgi-gate-arch{animation:fgiFadeIn 700ms ease-out 250ms both}
+@keyframes fgiFadeIn{to{opacity:1}}
+
+.fgi-gate-leaf{position:absolute;top:8%;bottom:0;width:31%;opacity:0;z-index:3;
+  background:linear-gradient(180deg,#2c2013,#160f08);box-shadow:inset 0 0 40px rgba(0,0,0,.7)}
+.fgi-gate-leaf.left{left:calc(50% - 31%)}
+.fgi-gate-leaf.right{left:50%}
+.forge-gate-intro.play .fgi-gate-leaf{animation:fgiFadeIn 300ms ease-out 300ms both}
+.forge-gate-intro.play .fgi-gate-leaf.left{animation:fgiFadeIn 300ms ease-out 300ms both,fgiLeafL 1100ms cubic-bezier(.22,.61,.36,1) 800ms both}
+.forge-gate-intro.play .fgi-gate-leaf.right{animation:fgiFadeIn 300ms ease-out 300ms both,fgiLeafR 1100ms cubic-bezier(.22,.61,.36,1) 800ms both}
+@keyframes fgiLeafL{0%{transform:translateX(0)}100%{transform:translateX(-94%)}}
+@keyframes fgiLeafR{0%{transform:translateX(0)}100%{transform:translateX(94%)}}
+
+.fgi-light{position:absolute;inset:0;opacity:0;z-index:2;
+  background:radial-gradient(38% 58% at 50% 42%,rgba(255,190,110,.5),transparent 70%),
+    radial-gradient(60% 30% at 50% 100%,rgba(255,140,60,.38),transparent 70%)}
+.forge-gate-intro.play .fgi-light{animation:fgiFadeIn 900ms ease-out 900ms both,fgiLightFlicker 2.8s ease-in-out 1800ms infinite}
+@keyframes fgiLightFlicker{0%,100%{opacity:1}22%{opacity:.85}45%{opacity:1}64%{opacity:.9}83%{opacity:1}}
+
+.fgi-interior{position:absolute;left:50%;bottom:8%;width:min(70vw,420px);height:46%;transform:translateX(-50%);opacity:0;z-index:4}
+.forge-gate-intro.play .fgi-interior{animation:fgiFadeIn 500ms ease-out 1900ms both}
+/* Anvil/iron/hammer are positioned in fixed px from .fgi-interior's own
+   bottom-center, not percentages - this scene is a small hand-placed diorama
+   (anvil, glowing iron, hammer arm) and the hammer's swing math below depends
+   on knowing exactly where the iron sits, in real pixels. */
+.fgi-anvil{position:absolute;left:50%;bottom:20px;width:220px;height:100px;transform:translateX(-50%);background:#100b07;
+  clip-path:polygon(0 42%,22% 42%,28% 0,72% 0,78% 42%,100% 42%,84% 58%,60% 58%,60% 100%,40% 100%,40% 58%,16% 58%)}
+.fgi-iron{position:absolute;left:50%;bottom:95px;width:110px;height:110px;transform:translateX(-50%);border-radius:50%;opacity:.5;
+  background:radial-gradient(circle,rgba(255,255,255,.9),transparent 30%),
+    radial-gradient(circle,rgba(255,180,80,.75),transparent 55%),
+    radial-gradient(circle,rgba(255,110,40,.35),transparent 75%)}
+.forge-gate-intro.play .fgi-iron{animation:fgiIronBreathe 900ms ease-in-out 1900ms both,fgiIronHot 1100ms 2800ms both}
+@keyframes fgiIronBreathe{0%{opacity:.45}55%{opacity:.7}100%{opacity:.55}}
+@keyframes fgiIronHot{
+  0%{opacity:.55;animation-timing-function:ease-in}
+  46%{opacity:.6;animation-timing-function:ease-out}
+  60%{opacity:1}
+  78%{opacity:.85;animation-timing-function:ease-in}
+  100%{opacity:.68}
+}
+
+/* Hammer: a wooden handle with a steel head, pivoting from the grip point.
+   Iron's center sits at (x:0, h:150px) from .fgi-interior's bottom-center
+   (bottom:95px + half of 110px height). The pivot sits 105px right of that
+   and 166px up (16px above the iron), with a 170px arm from pivot to head-
+   center - solved so that at the 60% keyframe (rotate(-38deg), the impact
+   moment) the head-center lands exactly on the iron:
+     headX = pivotX + ARM*sin(-38deg) = 105 - 170*0.616 ≈ 0
+     headH = pivotH + ARM*cos(-38deg) =  16 + 170*0.788 ≈ 150
+   Every other angle in the swing keyframe below is the same swing mirrored
+   to match (negative = raised/anticipation, per the same formula). */
+.fgi-hammer{position:absolute;left:calc(50% + 105px);bottom:166px;width:18px;height:170px;opacity:0;transform-origin:50% 100%;z-index:5}
+.fgi-hammer-handle{position:absolute;left:50%;bottom:0;width:14px;height:155px;transform:translateX(-50%);
+  background:linear-gradient(90deg,#2e1f12,#6b4a2c 45%,#2e1f12);border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.fgi-hammer-head{position:absolute;left:50%;bottom:148px;width:90px;height:44px;transform:translateX(-50%);border-radius:8px;
+  background:linear-gradient(180deg,#9a9aa0 0%,#55555c 45%,#2b2b30 100%);
+  box-shadow:0 4px 9px rgba(0,0,0,.6),inset 0 -3px 5px rgba(0,0,0,.4)}
+.fgi-hammer-head::before{content:'';position:absolute;top:4px;left:6px;right:6px;height:5px;
+  background:rgba(255,255,255,.28);border-radius:3px}
+.forge-gate-intro.play .fgi-hammer{animation:fgiHammerSwing 1100ms linear 2800ms both}
+@keyframes fgiHammerSwing{
+  0%{opacity:0;transform:rotate(-10deg);animation-timing-function:ease-out}
+  12%{opacity:1}
+  46%{transform:rotate(56deg);animation-timing-function:cubic-bezier(.76,0,.86,0)}
+  60%{transform:rotate(-38deg);animation-timing-function:cubic-bezier(.3,1.6,.6,1)}
+  78%{transform:rotate(-25deg);animation-timing-function:ease-out}
+  100%{opacity:.95;transform:rotate(-29deg)}
+}
+
+.fgi-flash{position:absolute;inset:0;opacity:0;mix-blend-mode:screen;z-index:6;
+  background:radial-gradient(42% 42% at 50% 75%,rgba(255,255,255,.9),transparent 60%)}
+.forge-gate-intro.play .fgi-flash{animation:fgiFlash 260ms ease-out 3460ms both}
+@keyframes fgiFlash{0%{opacity:0}30%{opacity:.85}100%{opacity:0}}
+
+/* sparks: canvas, not DOM. 40+ elements each animating opacity/transform/
+   background-color/box-shadow simultaneously - all newly created in the same
+   instant as the hammer-impact keyframe, the flash, and the shockwave ring -
+   was the real source of the reported lag: that many simultaneous style/paint/
+   layer-promotion events landing in one frame. A single canvas draw loop for
+   the same 40+ particles is drastically cheaper (one element, no per-node
+   style recalc). This is the same technique already proven smooth by the
+   background embers canvas below. The FIRST attempt at canvas sparks here
+   failed for an unrelated reason - a stacking bug where the trunk's opaque
+   background painted over the canvas - not because canvas was the wrong tool. */
+#fgiSparkCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:7;pointer-events:none}
+
+/* shockwave ring - a quick expanding pulse right at the point of impact,
+   layered under the sparks, for the "explosion" beat the burst alone can't sell */
+.fgi-shockwave{position:absolute;left:50%;bottom:150px;width:20px;height:20px;transform:translate(-50%,50%);
+  border-radius:50%;border:2px solid rgba(255,220,160,.85);opacity:0;pointer-events:none;z-index:6}
+.forge-gate-intro.play .fgi-shockwave{animation:fgiShockwave 520ms ease-out 3460ms both}
+@keyframes fgiShockwave{
+  0%{opacity:.9;transform:translate(-50%,50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,50%) scale(9)}
+}
+
+/* ambient embers: a slow, continuous trickle rising off the forge during the
+   interior-reveal and strike stages, so that stretch of the scene isn't just
+   sitting still waiting for the hammer - a couple of these are always aloft. */
+.fgi-ember{position:absolute;width:4px;height:4px;border-radius:50%;opacity:0;pointer-events:none;z-index:3;
+  background:#ffb35a;box-shadow:0 0 7px 2px rgba(255,150,60,.7);
+  animation:fgiEmberRise var(--edur,1600ms) ease-out both}
+@keyframes fgiEmberRise{
+  0%{opacity:0;transform:translate(0,0) scale(.8)}
+  12%{opacity:.9}
+  60%{opacity:.65;transform:translate(var(--ex,8px),var(--ey,-70px)) scale(.6)}
+  100%{opacity:0;transform:translate(var(--ex2,14px),var(--ey2,-130px)) scale(.3)}
+}
+
 /* ===== landing / the gate ===== */
 #embers{position:fixed;inset:0;z-index:-2;width:100%;height:100%;pointer-events:none}
 .gate{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
   text-align:center;padding:clamp(1.5rem,5vh,3rem) clamp(1rem,4vw,2rem)}
 
+.hero-logo{width:clamp(130px,22vw,210px);height:auto;display:block;margin:0 auto .8rem;
+  filter:drop-shadow(0 0 26px rgba(232,178,76,.4)) drop-shadow(0 0 54px rgba(255,122,44,.22));
+  opacity:0;animation:logoin 1s ease-out both}
+@keyframes logoin{0%{opacity:0;transform:translateY(-18px) scale(.9)}100%{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.hero-logo{animation:none;opacity:1}}
 .crest{font-family:var(--disp);letter-spacing:5px;font-size:.78rem;color:var(--ember);text-transform:uppercase;
   margin-bottom:.4rem;opacity:0;animation:fadein .8s .1s both}
 .title{font-size:clamp(3rem,14vw,8rem);letter-spacing:2px;line-height:.92;display:flex;gap:.02em;flex-wrap:wrap;justify-content:center}
@@ -79,115 +255,82 @@
 .tag b{color:var(--rune);font-weight:600}
 @keyframes fadein{to{opacity:1}}
 
-.choose{margin-top:.6rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;font-size:.72rem;font-weight:700;
-  opacity:0;animation:fadein .8s 1.3s both}
-
-/* the two doors */
-.doors{display:grid;grid-template-columns:1fr 2px 1fr;gap:clamp(.7rem,2vw,1.4rem);align-items:stretch;
-  width:100%;max-width:900px;margin:1.2rem auto 0;perspective:1400px}
-.door{position:relative;transform-style:preserve-3d;
+/* the door */
+.doors{display:flex;justify-content:center;width:100%;max-width:520px;margin:1.4rem auto 0;perspective:1400px}
+.door{position:relative;width:100%;transform-style:preserve-3d;
   transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
   transition:transform .25s ease,filter .35s,box-shadow .35s;
-  border-radius:18px;min-height:clamp(230px,38vh,320px);padding:1.6rem;overflow:hidden;cursor:pointer;
+  border-radius:18px;min-height:clamp(230px,38vh,320px);padding:1.8rem;overflow:hidden;cursor:pointer;
   display:flex;flex-direction:column;justify-content:flex-end;text-align:left;
-  border:1px solid var(--line);opacity:0;animation:doorin .9s cubic-bezier(.2,.7,.2,1) both}
-.door.lab{animation-delay:1.35s}
-.door.hire{animation-delay:1.5s}
+  border:1px solid var(--line);opacity:0;animation:doorin .9s 1.35s cubic-bezier(.2,.7,.2,1) both}
 @keyframes doorin{0%{opacity:0;transform:translateY(28px) scale(.96)}100%{opacity:1;transform:none}}
-.doors:has(.door:hover) .door:not(:hover){filter:brightness(.55) saturate(.7);transform:scale(.975)}
 .door:hover{box-shadow:0 24px 60px rgba(0,0,0,.5)}
 
-.door .scene{position:absolute;inset:0;z-index:-1;transition:transform .3s}
-.door.lab .scene{background:radial-gradient(120% 90% at 30% 10%,rgba(79,240,224,.22),transparent 55%),radial-gradient(100% 100% at 85% 110%,rgba(176,107,255,.28),transparent 60%),linear-gradient(160deg,#0d1930,#0a0f1e)}
-.door.hire .scene{background:radial-gradient(120% 90% at 70% 10%,rgba(246,215,133,.22),transparent 55%),radial-gradient(100% 100% at 15% 110%,rgba(255,90,28,.24),transparent 60%),linear-gradient(160deg,#241a10,#120c08)}
+/* idle call-to-action, once the door has settled in: a slow ember-glow breathe
+   plus a periodic light-glint (same sweep the hover state already uses, just
+   auto-firing every few seconds) - so the door reads as "click me" even before
+   anyone hovers, without resorting to a bouncing/shaking button. */
+.door.hire{animation:doorin .9s 1.35s cubic-bezier(.2,.7,.2,1) both,doorGlow 3.2s ease-in-out 2.3s infinite}
+.door.hire:hover{animation:doorin .9s 1.35s cubic-bezier(.2,.7,.2,1) both}
+@keyframes doorGlow{
+  0%,100%{box-shadow:0 0 0 1px rgba(246,215,133,.12),0 8px 28px rgba(255,122,44,.08)}
+  50%{box-shadow:0 0 0 1px rgba(246,215,133,.34),0 8px 40px rgba(255,122,44,.26)}
+}
+@media(prefers-reduced-motion:reduce){.door.hire{animation:doorin .9s 1.35s cubic-bezier(.2,.7,.2,1) both}}
+
+.door .scene{position:absolute;inset:0;z-index:-1;transition:transform .3s;
+  background:radial-gradient(120% 90% at 70% 10%,rgba(246,215,133,.22),transparent 55%),radial-gradient(100% 100% at 15% 110%,rgba(255,90,28,.24),transparent 60%),linear-gradient(160deg,#241a10,#120c08)}
 /* light spill from the opening on hover */
 .door::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:100%;transform:skewX(-18deg);
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);transition:left .6s;pointer-events:none}
 .door:hover::after{left:130%}
-
-/* floating pixel motes in the Lab door */
-.mote{position:absolute;width:10px;height:10px;border-radius:2px;opacity:.0;
-  animation:rise 6s linear infinite;box-shadow:0 0 10px currentColor}
-@keyframes rise{0%{opacity:0;transform:translateY(20px)}15%,80%{opacity:.8}100%{opacity:0;transform:translateY(-90px)}}
+/* the same glint, auto-firing on a loop so it catches the eye unprompted */
+.door.hire::before{content:'';position:absolute;top:0;left:-40%;width:40%;height:100%;transform:skewX(-18deg);z-index:1;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);pointer-events:none;
+  animation:doorSweep 4.6s ease-in-out 3.6s infinite}
+@keyframes doorSweep{0%,86%{left:-40%}100%{left:130%}}
+@media(prefers-reduced-motion:reduce){.door.hire::before{animation:none;display:none}}
 
 .door .k{font-size:2.4rem;margin-bottom:.5rem;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5))}
-.door h2{font-size:clamp(1.5rem,4vw,2.1rem);letter-spacing:1px}
-.door.lab h2{color:var(--rune)}
-.door.hire h2{color:var(--gold2)}
-.door p{color:var(--muted);font-size:.98rem;margin-top:.3rem;max-width:34ch}
-.door .go{margin-top:.9rem;font-weight:700;font-size:.95rem;display:inline-flex;align-items:center;gap:.4rem;transition:gap .2s}
-.door.lab .go{color:var(--teal)} .door.hire .go{color:var(--gold)}
+.door h2{font-size:clamp(1.5rem,4vw,2.1rem);letter-spacing:1px;color:var(--gold2)}
+.door p{color:var(--muted);font-size:.98rem;margin-top:.3rem;max-width:38ch}
+.door .go{margin-top:.9rem;font-weight:700;font-size:.95rem;color:var(--gold);display:inline-flex;align-items:center;gap:.4rem;transition:gap .2s}
 .door:hover .go{gap:.75rem}
 
-/* the molten forge-seam between the doors */
-.seam{position:relative;border-radius:2px;background:linear-gradient(180deg,transparent,var(--ember2) 20%,var(--gold2) 50%,var(--ember2) 80%,transparent);
-  box-shadow:0 0 16px rgba(255,122,44,.6),0 0 40px rgba(255,90,28,.35);animation:seamflk 2.4s ease-in-out infinite}
-@keyframes seamflk{0%,100%{opacity:.7;filter:brightness(1)}50%{opacity:1;filter:brightness(1.4)}}
+/* the Lab - a quiet postscript, not a second door */
+.lab-link{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.1rem;color:var(--muted);
+  font-size:.88rem;text-decoration:none;opacity:0;animation:fadein .8s 1.7s both;transition:color .2s,gap .2s}
+.lab-link:hover{color:var(--violet);gap:.6rem}
 @media(max-width:640px){
   .gate{justify-content:flex-start;padding-top:clamp(2rem,8vh,3.2rem)}
   .title{font-size:clamp(2rem,12.5vw,3.6rem);letter-spacing:1px}
   .creations{font-size:clamp(1rem,6.6vw,1.7rem)}
   .tag{font-size:1.02rem;padding:0 .2rem}
-  .doors{grid-template-columns:1fr;max-width:430px;gap:.9rem}
-  .seam{height:2px;width:52%;justify-self:center;margin:.15rem 0;
-    background:linear-gradient(90deg,transparent,var(--ember2),var(--gold2),var(--ember2),transparent)}
-  .door{min-height:auto;padding:1.25rem 1.3rem}
+  .doors{max-width:430px}
+  .door{min-height:auto;padding:1.25rem 1.3rem;box-shadow:0 10px 26px rgba(255,90,28,.14),0 0 0 1px rgba(246,215,133,.18)}
   .door p{max-width:none;font-size:.95rem}
   .door .k{font-size:2rem;margin-bottom:.3rem}
-  .door.lab{box-shadow:0 10px 26px rgba(79,240,224,.14),0 0 0 1px rgba(79,240,224,.18)}
-  .door.hire{box-shadow:0 10px 26px rgba(255,90,28,.14),0 0 0 1px rgba(246,215,133,.18)}
   .forging{margin-top:1.2rem;flex-wrap:wrap;justify-content:center;text-align:center;max-width:94vw}
-  .mini-brand{font-size:.72rem;top:12px;left:12px}
+  .mini-brand{top:12px;left:12px}
+  .mini-brand img{height:28px}
 }
 
 /* ===== tap-to-enter: the door opens onto a scene, then into the page ===== */
 .enter{position:fixed;inset:0;z-index:200;background:#05070d;opacity:0;visibility:hidden;transition:opacity .3s ease;pointer-events:none}
 .enter.show{opacity:1;visibility:visible;pointer-events:auto}
 .enter .scene{position:absolute;inset:0;opacity:0;overflow:hidden}
-.enter.lab .scene-lab,.enter.hire .scene-hire{opacity:1}
+.enter.hire .scene-hire{opacity:1}
 /* the two doors that part to reveal the scene */
 .enter .dp{position:absolute;top:0;bottom:0;width:51%;z-index:5;background:linear-gradient(180deg,#161a22,#0c0f16);box-shadow:inset 0 0 70px rgba(0,0,0,.7)}
 .enter .dp::after{content:'';position:absolute;top:0;bottom:0;width:3px;box-shadow:0 0 26px 7px rgba(255,150,60,.6)}
 .enter .dp.left{left:0;border-right:1px solid #2a2f3a}.enter .dp.left::after{right:0}
 .enter .dp.right{right:0;border-left:1px solid #2a2f3a}.enter .dp.right::after{left:0}
-.enter.show .dp.left{animation:doorL 1.6s cubic-bezier(.6,.02,.3,1) forwards}
-.enter.show .dp.right{animation:doorR 1.6s cubic-bezier(.6,.02,.3,1) forwards}
+.enter.show .dp.left{animation:doorL .7s cubic-bezier(.6,.02,.3,1) forwards}
+.enter.show .dp.right{animation:doorR .7s cubic-bezier(.6,.02,.3,1) forwards}
 @keyframes doorL{0%,16%{transform:translateX(0)}100%{transform:translateX(-102%)}}
 @keyframes doorR{0%,16%{transform:translateX(0)}100%{transform:translateX(102%)}}
-/* Lab: night wilderness, campfire approaching from the distance */
-.scene-lab{background:linear-gradient(180deg,#081019,#0c1b28 52%,#0a1712)}
-.scene-lab .stars{position:absolute;inset:0;opacity:.85;background-image:
-  radial-gradient(1.5px 1.5px at 20% 18%,#cfe8ff,transparent),radial-gradient(1px 1px at 62% 12%,#bfe0ff,transparent),
-  radial-gradient(1.5px 1.5px at 80% 22%,#eaf4ff,transparent),radial-gradient(1px 1px at 40% 9%,#cfe8ff,transparent),
-  radial-gradient(1px 1px at 88% 14%,#bfe0ff,transparent),radial-gradient(1.5px 1.5px at 12% 30%,#eaf4ff,transparent),
-  radial-gradient(1px 1px at 52% 25%,#dffbff,transparent)}
-.scene-lab .ridge{position:absolute;left:-6%;right:-6%;bottom:0;height:40%;background:#04100c;border-radius:48% 52% 0 0/100% 100% 0 0}
-.scene-lab .pine{position:absolute;bottom:32%;width:0;height:0;border-left:solid transparent;border-right:solid transparent;border-bottom:solid #071a13}
-.scene-lab .pine.p1{left:14%;border-left-width:20px;border-right-width:20px;border-bottom-width:64px}
-.scene-lab .pine.p2{left:28%;border-left-width:14px;border-right-width:14px;border-bottom-width:46px}
-.scene-lab .pine.p3{right:22%;border-left-width:22px;border-right-width:22px;border-bottom-width:72px}
-.scene-lab .pine.p4{right:9%;border-left-width:13px;border-right-width:13px;border-bottom-width:44px}
-.scene-lab .fire{position:absolute;left:50%;bottom:30%;transform:translateX(-50%) scale(.16);transform-origin:center bottom}
-.enter.lab.show .fire{animation:approach 1.55s cubic-bezier(.3,.15,.2,1) forwards}
 @keyframes approach{0%{transform:translateX(-50%) scale(.16);filter:brightness(.55)}100%{transform:translateX(-50%) scale(1);filter:brightness(1.15)}}
-.fire .fglow{position:absolute;left:50%;bottom:-50px;width:340px;height:340px;transform:translateX(-50%);mix-blend-mode:screen;
-  background:radial-gradient(circle,rgba(255,190,90,.6),rgba(255,110,30,.2) 42%,transparent 68%);animation:flick .12s infinite alternate}
-.fire .fglow.core{width:150px;height:190px;bottom:-6px;background:radial-gradient(circle,rgba(255,246,210,.82),rgba(255,150,50,.3) 48%,transparent 72%);animation-duration:.09s}
 @keyframes flick{from{opacity:.78;transform:translateX(-50%) scale(.98)}to{opacity:1;transform:translateX(-50%) scale(1.05)}}
-.fire .logs{position:absolute;left:50%;bottom:0;width:84px;height:16px;transform:translateX(-50%);background:linear-gradient(90deg,#2a1a0c,#5c3a1e 50%,#2a1a0c);border-radius:6px;box-shadow:0 0 16px rgba(255,120,40,.5)}
-.fire .flame{position:absolute;left:50%;bottom:9px;transform-origin:50% 100%;filter:blur(.5px);
-  background:linear-gradient(180deg,#fffdf0 4%,#ffe27a 32%,#ff9a2e 64%,#ff4a14 88%,transparent);
-  border-radius:50% 50% 46% 46%/76% 76% 40% 40%;animation:flame .5s ease-in-out infinite alternate}
-.fire .flame.f1{width:30px;height:66px;margin-left:-15px}
-.fire .flame.f2{width:18px;height:48px;margin-left:-25px;animation-duration:.4s;animation-delay:-.1s}
-.fire .flame.f3{width:16px;height:44px;margin-left:9px;animation-duration:.63s;animation-delay:-.25s}
-.fire .flame.f4{width:12px;height:34px;margin-left:-4px;animation-duration:.34s;background:linear-gradient(180deg,#fff,#ffd45a 52%,#ff8a2c)}
-.fire .flame.f5{width:10px;height:28px;margin-left:15px;animation-duration:.72s;animation-delay:-.4s}
-@keyframes flame{0%{transform:scaleY(.9) skewX(-7deg)}100%{transform:scaleY(1.24) skewX(8deg)}}
-/* rising embers - a spark stream spawned on the Lab cutscene */
-.scene-lab .ember{position:absolute;bottom:30%;width:5px;height:5px;border-radius:50%;background:#ffd27a;
-  box-shadow:0 0 9px 2px rgba(255,140,50,.85);opacity:0;pointer-events:none;animation:emberrise 1.5s ease-out forwards}
-@keyframes emberrise{0%{opacity:0;transform:translate(0,0) scale(1.1)}15%{opacity:1}100%{opacity:0;transform:translate(var(--ex,0px),calc(-1 * var(--er,90px))) scale(.3)}}
 /* Hire: the forge lights up - stone workshop wall, hanging tools, a hammer that strikes the anvil */
 .scene-hire{background:radial-gradient(120% 95% at 50% 100%,#3a1c0c,#0c0805)}
 .scene-hire .wall{position:absolute;inset:0;opacity:0;
@@ -208,7 +351,7 @@
 .scene-hire .tool.t3::after{width:19px;height:9px;background:#3d3022;border-radius:2px}
 @keyframes toolin{to{opacity:.8}}
 .scene-hire .fg{position:absolute;left:50%;bottom:22%;width:340px;height:340px;transform:translateX(-50%) scale(.28);transform-origin:center bottom}
-.enter.hire.show .fg{animation:approach 1.55s ease-out forwards}
+.enter.hire.show .fg{animation:approach .7s ease-out forwards}
 .scene-hire .fg::before{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(255,150,50,.6),rgba(255,60,20,.15) 45%,transparent 70%);animation:flick .18s infinite alternate}
 .scene-hire .anvil{position:absolute;left:50%;bottom:20%;width:120px;height:56px;transform:translateX(-50%);background:#140f0a;opacity:0;
   clip-path:polygon(0 42%,22% 42%,28% 0,72% 0,78% 42%,100% 42%,84% 58%,60% 58%,60% 100%,40% 100%,40% 58%,16% 58%);animation:anvilin 1s .35s forwards}
@@ -217,23 +360,27 @@
   background:linear-gradient(90deg,#4a3a26,#2c2115);border-radius:4px;box-shadow:0 0 0 2px #1a1108 inset;
   transform-origin:2px 9px}
 .scene-hire .hammer::after{content:'';position:absolute;right:-4px;top:-13px;width:5px;height:24px;background:#5a4a34;border-radius:2px}
-.enter.hire.show .hammer{animation:hammerstrike 1.55s .2s cubic-bezier(.5,0,.4,1) forwards}
+.enter.hire.show .hammer{animation:hammerstrike .65s .05s cubic-bezier(.5,0,.4,1) forwards}
 @keyframes hammerstrike{
   0%{opacity:0;transform:rotate(-62deg) translate(-6px,-30px)}
-  14%{opacity:1}
-  58%{transform:rotate(-62deg) translate(-6px,-30px)}
-  70%{transform:rotate(16deg) translate(2px,4px)}
-  78%{transform:rotate(10deg) translate(2px,2px)}
+  18%{opacity:1}
+  52%{transform:rotate(-62deg) translate(-6px,-30px)}
+  74%{transform:rotate(18deg) translate(3px,5px)}
+  86%{transform:rotate(9deg) translate(1px,1px)}
   100%{opacity:.95;transform:rotate(13deg) translate(2px,3px)}
 }
 .scene-hire .spark{position:absolute;bottom:31%;width:4px;height:4px;border-radius:50%;background:#ffd27a;
   box-shadow:0 0 8px 2px rgba(255,150,50,.85);opacity:0;pointer-events:none;animation:sparkfly .75s ease-out forwards}
-@keyframes sparkfly{0%{opacity:0;transform:translate(0,0) scale(1.1)}10%{opacity:1}100%{opacity:0;transform:translate(var(--sx,0px),var(--sy,-60px)) scale(.3)}}
+@keyframes sparkfly{
+  0%{opacity:0;transform:translate(0,0) scale(1.1)}
+  10%{opacity:1}
+  40%{transform:translate(var(--s1x,0px),var(--s1y,-20px)) scale(.85)}
+  70%{transform:translate(var(--s2x,0px),var(--s2y,-40px)) scale(.55)}
+  100%{opacity:0;transform:translate(var(--s3x,0px),var(--s3y,-60px)) scale(.3)}
+}
 .enter-label{position:absolute;left:0;right:0;bottom:13%;z-index:6;text-align:center;font-family:var(--disp);letter-spacing:3px;
   color:var(--gold2);font-size:clamp(1rem,3vw,1.5rem);opacity:0;text-shadow:0 2px 20px rgba(255,120,40,.55)}
-.enter.show .enter-label{animation:fadein .7s .65s forwards}
-/* when GSAP drives the cutscene, stand down the CSS keyframes so they don't fight it */
-.enter.gsap .dp.left,.enter.gsap .dp.right,.enter.gsap .scene-lab .fire,.enter.gsap .scene-hire .fg,.enter.gsap .enter-label{animation:none!important}
+.enter.show .enter-label{animation:fadein .4s .3s forwards}
 
 /* currently forging ticker */
 .forging{margin:1.6rem auto 0;display:inline-flex;align-items:center;gap:.6rem;padding:.5rem 1rem;border-radius:999px;
@@ -243,10 +390,31 @@
 .forging b{color:var(--gold2);font-weight:600}
 .forging .lbl{color:var(--ember);font-weight:700;letter-spacing:.5px;text-transform:uppercase;font-size:.72rem}
 
-.mini-brand{position:fixed;top:14px;left:16px;z-index:40;font-family:var(--disp);letter-spacing:2px;font-size:.8rem;color:var(--gold2);opacity:.85}
+.mini-brand{position:fixed;top:14px;left:16px;z-index:40;display:block;opacity:.85}
+.mini-brand img{display:block;height:34px;width:auto;filter:drop-shadow(0 0 10px rgba(232,178,76,.25))}
 </style>
 </head>
 <body>
+
+<div class="forge-gate-intro" id="forgeGateIntro" aria-hidden="true">
+  <div class="fgi-trunk"></div>
+  <div class="fgi-gate-arch"></div>
+  <span class="fgi-gate-leaf left"></span>
+  <span class="fgi-gate-leaf right"></span>
+  <div class="fgi-light"></div>
+  <div class="fgi-interior" id="fgiInterior">
+    <div class="fgi-anvil"></div>
+    <div class="fgi-iron"></div>
+    <div class="fgi-hammer">
+      <span class="fgi-hammer-handle"></span>
+      <span class="fgi-hammer-head"></span>
+    </div>
+    <div class="fgi-shockwave"></div>
+  </div>
+  <div class="fgi-flash"></div>
+  <canvas id="fgiSparkCanvas"></canvas>
+</div>
+<noscript><style>.forge-gate-intro{display:none}</style></noscript>
 
 <canvas id="embers"></canvas>
 <div class="bg">
@@ -255,49 +423,35 @@
   <div id="runes"></div>
 </div>
 
-<span class="mini-brand">⚒ GRIMFORGE</span>
+<span class="mini-brand"><img src="images/logo-grimforge-corner.png" alt="GrimForge"></span>
 
 <main class="gate">
+  <img class="hero-logo" src="images/logo-grimforge-hero.png" alt="GrimForge emblem">
   <p class="crest">⚒ The one-smith workshop of</p>
   <h1 class="title" id="title" aria-label="GrimForge Creations"></h1>
   <div class="creations">CREATIONS</div>
   <p class="byline">by Cody Noah</p>
-  <p class="tag">A mountain workshop in Wilkes County, NC. I forge <b>real, live software</b> for real people - and build weird, fun things because I can't help it.</p>
+  <p class="tag">A mountain workshop in Wilkes County, NC. I forge <b>real, live software</b> for real people.</p>
 
-  <p class="choose">Two ways in</p>
   <div class="doors">
-    <a class="door lab" href="world.html">
-      <div class="scene"></div>
-      <span class="k">⚔️</span>
-      <h2>Enter the Lab</h2>
-      <p>Walk the pixel world, play the arcade, and watch what's still glowing on the anvil. The fun side.</p>
-      <span class="go">Explore →</span>
-    </a>
-    <div class="seam"></div>
-    <a class="door hire" href="hire.html">
+    <a class="door hire" href="pages/hire.html">
       <div class="scene"></div>
       <span class="k">⚒️</span>
       <h2>Hire the Smith</h2>
-      <p>The professional side - software built with AI as the edge, live systems real people use, repairs too. See the proof, then start a project.</p>
+      <p>If you can picture it for your business, tell me and I'll tell you honestly what it takes.</p>
       <span class="go">Show me →</span>
     </a>
   </div>
+  <a class="lab-link" href="pages/world.html">⚔ There's more, if you go looking - the Lab →</a>
 
   <div class="forging glass">
     <span class="dot"></span><span class="lbl">Currently forging</span>
-    <b id="fg">CodyNoah.net 1.0 - the two-door gate</b>
+    <b id="fg">CodyNoah.net 1.0 - one clear door in</b>
   </div>
 </main>
 
 <!-- tap-to-enter transition -->
 <div class="enter" id="enter" aria-hidden="true">
-  <div class="scene scene-lab">
-    <span class="stars"></span>
-    <span class="ridge"></span>
-    <span class="pine p1"></span><span class="pine p2"></span><span class="pine p3"></span><span class="pine p4"></span>
-    <div class="fire"><span class="fglow"></span><span class="fglow core"></span><span class="logs"></span><span class="flame f1"></span><span class="flame f2"></span><span class="flame f3"></span><span class="flame f4"></span><span class="flame f5"></span></div>
-    <div class="enter-label">Follow the firelight...</div>
-  </div>
   <div class="scene scene-hire">
     <span class="wall"></span>
     <span class="tool t1"></span><span class="tool t2"></span><span class="tool t3"></span>
@@ -309,11 +463,171 @@
 
 <!-- Meepo -->
 <div class="bubble" id="bubble"></div>
-<div id="meepo" title="Poke me!" data-tips='["Oi! I&apos;m <b>Meepo</b>. Pick a door - <b>Lab</b> for fun, <b>Smith</b> for business.","Left&apos;s the playground, right&apos;s the resume. Both are Cody.","See that seam glowing? That&apos;s the forge. Don&apos;t touch, it&apos;s hot.","<b>Currently forging</b> down there updates as Cody builds. Neat, huh?","Everything here, one guy made. Power tools and all. Honest work."]'>
+<div id="meepo" title="Poke me!" data-tips='["Oi! I&apos;m <b>Meepo</b>. That gold door is the whole pitch. The Lab&apos;s down there if you go looking.","Everything here, one guy made. Power tools and all. Honest work.","<b>Currently forging</b> down there updates as Cody builds. Neat, huh?","Psst - the Lab link is small on purpose. Doesn&apos;t mean it&apos;s not worth a look."]'>
 </div>
 
 <script src="js/forge.js?v=3"></script>
 <script>
+/* Forge Gate entrance - a 5.0s intro (tree, gate, forge, hammer strike) that plays
+   once per browser session before the landing page. Every visual stage is a CSS
+   animation with an absolute delay matching the storyboard comment at the top of
+   the <style> block, so this script's only real jobs are: decide whether to play
+   at all, spawn the spark burst at the moment of impact, and hand off when it's
+   done. Runs before the embers script below and tells it to hold off starting
+   its own canvas loop until this is finished - one less animation loop fighting
+   for frame time during the busiest second of this sequence. */
+(function(){
+  var el = document.getElementById('forgeGateIntro');
+  if (!el) return;
+
+  var DURATION = 5000, REDUCED_DURATION = 700, IMPACT_AT = 3460; // 60% through the 2800-3900ms strike stage - the hammer's actual low point
+  var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var forceReplay = /(?:^|[?&])intro=/.test(location.search);
+  var seen = false;
+  try { seen = !!sessionStorage.getItem('gateIntroSeen'); } catch (e) {}
+
+  if (seen && !forceReplay) { el.classList.add('hidden'); return; }
+
+  window.__gateIntroActive = true;
+  var done = false, timers = [], emberInterval = null;
+  function markSeen() { try { sessionStorage.setItem('gateIntroSeen', '1'); } catch (e) {} }
+  function finish() {
+    if (done) return;
+    done = true;
+    timers.forEach(clearTimeout);
+    if (emberInterval) clearInterval(emberInterval);
+    if (sparkRaf) { cancelAnimationFrame(sparkRaf); sparkRaf = null; }
+    el.classList.add('hidden');
+    markSeen();
+    window.__gateIntroActive = false;
+    if (window.__startEmbers) window.__startEmbers();
+  }
+  function skip() {
+    if (done) return;
+    el.style.transition = 'opacity 250ms ease-out';
+    el.style.opacity = '0';
+    setTimeout(finish, 250);
+  }
+  el.addEventListener('click', skip);
+  addEventListener('keydown', function (e) {
+    if (!done && (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape')) skip();
+  });
+
+  // dev/demo helper - replay from the console without hand-editing the URL
+  window.__replayForgeGate = function () {
+    try { sessionStorage.removeItem('gateIntroSeen'); } catch (e) {}
+    location.search = 'intro=1';
+  };
+
+  if (reduce) {
+    el.classList.add('reduced');
+    timers.push(setTimeout(finish, REDUCED_DURATION));
+    return;
+  }
+
+  el.classList.add('play');
+  timers.push(setTimeout(spawnSparks, IMPACT_AT));
+  timers.push(setTimeout(finish, DURATION));
+  // ambient ember trickle: starts once the interior is visible, stops once the
+  // real strike sparks take over - keeps that stretch from sitting dead still
+  timers.push(setTimeout(function () { emberInterval = setInterval(spawnEmber, 450); }, 1900));
+  timers.push(setTimeout(function () { if (emberInterval) { clearInterval(emberInterval); emberInterval = null; } }, 3460));
+
+  function spawnEmber() {
+    var host = document.getElementById('fgiInterior'); if (!host) return;
+    var em = document.createElement('span'); em.className = 'fgi-ember';
+    em.style.left = (44 + Math.random() * 12) + '%';
+    em.style.bottom = (135 + Math.random() * 25) + 'px'; // near the iron, a bit of scatter
+    var ex = Math.round((Math.random() - .5) * 30);
+    em.style.setProperty('--ex', ex + 'px');
+    em.style.setProperty('--ey', -(60 + Math.random() * 30) + 'px');
+    em.style.setProperty('--ex2', Math.round(ex + (Math.random() - .5) * 20) + 'px');
+    em.style.setProperty('--ey2', -(110 + Math.random() * 50) + 'px');
+    var dur = Math.round(1400 + Math.random() * 500);
+    em.style.setProperty('--edur', dur + 'ms');
+    host.appendChild(em);
+    setTimeout(function () { em.remove(); }, dur + 100);
+  }
+  /* The strike burst: a synchronized radial bloom, rendered on canvas instead
+     of as 40+ separate DOM nodes (see the #fgiSparkCanvas comment in <style>
+     for why - this is what actually fixed the lag at impact). COUNT particles
+     launch within a ~30ms window (near-simultaneous), each along its own angle
+     evenly spread across a 200deg arc centered straight up (so nothing shoots
+     downward through the anvil), each nudged a few degrees for texture. Every
+     particle eases outward (fast burst, then decelerate) toward its own target
+     point, with a little gravity drop added as it ages, and cools from white-
+     yellow through orange to deep red before fading out - same motion/color
+     design as the DOM version, just simulated per-frame instead of keyframed. */
+  var sparkCv = document.getElementById('fgiSparkCanvas'), sparkCtx, sparkW, sparkH, sparkDPR = Math.min(devicePixelRatio || 1, 2);
+  var sparkParts = [], sparkRaf = null;
+  function sizeSparkCanvas() {
+    if (!sparkCv) return;
+    sparkW = sparkCv.clientWidth; sparkH = sparkCv.clientHeight;
+    sparkCv.width = sparkW * sparkDPR; sparkCv.height = sparkH * sparkDPR;
+    sparkCtx = sparkCv.getContext('2d'); sparkCtx.setTransform(sparkDPR, 0, 0, sparkDPR, 0, 0);
+  }
+  function sparkColor(t) { // 4-stop cooling ramp: white-yellow -> orange -> deep red
+    var stops = [[0, 255, 248, 224], [.3, 255, 207, 130], [.62, 255, 149, 72], [1, 138, 42, 18]];
+    for (var i = 0; i < stops.length - 1; i++) {
+      var a = stops[i], b = stops[i + 1];
+      if (t >= a[0] && t <= b[0]) {
+        var f = (t - a[0]) / (b[0] - a[0]);
+        return [a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f, a[3] + (b[3] - a[3]) * f];
+      }
+    }
+    return stops[stops.length - 1].slice(1);
+  }
+  function spawnSparks() {
+    if (!sparkCv) return;
+    sizeSparkCanvas();
+    var iron = document.querySelector('.fgi-iron');
+    if (!iron) return;
+    var ir = iron.getBoundingClientRect(), cr = sparkCv.getBoundingClientRect();
+    var originX = ir.left - cr.left + ir.width / 2, originY = ir.top - cr.top + ir.height / 2;
+    var COUNT = 42, now0 = performance.now();
+    sparkParts = [];
+    for (var j = 0; j < COUNT; j++) {
+      var baseAng = -100 + (200 * j / (COUNT - 1));
+      var ang = (baseAng + (Math.random() - .5) * 9) * Math.PI / 180;
+      var dist = 150 + Math.random() * 280;
+      sparkParts.push({
+        ox: originX, oy: originY,
+        fx: Math.sin(ang) * dist, fy: -Math.cos(ang) * dist,
+        birth: now0 + Math.random() * 30, // near-synchronous, not staggered
+        dur: 650 + Math.random() * 220, // finishes on its own before the exit-fade starts at 4300ms
+        size: 4 + Math.random() * 5
+      });
+    }
+    if (sparkRaf) cancelAnimationFrame(sparkRaf);
+    sparkTick();
+  }
+  function sparkTick() {
+    var now = performance.now(), alive = false;
+    sparkCtx.clearRect(0, 0, sparkW, sparkH);
+    for (var i = 0; i < sparkParts.length; i++) {
+      var p = sparkParts[i], t = (now - p.birth) / p.dur;
+      if (t < 0) { alive = true; continue; }
+      if (t > 1) continue;
+      alive = true;
+      var eased = 1 - Math.pow(1 - t, 3); // fast outward burst, then decelerate
+      var x = p.ox + p.fx * eased, y = p.oy + p.fy * eased + 46 * t * t; // gravity droop as it ages
+      var a = t < .08 ? t / .08 : Math.pow(Math.max(0, 1 - (t - .08) / .92), 1.3);
+      var c = sparkColor(t), r = Math.max(p.size * (1.15 - t * .7), .1);
+      // soft halo (wide, dim) plus a sharp bright core (tight, full-opacity) -
+      // one wide gradient alone read as a blurry cloud instead of distinct sparks
+      var g = sparkCtx.createRadialGradient(x, y, 0, x, y, r * 1.8);
+      g.addColorStop(0, 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (a * .55) + ')');
+      g.addColorStop(1, 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0)');
+      sparkCtx.fillStyle = g;
+      sparkCtx.beginPath(); sparkCtx.arc(x, y, r * 1.8, 0, 6.283); sparkCtx.fill();
+      sparkCtx.fillStyle = 'rgba(' + Math.min(255, c[0] + 30) + ',' + Math.min(255, c[1] + 30) + ',' + Math.min(255, c[2] + 10) + ',' + a + ')';
+      sparkCtx.beginPath(); sparkCtx.arc(x, y, r * .55, 0, 6.283); sparkCtx.fill();
+    }
+    if (alive) sparkRaf = requestAnimationFrame(sparkTick);
+  }
+  addEventListener('resize', sizeSparkCanvas, { passive: true });
+})();
+
 /* forge the title letters in, one strike at a time.
    Rebuilt (not just re-shown) on bfcache restore - a CSS animation caught
    mid-flight when you navigate away doesn't reliably resume/finish when the
@@ -331,31 +645,52 @@
   addEventListener('pageshow', function(e){ if(e.persisted) build(); });
 })();
 
-/* rising ember/spark canvas */
+/* rising ember/spark canvas - carries a little "heat" now: moving the cursor,
+   touching, or scrolling brightens and quickens the embers for a moment, then
+   they settle back down, like a real bed of coals instead of a fixed loop. */
 (function(){
   var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   var cv=document.getElementById('embers'); if(!cv) return;
   var ctx=cv.getContext('2d'), W=0,H=0, DPR=Math.min(window.devicePixelRatio||1,2), parts=[];
   var N=innerWidth<640?34:70;
+  var heat=0.15, ptr={x:0,y:0,active:false,px:0,py:0};
   function mk(seed){ return {x:Math.random()*W, y:seed?Math.random()*H:H+8, r:.6+Math.random()*2.1,
     vy:-(.25+Math.random()*1.0), vx:(Math.random()-.5)*.4, life:seed?Math.random()*180:0, max:150+Math.random()*160, hue:18+Math.random()*32}; }
   function size(){ W=cv.clientWidth; H=cv.clientHeight; cv.width=W*DPR; cv.height=H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
   function init(){ size(); parts=[]; for(var i=0;i<N;i++) parts.push(mk(true)); }
+
+  if(!reduce){
+    function stir(x,y){ var d=Math.hypot(x-ptr.px,y-ptr.py); ptr.px=x;ptr.py=y;ptr.x=x;ptr.y=y;ptr.active=true;
+      heat=Math.min(1,heat+d*0.0009); }
+    addEventListener('pointermove',function(e){ stir(e.clientX,e.clientY); },{passive:true});
+    addEventListener('touchmove',function(e){ if(e.touches[0]) stir(e.touches[0].clientX,e.touches[0].clientY); },{passive:true});
+    addEventListener('scroll',function(){ heat=Math.min(1,heat+0.05); },{passive:true});
+  }
+
   function frame(){
+    heat*=0.985; if(heat<0.15) heat=0.15;
+    var boost=1+heat*0.9;
     ctx.clearRect(0,0,W,H);
     for(var i=0;i<parts.length;i++){ var p=parts[i];
-      p.x+=p.vx; p.y+=p.vy; p.vy-=0.0016; p.life++;
+      if(ptr.active){ var dx=p.x-ptr.x, dy=p.y-ptr.y, d=Math.hypot(dx,dy), R=90;
+        if(d<R){ var f=(1-d/R)*0.02*heat; p.vx+=(dx/(d||1))*f; } }
+      p.x+=p.vx*boost; p.y+=p.vy*boost; p.vy-=0.0016; p.vx*=0.995; p.life++;
       if(p.life>=p.max||p.y<-12){ parts[i]=mk(false); continue; }
-      var a=Math.sin(Math.PI*(p.life/p.max))*0.85;
-      var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4.2);
+      var a=Math.min(1,Math.sin(Math.PI*(p.life/p.max))*0.85*boost);
+      var rad=p.r*4.2*boost;
+      var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,rad);
       g.addColorStop(0,'hsla('+p.hue+',100%,66%,'+a+')');
       g.addColorStop(1,'hsla('+p.hue+',100%,50%,0)');
-      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*4.2,0,6.3); ctx.fill();
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,rad,0,6.3); ctx.fill();
     }
     requestAnimationFrame(frame);
   }
   init(); addEventListener('resize',init,{passive:true});
-  if(!reduce) frame();
+  // Held off while the forge-gate intro plays (see script above) - it's fully
+  // hidden behind that opaque overlay anyway, so there's no reason to spend
+  // frame budget on it during the intro's busiest moments.
+  window.__startEmbers = function(){ if(!reduce) frame(); };
+  if(!reduce && !window.__gateIntroActive) window.__startEmbers();
 })();
 
 /* 3D tilt on the doors, following the cursor */
@@ -370,15 +705,6 @@
     });
     d.addEventListener('pointerleave',function(){ d.style.setProperty('--rx','0deg'); d.style.setProperty('--ry','0deg'); });
   });
-
-  /* scatter a few glowing pixel motes inside the Lab door */
-  var lab=document.querySelector('.door.lab .scene');
-  if(lab){ var cols=['#4ff0e0','#b06bff','#f6d785'];
-    for(var i=0;i<7;i++){ var m=document.createElement('span'); m.className='mote';
-      m.style.left=(10+Math.random()*80)+'%'; m.style.bottom=(Math.random()*40)+'%';
-      m.style.color=cols[i%3]; m.style.animationDelay=(-Math.random()*6)+'s';
-      m.style.animationDuration=(5+Math.random()*4)+'s'; lab.appendChild(m); }
-  }
 })();
 
 /* the Currently Forging ticker - swaps through recent work (Forge Admin will feed this later) */
@@ -396,8 +722,9 @@
   el.style.transition='opacity .3s';
 })();
 
-/* tap-to-enter: a GSAP timeline choreographs the doors opening onto the scene,
-   then walks you into the page. Falls back to the CSS cutscene if GSAP is absent. */
+/* tap-to-enter: pure CSS cutscene, no animation library. A quick door-part +
+   scene reveal, then navigate - kept short on purpose so it reads as a
+   transition, not a wait. */
 (function(){
   var enter=document.getElementById('enter'); if(!enter) return;
   var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -409,8 +736,8 @@
   // Reset it back to a plain, navigable landing page when that happens.
   addEventListener('pageshow', function(e){
     if(!e.persisted) return;
-    enter.classList.remove('show','lab','hire','gsap');
-    enter.querySelectorAll('.ember,.spark').forEach(function(el){ el.remove(); });
+    enter.classList.remove('show','hire');
+    enter.querySelectorAll('.spark').forEach(function(el){ el.remove(); });
     going=false;
   });
 
@@ -420,57 +747,42 @@
       e.preventDefault();
       if(going){ location.href=href; return; }   // second tap skips the cutscene
       going=true;
-      var isLab=d.classList.contains('lab');
-      enter.classList.add(isLab?'lab':'hire','show');
+      enter.classList.add('hire','show');
       enter.addEventListener('click',function(){ location.href=href; },{once:true});
 
-      if(isLab){                                     // spark stream so the campfire actually mesmerizes
-        var sc=enter.querySelector('.scene-lab');
-        for(var k=0;k<16;k++){
-          var em=document.createElement('span'); em.className='ember';
-          em.style.left=(45+Math.random()*10)+'%';
-          em.style.setProperty('--ex',((Math.random()-.5)*80)+'px');
-          em.style.setProperty('--er',(70+Math.random()*150)+'px');
-          em.style.animationDelay=(Math.random()*1.1)+'s';
-          em.style.animationDuration=(1+Math.random()*.9)+'s';
-          sc.appendChild(em);
+      // wandering path: walk a few short steps, nudging the direction a little
+      // each time (jitter), instead of a straight line to a random point -
+      // reads as organic instead of noisy. The final step is pulled back
+      // toward the originally-aimed spot so the burst still lands with intent.
+      function wander(ang0,dist){
+        var steps=3, curAng=ang0, x=0,y=0, pts=[];
+        for(var i=1;i<=steps;i++){
+          curAng += (Math.random()-.5)*.9;
+          var stepLen=dist/steps;
+          x += Math.sin(curAng)*stepLen;
+          y += -Math.abs(Math.cos(curAng))*stepLen;
+          pts.push({x:x,y:y});
         }
-      } else {                                        // spark shower timed to the hammer's impact
-        var scH=enter.querySelector('.scene-hire');
-        for(var j=0;j<18;j++){
-          var sp=document.createElement('span'); sp.className='spark';
-          var ang=(Math.random()*130-65)*Math.PI/180;
-          var dist=35+Math.random()*75;
-          sp.style.left=(58+Math.random()*5)+'%';
-          sp.style.setProperty('--sx',(Math.sin(ang)*dist)+'px');
-          sp.style.setProperty('--sy',(-Math.abs(Math.cos(ang))*dist-15)+'px');
-          sp.style.animationDelay=(0.95+Math.random()*.3)+'s';   // syncs with the hammer strike
-          sp.style.animationDuration=(.45+Math.random()*.4)+'s';
-          scH.appendChild(sp);
-        }
+        var last=pts[steps-1], tx=Math.sin(ang0)*dist, ty=-Math.abs(Math.cos(ang0))*dist-15;
+        last.x=last.x*.5+tx*.5; last.y=last.y*.5+ty*.5;
+        return pts;
       }
 
-      var G=window.gsap;
-      if(reduce || !G){                              // reduced-motion or no GSAP -> CSS cutscene / quick fade
-        setTimeout(function(){ location.href=href; }, reduce?350:1650);
-        return;
+      var scH=enter.querySelector('.scene-hire');           // spark shower timed to the hammer strike
+      for(var j=0;j<10;j++){
+        var sp=document.createElement('span'); sp.className='spark';
+        var ang=(Math.random()*130-65)*Math.PI/180;
+        var path=wander(ang,35+Math.random()*75);
+        sp.style.left=(58+Math.random()*5)+'%';
+        sp.style.setProperty('--s1x',path[0].x+'px'); sp.style.setProperty('--s1y',path[0].y+'px');
+        sp.style.setProperty('--s2x',path[1].x+'px'); sp.style.setProperty('--s2y',path[1].y+'px');
+        sp.style.setProperty('--s3x',path[2].x+'px'); sp.style.setProperty('--s3y',path[2].y+'px');
+        sp.style.animationDelay=(.48+Math.random()*.1)+'s';   // syncs with the hammer strike
+        sp.style.animationDuration=(.4+Math.random()*.3)+'s';
+        scH.appendChild(sp);
       }
 
-      // ---- GSAP overhaul ----
-      enter.classList.add('gsap');                   // stand down the CSS keyframes
-      var dpL=enter.querySelector('.dp.left'), dpR=enter.querySelector('.dp.right');
-      var scene=enter.querySelector(isLab?'.scene-lab':'.scene-hire');
-      var focus=scene.querySelector(isLab?'.fire':'.fg');
-      var label=scene.querySelector('.enter-label');
-      G.set([dpL,dpR],{xPercent:0});
-      G.set(focus,{xPercent:-50, scale:.14, transformOrigin:'50% 100%'});
-      G.set(label,{opacity:0, y:14});
-      G.timeline({delay:.16, onComplete:function(){ location.href=href; }})
-        .to(dpL,  {xPercent:-104, duration:1.05, ease:'power3.inOut'}, 0)      // doors part, smooth accel/decel
-        .to(dpR,  {xPercent: 104, duration:1.05, ease:'power3.inOut'}, 0)
-        .to(focus,{scale:1,       duration:1.25, ease:'power2.out'},  .18)     // firelight rises toward you
-        .to(label,{opacity:1, y:0, duration:.55, ease:'back.out(1.8)'}, .72)   // label pops in with a little overshoot
-        .to({},   {duration:.28});                                            // brief hold, then navigate
+      setTimeout(function(){ location.href=href; }, reduce?350:850);
     });
   });
 })();
