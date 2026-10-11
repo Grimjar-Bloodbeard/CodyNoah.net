@@ -54,6 +54,7 @@
         '<stop offset="100%" stop-color="#4ff0e0" stop-opacity="0"/>' +
       '</radialGradient></defs>' +
       '<circle class="k-glow" cx="36" cy="44" r="33" fill="url(#kglow)"/>' +
+      '<g class="k-body">' +
       '<g class="k-wing kl"><path d="M27 38 Q7 27 8 50 Q18 47 27 52 Z" fill="#8a63ff" stroke="#4a2f9e" stroke-width="1.6"/></g>' +
       '<g class="k-wing kr"><path d="M45 38 Q65 27 64 50 Q54 47 45 52 Z" fill="#8a63ff" stroke="#4a2f9e" stroke-width="1.6"/></g>' +
       '<path d="M40 68 Q52 74 48 61" fill="none" stroke="#2c7d69" stroke-width="5" stroke-linecap="round"/>' +
@@ -67,15 +68,117 @@
       '<path d="M17 33 L11 30 L17 27 Z" fill="#3aa88f"/><path d="M55 33 L61 30 L55 27 Z" fill="#3aa88f"/>' +
       '<ellipse cx="36" cy="40" rx="10.5" ry="6.5" fill="#cbf1e7"/>' +
       '<circle cx="32.5" cy="40" r="1" fill="#2c7d69"/><circle cx="39.5" cy="40" r="1" fill="#2c7d69"/>' +
-      '<g class="k-eye"><ellipse cx="29" cy="31" rx="5.4" ry="6.4" fill="#fff"/><ellipse class="k-pupil" cx="30" cy="32" rx="2.5" ry="3.3" fill="#141b28"/><circle cx="28.6" cy="29.6" r=".9" fill="#fff"/></g>' +
-      '<g class="k-eye"><ellipse cx="43" cy="31" rx="5.4" ry="6.4" fill="#fff"/><ellipse class="k-pupil" cx="44" cy="32" rx="2.5" ry="3.3" fill="#141b28"/><circle cx="42.6" cy="29.6" r=".9" fill="#fff"/></g>' +
+      // pupil + highlight are wrapped in .k-look so they move together when he looks around
+      '<g class="k-eye"><ellipse cx="29" cy="31" rx="5.4" ry="6.4" fill="#fff"/><g class="k-look"><ellipse class="k-pupil" cx="30" cy="32" rx="2.5" ry="3.3" fill="#141b28"/><circle cx="28.6" cy="29.6" r=".9" fill="#fff"/></g></g>' +
+      '<g class="k-eye"><ellipse cx="43" cy="31" rx="5.4" ry="6.4" fill="#fff"/><g class="k-look"><ellipse class="k-pupil" cx="44" cy="32" rx="2.5" ry="3.3" fill="#141b28"/><circle cx="42.6" cy="29.6" r=".9" fill="#fff"/></g></g>' +
+      '</g>' +
       '<g class="k-spark s1"><path d="M62 16 l1.4 3 3 1.4 -3 1.4 -1.4 3 -1.4 -3 -3 -1.4 3 -1.4 z" fill="#f6d785"/></g>' +
       '<g class="k-spark s2"><path d="M9 22 l1 2.2 2.2 1 -2.2 1 -1 2.2 -1 -2.2 -2.2 -1 2.2 -1 z" fill="#5fe0d6"/></g>' +
     '</svg>';
 
+  /* Meepo's moods - one small state machine (idle / curious / happy / working).
+     setState() just records the state + a timestamp; a single rAF loop reads it
+     and eases every value toward that state's target, so nothing ever snaps.
+     Everything is written as SVG transform attributes (no layout, no repaint
+     of the page around him). Try it from devtools: Meepo.setState('happy') */
+  function makeKobold(svg) {
+    var body = svg.querySelector('.k-body');
+    var eyes = svg.querySelectorAll('.k-eye');
+    var looks = svg.querySelectorAll('.k-look');
+    var EYE_C = [[29, 31], [43, 31]];   // eye centers, in SVG units
+    var PUPIL_X = 2.4, PUPIL_Y = 2.6;   // how far a pupil may travel from the eye center (keeps it inside the white)
+    var REST = [1, 1];                  // the pupils' drawn resting offset - with nothing to look at he matches the original art
+    var RANGE = 300;                    // px - cursor closer than this makes him curious
+    var TARGETS = {                     // per-state targets the loop eases toward
+      idle:    { eyeX: 1,    eyeY: 1,    tilt: 0 },
+      curious: { eyeX: 1,    eyeY: 1,    tilt: 0 },
+      happy:   { eyeX: 1.15, eyeY: 1.15, tilt: 0 },
+      working: { eyeX: 1.04, eyeY: .72,  tilt: 7 }   // squint + head tilt while he "thinks"
+    };
+    var HAPPY_MS = 1000, BOUNCE_MS = 650;
+
+    var k = { state: 'idle', since: 0 };
+    var RX = REST[0] / PUPIL_X, RY = REST[1] / PUPIL_Y;   // that resting gaze, in the same -1..1 units as cursor looks
+    var cur = { eyeX: 1, eyeY: 1, tilt: 0, lx: RX, ly: RY };
+    var ptr = null, lastT = 0, nextBlink = 0, blinkAt = -1;
+
+    k.setState = function (s) {
+      if (!TARGETS[s] || s === k.state) return;
+      k.state = s; k.since = performance.now();
+    };
+
+    addEventListener('pointermove', function (e) { ptr = [e.clientX, e.clientY]; }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', function () { ptr = null; });
+
+    function ease(from, to, rate, dt) { return from + (to - from) * (1 - Math.exp(-rate * dt)); }
+
+    function frame(t) {
+      var dt = Math.min((t - (lastT || t)) / 1000, .05); lastT = t;
+      var age = t - k.since;
+
+      // where is the cursor relative to his eyes? (one rect read per frame, only when there is a pointer)
+      var lx = RX, ly = RY, near = false;
+      if (ptr) {
+        var r = svg.getBoundingClientRect();
+        var ex = r.left + r.width * .5, ey = r.top + r.height * (31 / 84);
+        var dx = ptr[0] - ex, dy = ptr[1] - ey, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < RANGE && d > 0) {
+          near = true;
+          var reach = Math.min(1, d / 120);          // look harder the further away (within range)
+          lx = dx / d * reach; ly = dy / d * reach;   // unit-circle direction, scaled
+        }
+      }
+
+      // idle <-> curious is decided by distance; happy + working expire on their own
+      if (k.state === 'happy' && age > HAPPY_MS) k.setState(near ? 'curious' : 'idle');
+      if (k.state === 'idle' && near) k.setState('curious');
+      if (k.state === 'curious' && !near) k.setState('idle');
+      if (k.state === 'working') { lx = 0; ly = .5; }   // eyes down to "read" the next fact
+
+      var tg = TARGETS[k.state];
+      cur.eyeX = ease(cur.eyeX, tg.eyeX, 12, dt);
+      cur.eyeY = ease(cur.eyeY, tg.eyeY, 12, dt);
+      cur.tilt = ease(cur.tilt, tg.tilt, 10, dt);
+      cur.lx = ease(cur.lx, lx, 14, dt);
+      cur.ly = ease(cur.ly, ly, 14, dt);
+
+      // blink every 3-5s (never mid-squint or mid-grin): a 160ms dip to 10% height
+      if (!nextBlink) nextBlink = t + 3000 + Math.random() * 2000;
+      if (blinkAt < 0 && t >= nextBlink && (k.state === 'idle' || k.state === 'curious')) blinkAt = t;
+      var blink = 1;
+      if (blinkAt >= 0) {
+        var bp = (t - blinkAt) / 160;
+        if (bp >= 1) { blinkAt = -1; nextBlink = t + 3000 + Math.random() * 2000; }
+        else blink = 1 - .9 * Math.sin(Math.PI * bp);
+      }
+
+      // body: gentle bob always; two decaying hops right after a happy poke
+      var y = Math.sin(t / 2600 * Math.PI * 2) * 1.4;
+      if (k.state === 'happy' && age < BOUNCE_MS) {
+        var p = age / BOUNCE_MS;
+        y -= 7 * Math.abs(Math.sin(p * Math.PI * 2)) * (1 - p);
+      }
+      body.setAttribute('transform', 'translate(0 ' + y.toFixed(2) + ') rotate(' + cur.tilt.toFixed(2) + ' 36 50)');
+
+      // pupils: clamp the offset to an ellipse so they can never leave the eye whites
+      var px = cur.lx * PUPIL_X, py = cur.ly * PUPIL_Y;
+      var m = (px * px) / (PUPIL_X * PUPIL_X) + (py * py) / (PUPIL_Y * PUPIL_Y);
+      if (m > 1) { m = Math.sqrt(m); px /= m; py /= m; }
+      for (var i = 0; i < 2; i++) {
+        var c = EYE_C[i];
+        eyes[i].setAttribute('transform', 'translate(' + c[0] + ' ' + c[1] + ') scale(' + cur.eyeX.toFixed(3) + ' ' + (cur.eyeY * blink).toFixed(3) + ') translate(' + -c[0] + ' ' + -c[1] + ')');
+        looks[i].setAttribute('transform', 'translate(' + (px - REST[0]).toFixed(2) + ' ' + (py - REST[1]).toFixed(2) + ')');
+      }
+      requestAnimationFrame(frame);
+    }
+    if (!reduce) requestAnimationFrame(frame);
+    return k;
+  }
+
   var meepo = document.getElementById('meepo'), bub = document.getElementById('bubble');
   if (meepo) {
     if (!meepo.querySelector('svg')) meepo.insertAdjacentHTML('afterbegin', KOBOLD_SVG);
+    var kobold = window.Meepo = makeKobold(meepo.querySelector('svg.kobold'));
     if (bub) {
       meepo.appendChild(bub); // the speech bubble now travels with Meepo
 
@@ -95,12 +198,20 @@
       try { pageTips = JSON.parse(meepo.getAttribute('data-tips')) || []; } catch (e) { pageTips = []; }
       var tips = SHARED_TIPS.concat(pageTips);
 
-      var ti = 0, hideT, retreatT;
+      var ti = 0, hideT, retreatT, swapT;
       var emerge = function () { clearTimeout(retreatT); meepo.classList.add('up'); };
       var retreat = function () { meepo.classList.remove('up'); };
       var say = function (t) {
         emerge();
-        bub.innerHTML = t; bub.classList.add('show');
+        // working: he squints and tilts while the old line fades out, then the
+        // new line lands with a happy hop. 280ms = the bubble's .2s fade + a beat.
+        kobold.setState('working');
+        bub.classList.remove('show');
+        clearTimeout(swapT);
+        swapT = setTimeout(function () {
+          bub.innerHTML = t; bub.classList.add('show');
+          kobold.setState('happy');
+        }, reduce ? 0 : 280);
         clearTimeout(hideT);
         hideT = setTimeout(function () {
           bub.classList.remove('show');
