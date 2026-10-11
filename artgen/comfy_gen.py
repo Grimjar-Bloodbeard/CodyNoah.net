@@ -12,6 +12,9 @@ Prereq: launch  C:\\ImageStudio\\ComfyUI-Zluda\\Mountain-Tech-ImageGen.bat
 Usage:
     python comfy_gen.py                 # -> Cody anime portrait (default)
     python comfy_gen.py <name> "<positive prompt>" ["<negative>"]
+
+    Size defaults to portrait 832x1216. For a wide backdrop:
+        $env:COMFY_W=1344; $env:COMFY_H=768
 """
 import json, urllib.request, urllib.parse, time, os, sys, random
 
@@ -80,6 +83,6 @@ if __name__ == "__main__":
         name = sys.argv[1]
         pos  = sys.argv[2]
         neg  = sys.argv[3] if len(sys.argv) > 3 else CODY_NEG
-        generate(name, pos, neg)
+        generate(name, pos, neg, w=int(os.environ.get("COMFY_W", 832)), h=int(os.environ.get("COMFY_H", 1216)))
     else:
         generate("cody_portrait", CODY_POS, CODY_NEG)
