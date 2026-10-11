@@ -137,7 +137,10 @@ h2.sec{font-size:clamp(1.7rem,5vw,2.6rem);margin-bottom:.4rem;
   transition:transform .55s cubic-bezier(.34,1.45,.5,1)}
 #meepo:hover,#meepo:focus-visible,#meepo.up{transform:translateY(-6%)}
 #meepo svg.kobold{width:100%;height:auto;display:block;overflow:visible}
-/* kobold sprite parts: glow pulse, wing flap, eye blink, orbiting sparkles */
+/* kobold sprite parts: glow pulse, wing flap, orbiting sparkles. Body bob, blinks,
+   pupils and moods are driven by the state machine in forge.js (SVG transform
+   attributes) - so no CSS transform may sit on .k-body/.k-eye/.k-look, or it
+   would silently override them. */
 .kobold .k-glow{transform-box:fill-box;transform-origin:center;animation:kglowp 3.2s ease-in-out infinite}
 @keyframes kglowp{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.14)}}
 .kobold .k-wing{transform-box:fill-box}
@@ -145,8 +148,6 @@ h2.sec{font-size:clamp(1.7rem,5vw,2.6rem);margin-bottom:.4rem;
 .kobold .kr{transform-origin:45px 46px;animation:kflapR .5s ease-in-out infinite}
 @keyframes kflapL{0%,100%{transform:rotate(4deg)}50%{transform:rotate(22deg)}}
 @keyframes kflapR{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(-22deg)}}
-.kobold .k-eye{transform-box:fill-box;transform-origin:center;animation:kblink 5.5s infinite}
-@keyframes kblink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.12)}}
 .kobold .k-spark{transform-box:fill-box;transform-origin:center;animation:ktwk 2.4s ease-in-out infinite}
 .kobold .s2{animation-delay:1.2s}
 @keyframes ktwk{0%,100%{opacity:.25;transform:scale(.5) rotate(0)}50%{opacity:1;transform:scale(1) rotate(120deg)}}
