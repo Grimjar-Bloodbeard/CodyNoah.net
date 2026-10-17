@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrimForge Creations · hearth reveal test</title>
+<!-- TEST PAGE (2026-10-12): the first state reveal, built standalone before it goes in the room
+     (Animation Standards, System 3 rule 4). Unlisted on purpose: no links point here, not in
+     the sitemap, and noindex below. -->
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#070a12">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../images/forge/forge-keep.webp?v=2">
+<style>
+/* ===== One object, two states. =====
+   Resting: the fire is banked. Coals glow, the wall is cold, nothing is asked of you.
+   Revealed: the fire catches, light climbs the stone, and the three steps of a project
+   are written in that light. The fire is the button and the fire is the answer.
+
+   Same picture as the room (1344x768, ratio 1.75), pushed in 1.6x on the hearth.
+   Everything glued to the art is placed in % of the picture, so these numbers carry
+   straight over to the room page.
+
+   Simplification plan, decided up front:
+   - phone / coarse pointer: 5 sparks not 9, no blend modes, no blur on the text
+   - reduced motion: the two states swap with a short fade. No flare, no sparks, no loops. */
+:root{
+  --ember:#ff8a3c; --gold:#f6d785; --teal:#3fe0d0; --ink:#070a12; --text:#f3ead9; --muted:#c9bda6;
+  --W:calc(max(100vw,175dvh) * 1.6);
+  --H:calc(var(--W) / 1.75);
+  --ease-catch:cubic-bezier(.16,1.28,.3,1);      /* fire catching: fast up, a little past, settle */
+  --ease-bank:cubic-bezier(.55,0,.75,.25);       /* fire dying back: reluctant, then gone */
+  --ease-light:cubic-bezier(.2,.7,.2,1);         /* light reaching something */
+  --ease-breathe:cubic-bezier(.45,.05,.55,.95);  /* the quiet loops */
+  --ease-rise:cubic-bezier(.1,.6,.3,1);          /* sparks: quick off the fire, slowing as they cool */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--ink);color:var(--text);font-family:'Rajdhani',system-ui,sans-serif;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+
+.scene{position:fixed;inset:0;overflow:hidden}
+/* the fire sits at 50.75% across; the picture is slid so it lands mid-screen, a little low,
+   which leaves the stone above it free for the words */
+.pic{position:absolute;width:var(--W);height:var(--H);
+  left:calc(50vw - var(--W) * .5075);top:calc(50dvh - var(--H) * .44);
+  background:url(../images/forge/forge-keep.webp?v=2) center/100% 100% no-repeat}
+
+/* resting: the room is colder and darker, because the fire is not giving much */
+.dim{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 30% 38% at 50.75% 52%,rgba(6,8,16,.66),rgba(6,8,16,.54) 60%,rgba(6,8,16,.44));
+  transition:opacity 900ms var(--ease-bank)}
+.lit .dim{opacity:0;transition:opacity 700ms var(--ease-light) 120ms}
+
+/* revealed: firelight on the wall */
+.wash{position:absolute;left:50.75%;top:50%;width:46%;aspect-ratio:1;border-radius:50%;translate:-50% -50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,172,84,.44),rgba(255,122,42,.15) 42%,transparent 68%);mix-blend-mode:screen;
+  opacity:0;scale:.5;transition:opacity 800ms var(--ease-bank),scale 800ms var(--ease-bank)}
+.lit .wash{opacity:1;scale:1;transition:opacity 620ms var(--ease-light) 100ms,scale 900ms var(--ease-catch) 100ms;
+  animation:waver 2.7s var(--ease-breathe) 1s infinite}
+@keyframes waver{0%,100%{opacity:1}24%{opacity:.84}47%{opacity:.97}71%{opacity:.8}}
+
+/* the hearth itself: the whole firebox is the button */
+.hearth{position:absolute;left:46.6%;top:40.8%;width:9%;height:18.8%;border-radius:6px 6px 2px 2px;-webkit-tap-highlight-color:transparent}
+.hearth:focus-visible{outline:3px solid var(--teal);outline-offset:6px}
+/* a dark cover over the painted flame, so at rest the firebox reads as banked */
+.bank{position:absolute;inset:3%;pointer-events:none;
+  background:radial-gradient(ellipse 58% 52% at 50% 56%,rgba(10,5,3,.97),rgba(10,5,3,.9) 58%,transparent 100%);
+  transition:opacity 900ms var(--ease-bank)}
+.lit .bank{opacity:0;transition:opacity 380ms var(--ease-light)}
+/* coals: the only thing moving at rest, slow and small */
+.coals{position:absolute;left:47.8%;top:71%;width:40%;height:9%;translate:-50% -50%;pointer-events:none;
+  background:radial-gradient(ellipse 22% 60% at 22% 55%,rgba(255,112,36,.95),transparent 100%),
+             radial-gradient(ellipse 26% 70% at 52% 45%,rgba(255,150,54,.95),transparent 100%),
+             radial-gradient(ellipse 20% 55% at 80% 60%,rgba(232,74,26,.9),transparent 100%);
+  filter:drop-shadow(0 0 6px rgba(255,110,40,.7));animation:coal 4.2s var(--ease-breathe) infinite}
+@keyframes coal{0%,100%{opacity:.5}38%{opacity:.95}62%{opacity:.68}}
+.lit .coals{opacity:1;animation:none}
+
+/* the flame: three tongues that share one base. Flat at rest, standing when lit. */
+.flame{position:absolute;left:47.8%;top:71%;width:42%;height:52%;translate:-50% -100%;pointer-events:none;mix-blend-mode:screen;filter:blur(2.5px);
+  transform-origin:50% 100%;transform:scale(.3,0);opacity:0;
+  transition:transform 800ms var(--ease-bank),opacity 600ms var(--ease-bank)}
+.flame i{position:absolute;left:50%;bottom:0;width:62%;height:100%;border-radius:50% 50% 42% 42%/86% 86% 14% 14%;transform-origin:50% 100%;
+  background:radial-gradient(ellipse 50% 60% at 50% 88%,rgba(255,240,196,.95),rgba(255,160,50,.7) 38%,rgba(255,84,20,.22) 66%,rgba(255,84,20,0) 88%)}
+.flame i:nth-child(1){margin-left:-31%;animation:tongue .92s var(--ease-breathe) infinite}
+.flame i:nth-child(2){margin-left:-58%;width:44%;height:70%;animation:tongue 1.27s var(--ease-breathe) -.4s infinite}
+.flame i:nth-child(3){margin-left:-4%;width:44%;height:62%;animation:tongue 1.06s var(--ease-breathe) -.7s infinite}
+@keyframes tongue{0%,100%{transform:scale(1,1) skewX(0)}30%{transform:scale(.86,1.2) skewX(5deg)}55%{transform:scale(1.08,.85) skewX(-6deg)}80%{transform:scale(.92,1.11) skewX(3deg)}}
+.lit .flame{opacity:1;transform:none;transition:none;animation:catch 950ms var(--ease-catch) both}
+@keyframes catch{0%{transform:scale(.3,.05);opacity:.4}38%{transform:scale(1.2,1.42);opacity:1}100%{transform:none;opacity:1}}
+
+/* sparks thrown once when it catches. Each one gets its own direction from --dx / --dy. */
+.sparks{position:absolute;left:47.8%;top:66%;width:0;height:0;pointer-events:none}
+.sparks i{position:absolute;width:4px;height:4px;margin:-2px;border-radius:50%;background:#ffd58a;box-shadow:0 0 6px 1px rgba(255,150,60,.9);opacity:0}
+.lit .sparks i{animation:spark var(--t,1100ms) var(--ease-rise) var(--w,0ms) both}
+@keyframes spark{0%{translate:0 0;opacity:0}12%{opacity:1}100%{translate:var(--dx) var(--dy);opacity:0}}
+
+/* hover is only a hint that the fire will answer: the coals wake and a low flame stands up.
+   Only on devices that really hover, so a phone never gets a stuck half-state. */
+@media(hover:hover){
+  .scene:not(.lit) .hearth:hover .flame,.scene:not(.lit) .hearth:focus-visible .flame{transform:scale(.62,.34);opacity:.9;
+    transition:transform 420ms var(--ease-catch),opacity 260ms var(--ease-light)}
+  .scene:not(.lit) .hearth:hover .coals,.scene:not(.lit) .hearth:focus-visible .coals{opacity:1;animation:none}
+  .scene:not(.lit) .hearth:hover .bank{opacity:.7;transition:opacity 300ms var(--ease-light)}
+}
+
+/* ---------- the words ---------- */
+/* resting: one plain plate under the fire. It says what opens and one true fact. */
+.plate{position:absolute;left:50%;top:calc(50dvh + var(--H) * .154 + 12px);translate:-50% 0;text-align:left;white-space:nowrap;cursor:pointer;
+  line-height:1.15;padding:.42rem .85rem .46rem;background:rgba(6,9,16,.9);border:1px solid rgba(255,138,60,.5);border-left:3px solid var(--ember);
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%);
+  transition:opacity 420ms var(--ease-light) 500ms,translate 420ms var(--ease-light) 500ms}
+.plate b{display:block;font-weight:700;font-size:1.12rem;letter-spacing:.04em}
+.plate small{display:block;font-weight:500;font-size:.94rem;color:var(--gold)}
+.plate em{display:block;font-style:normal;font-size:.84rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+.lit .plate{opacity:0;translate:-50% 8px;pointer-events:none;transition:opacity 180ms var(--ease-bank),translate 180ms var(--ease-bank)}
+
+/* revealed: the three steps, written on the stone above the fire, lit from below in order */
+.steps{position:absolute;left:50%;bottom:calc(50dvh + var(--H) * .03 + 14px);translate:-50% 0;width:min(430px,calc(100vw - 28px));
+  list-style:none;display:grid;gap:.6rem;visibility:hidden;transition:visibility 0s 500ms}
+.lit .steps{visibility:visible;transition:none}
+.steps::before{content:'';position:absolute;inset:-28px -34px;z-index:-1;border-radius:40%;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse at 50% 55%,rgba(8,5,3,.58),rgba(8,5,3,.32) 55%,transparent 80%);transition:opacity 400ms var(--ease-bank)}
+.lit .steps::before{opacity:1;transition:opacity 600ms var(--ease-light) 200ms}
+.steps li{display:grid;grid-template-columns:2rem 1fr;gap:0 .55rem;align-items:baseline;
+  opacity:0;translate:0 12px;filter:blur(5px);transition:opacity 260ms var(--ease-bank),translate 260ms var(--ease-bank),filter 260ms var(--ease-bank)}
+/* bottom step first: the light reaches the lowest line before the highest */
+.lit .steps li{opacity:1;translate:0 0;filter:none;
+  transition:opacity 520ms var(--ease-light) var(--at),translate 620ms var(--ease-light) var(--at),filter 520ms var(--ease-light) var(--at)}
+.steps li:nth-child(3){--at:380ms}.steps li:nth-child(2){--at:540ms}.steps li:nth-child(1){--at:700ms}
+.steps .n{font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;color:var(--ember);text-shadow:0 0 14px rgba(255,138,60,.75);text-align:center}
+.steps b{font-size:1.12rem;font-weight:700;color:var(--gold);letter-spacing:.02em;text-shadow:0 1px 10px #000,0 0 18px rgba(255,150,60,.35)}
+.steps span.d{grid-column:2;font-size:1rem;line-height:1.3;color:var(--text);text-shadow:0 1px 8px #000}
+
+/* revealed: where to go next, and how to put the fire back */
+.after{position:absolute;left:50%;top:calc(50dvh + var(--H) * .154 + 12px);translate:-50% 8px;display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;justify-content:center;
+  width:min(430px,calc(100vw - 28px));opacity:0;visibility:hidden;transition:opacity 200ms var(--ease-bank),translate 200ms var(--ease-bank),visibility 0s 200ms}
+.lit .after{opacity:1;translate:-50% 0;visibility:visible;transition:opacity 420ms var(--ease-light) 900ms,translate 420ms var(--ease-light) 900ms}
+.after .go{font-weight:700;font-size:1.05rem;text-decoration:none;color:#1a0e04;background:linear-gradient(180deg,#ffd58a,#ff9a3c);padding:.7rem 1.1rem;border-radius:2px;
+  clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+.after .back{font-size:1rem;color:var(--muted);text-decoration:underline;text-underline-offset:3px;min-height:44px;padding:0 .5rem}
+.after .go:focus-visible,.after .back:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+
+.tag{position:absolute;left:12px;top:10px;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  background:rgba(6,9,16,.7);padding:.25rem .55rem}
+
+.lit .tag{opacity:0}
+/* short screens: the words sit tighter so all three steps clear the top edge */
+@media(max-height:700px){
+  .steps{gap:.3rem;bottom:calc(50dvh + var(--H) * .03 + 6px)}
+  .steps .n{font-size:1.25rem}
+  .steps b{font-size:1rem}.steps span.d{font-size:.9rem;line-height:1.2}
+}
+/* phone plan: fewer sparks, no blend, no text blur */
+@media(max-width:560px),(pointer:coarse){
+  .wash,.flame{mix-blend-mode:normal}
+  .flame{filter:none}
+  .sparks i:nth-child(n+6){display:none}
+  .steps li{filter:none}
+  .steps b{font-size:1.06rem}.steps span.d{font-size:.96rem}
+}
+@media(max-width:560px) and (max-height:700px){.steps b{font-size:1rem}.steps span.d{font-size:.9rem}}
+/* reduced motion: the same two states, swapped with a short fade and nothing else */
+@media(prefers-reduced-motion:reduce){
+  .coals,.flame i,.lit .wash,.lit .flame,.lit .sparks i{animation:none}
+  .sparks{display:none}
+  .dim,.wash,.bank,.flame,.plate,.after,.steps li,.steps::before,
+  .lit .dim,.lit .wash,.lit .bank,.lit .flame,.lit .plate,.lit .after,.lit .steps li,.lit .steps::before{transition:opacity 200ms linear}
+  .wash,.lit .wash{scale:1}
+  .steps li,.lit .steps li{translate:none;filter:none}
+  .plate,.lit .plate{translate:-50% 0}.after,.lit .after{translate:-50% 0}
+  .scene:not(.lit) .hearth:hover .flame{transform:scale(.3,0);opacity:0}
+}
+</style>
+</head>
+<body>
+
+<div class="scene" id="scene">
+  <div class="pic">
+    <span class="dim"></span>
+    <span class="wash"></span>
+    <button class="hearth" id="hearth" aria-expanded="false" aria-controls="steps"
+            aria-label="How it works: 3 steps, price in writing first">
+      <span class="bank"></span>
+      <span class="coals"></span>
+      <span class="flame"><i></i><i></i><i></i></span>
+      <span class="sparks" aria-hidden="true">
+        <i style="--dx:-34px;--dy:-120px;--t:1050ms"></i>
+        <i style="--dx:22px;--dy:-150px;--t:1250ms;--w:60ms"></i>
+        <i style="--dx:-8px;--dy:-176px;--t:1400ms;--w:120ms"></i>
+        <i style="--dx:46px;--dy:-98px;--t:950ms;--w:40ms"></i>
+        <i style="--dx:-52px;--dy:-84px;--t:900ms;--w:150ms"></i>
+        <i style="--dx:12px;--dy:-112px;--t:1100ms;--w:220ms"></i>
+        <i style="--dx:-24px;--dy:-158px;--t:1300ms;--w:260ms"></i>
+        <i style="--dx:36px;--dy:-134px;--t:1200ms;--w:320ms"></i>
+        <i style="--dx:-4px;--dy:-92px;--t:1000ms;--w:380ms"></i>
+      </span>
+    </button>
+  </div>
+
+  <!-- the plate is the fire's name tag, not a second control: it is hidden from screen readers
+       and tapping it runs the same handler as the fire -->
+  <div class="plate" id="plate" aria-hidden="true">
+    <b>How it works</b><small>3 steps, price in writing first</small><em>Tap the fire</em>
+  </div>
+
+  <!-- Wording copied from pages/hire.html (same as the room's "How it works" sign). If that page changes, change it here too. -->
+  <ol class="steps" id="steps" aria-live="polite">
+    <li><span class="n">1</span><b>You tell me what you're after</b><span class="d">Plain English is fine, and "not sure yet" is a fine answer.</span></li>
+    <li><span class="n">2</span><b>I send honest recommendations and a real price</b><span class="d">For custom work, a written scope before a dime moves.</span></li>
+    <li><span class="n">3</span><b>I build it, launch it, and hand you the keys</b><span class="d">You talk to me the whole way. No account manager, no phone tree.</span></li>
+  </ol>
+
+  <div class="after" id="after">
+    <a class="go" href="hire-keep-test.html#how-i-work">Read how I actually work →</a>
+    <button class="back" id="back">Bank the fire</button>
+  </div>
+
+  <span class="tag">Reveal test · the hearth</span>
+</div>
+
+<script>
+/* One switch: the scene is either banked or lit. Everything visual hangs off the "lit" class in the CSS. */
+(function(){
+  var scene = document.getElementById('scene'), hearth = document.getElementById('hearth');
+  function set(lit){
+    scene.classList.toggle('lit', lit);
+    hearth.setAttribute('aria-expanded', lit ? 'true' : 'false');
+  }
+  function toggle(){ set(!scene.classList.contains('lit')); }
+  hearth.addEventListener('click', toggle);
+  document.getElementById('plate').addEventListener('click', toggle);
+  document.getElementById('back').addEventListener('click', function(){ set(false); hearth.focus(); });
+  addEventListener('keydown', function(e){ if (e.key === 'Escape' && scene.classList.contains('lit')) { set(false); hearth.focus(); } });
+  // ?lit=1 opens it lit, handy while tuning
+  if (/(?:^|[?&])lit=/.test(location.search)) set(true);
+})();
+</script>
+</body>
+</html>

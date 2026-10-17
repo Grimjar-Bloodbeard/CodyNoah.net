@@ -1,0 +1,41 @@
+/* ============================================================
+   keep-theme.css  -  TEST (2026-10-12)
+   Carries the look of the new entrance (the stone keep) onto an
+   inner page, so walking from the room to a page feels like one
+   place. Loaded LAST (after forge.css and the page's own style block) and only overrides them: swap the
+   colors, swap the backdrop, square off the cards. No page markup
+   changes. Remove the <link> and the page is back to how it was.
+   ============================================================ */
+:root{
+  --void:#0b0705; --void2:#140c07;                     /* warm near-black, not navy */
+  --teal:#3fe0d0; --rune:#5fd8cc;                      /* teal stays: it is the one "tech" color */
+  --violet:#ff9a3c;                                    /* violet retired, its jobs go to ember amber */
+  --text:#f3ead9; --muted:#c2b49b;                     /* parchment, not blue-grey */
+  --glass:rgba(16,10,6,.86); --line:rgba(246,215,133,.20);
+}
+body{background:#0b0705}
+
+/* backdrop: the keep itself, blurred and dimmed so text stays easy to read */
+.bg{background:#0b0705 url(../images/forge/forge-keep-soft.webp) center/cover no-repeat}
+.bg::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(9,6,3,.78) 0,rgba(9,6,3,.90) 55%,rgba(9,6,3,.96) 100%)}
+.bg .aurora,.bg .grid,.bg .beam,#runes{display:none}
+
+/* cards become solid plates: square corners, an ember line along the top, no frosted blur */
+.glass{border-radius:2px;backdrop-filter:none;-webkit-backdrop-filter:none;border-top:2px solid rgba(255,138,60,.75)}
+.glowb::before{display:none}
+.price,.skill,.work-card,.repbox,.repair li,.formsplit .proof,.about .frame{border-radius:2px}
+.price.custom{border-color:var(--line);border-top-color:rgba(255,138,60,.75)}
+.skill .ic{border-radius:2px}
+.prev.summit,.prev.senior,.prev.mirror{background:radial-gradient(120% 120% at 50% 0%,#3a2210,#120b06)}
+.pill.tool{color:#1a0e04;background:var(--gold2);border-color:var(--gold2)}
+.hon{border-left-color:rgba(255,138,60,.7)}
+
+/* buttons match the room's "Come in" plate */
+.btn{border-radius:2px;clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+.btn.ghost{clip-path:none}                               /* an outline button would lose its corners to the cut */
+.btn.violet{background:linear-gradient(180deg,#ffd58a,#ff9a3c);color:#1a0e04;box-shadow:0 6px 22px rgba(255,138,60,.34)}
+.reqform input,.reqform select,.reqform textarea,.poll-btns button{border-radius:2px;background:rgba(9,6,3,.7)}
+.reqform option{background:#140c07}
+
+.nav{background:rgba(11,7,5,.88)}

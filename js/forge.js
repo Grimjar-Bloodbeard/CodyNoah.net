@@ -218,13 +218,93 @@
           retreatT = setTimeout(retreat, 500); // slip back to peeking once he's done talking
         }, 6500);
       };
-      var sayNext = function () { say(tips[ti % tips.length]); ti++; };
+      var sayNext = function () { if (touring) return; say(tips[ti % tips.length]); ti++; };
 
-      meepo.addEventListener('click', sayNext);   // tap / click = give me a hint
+      /* Guided tour - a page opts in with data-tour='[{"sel":"#about","say":"..."}]'
+         on #meepo. Meepo stays up, scrolls each stop into view, rings it, and the
+         bubble grows End / Back / Next buttons. Nothing starts on its own: the
+         visitor taps "Show me around". Esc or "End tour" stops it at any point. */
+      var tour = [];
+      try { tour = JSON.parse(meepo.getAttribute('data-tour')) || []; } catch (e) { tour = []; }
+      var touring = false, si = 0, spot = null, tbtn = null;
+      var TOUR_KEY = 'gf-tour:' + location.pathname, tourSeen = false;
+      try { tourSeen = !!localStorage.getItem(TOUR_KEY); } catch (e) {}
+
+      var clearSpot = function () { if (spot) spot.classList.remove('tour-spot'); spot = null; };
+      var showStop = function () {
+        var st = tour[si], el = document.querySelector(st.sel);
+        clearSpot();
+        if (el) {
+          spot = el; el.classList.add('tour-spot');
+          el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        }
+        kobold.setState('working');               // he "reads ahead" while the page scrolls
+        bub.classList.remove('show');
+        clearTimeout(swapT);
+        swapT = setTimeout(function () {
+          bub.innerHTML = '<span class="t-say">' + st.say + '</span>' +
+            '<span class="t-row"><span class="t-count">' + (si + 1) + ' of ' + tour.length + '</span>' +
+            '<button type="button" data-t="end">End tour</button>' +
+            (si ? '<button type="button" data-t="back">Back</button>' : '') +
+            '<button type="button" class="t-next" data-t="next">' + (si === tour.length - 1 ? 'Done' : 'Next') + '</button></span>';
+          bub.classList.add('show');
+          kobold.setState('happy');
+          var nb = bub.querySelector('.t-next');
+          if (nb) nb.focus({ preventScroll: true });
+        }, reduce ? 0 : 420);
+      };
+      var endTour = function () {
+        touring = false; clearSpot();
+        clearTimeout(swapT); kobold.setState('idle');   // "working" never expires on its own
+        bub.classList.remove('show', 'tour');
+        meepo.classList.remove('touring');
+        if (tbtn) tbtn.hidden = false;
+        tourSeen = true;
+        try { localStorage.setItem(TOUR_KEY, '1'); } catch (e) {}
+        retreatT = setTimeout(retreat, 500);
+      };
+      var startTour = function () {
+        touring = true; si = 0;
+        clearTimeout(hideT); emerge();
+        meepo.classList.add('touring'); bub.classList.add('tour');
+        tbtn.hidden = true;
+        showStop();
+      };
+      var stepTour = function (d) {
+        si += d;
+        if (si >= tour.length) { endTour(); return; }
+        if (si < 0) si = 0;
+        showStop();
+      };
+      if (tour.length) {
+        tbtn = document.createElement('button');
+        tbtn.className = 'tourbtn'; tbtn.type = 'button';
+        tbtn.innerHTML = '<span aria-hidden="true">🧭</span> Show me around';
+        tbtn.setAttribute('data-tip', 'Meepo walks you through this page, ' + tour.length + ' quick stops');
+        document.body.appendChild(tbtn);
+        tbtn.addEventListener('click', startTour);
+        bub.setAttribute('aria-live', 'polite');
+        bub.addEventListener('click', function (e) {
+          if (!touring) return;
+          e.stopPropagation();                    // don't let it count as a poke on Meepo
+          var b = e.target.closest('button'); if (!b) return;
+          var a = b.getAttribute('data-t');
+          if (a === 'end') endTour(); else stepTour(a === 'back' ? -1 : 1);
+        });
+        addEventListener('keydown', function (e) { if (touring && e.key === 'Escape') endTour(); });
+      }
+
+      // tap / click = give me a hint (or, mid-tour, the next stop)
+      meepo.addEventListener('click', function () { if (touring) stepTour(1); else sayNext(); });
       // hover just pops him out of hiding (pure CSS :hover) so you know he's there
 
       if (!reduce) {
-        setTimeout(sayNext, 4000);              // one friendly hello so folks know he's a guide
+        // one friendly hello so folks know he's a guide - on a tour page, a first-time visitor gets the offer
+        setTimeout(function () {
+          if (touring) return;
+          if (tour.length && !tourSeen) say("Oi! I'm <b>Meepo</b>. First time here? Tap <b>Show me around</b> and I'll give you the quick tour.");
+          else sayNext();
+        }, 4000);
         setInterval(sayNext, 8 * 60 * 1000);    // then a hint once every ~8 minutes; otherwise he hides
       }
     }

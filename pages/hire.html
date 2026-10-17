@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/forge.css?v=3">
+<link rel="stylesheet" href="../css/forge.css?v=6">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -539,10 +539,19 @@
 
 <!-- Meepo -->
 <div class="bubble" id="bubble"></div>
-<div id="meepo" title="Poke me!" data-tips='["Oi! I&apos;m <b>Meepo</b>. This is the serious side - the <b>Lab</b> is where the fun hides.","Summit&apos;s an actual store with actual customers. Go <b>click it</b>, I dare you.","Cody didn&apos;t get paid for these. Built &apos;em to learn. Respect.","Need a repair? That gold button doesn&apos;t bite.","Every line forged with power tools. AI and all. No pretending here."]'>
+<div id="meepo" title="Poke me!" data-tips='["Oi! I&apos;m <b>Meepo</b>. This is the serious side - the <b>Lab</b> is where the fun hides.","Summit&apos;s an actual store with actual customers. Go <b>click it</b>, I dare you.","Cody didn&apos;t get paid for these. Built &apos;em to learn. Respect.","Need a repair? That gold button doesn&apos;t bite.","Every line forged with power tools. AI and all. No pretending here."]'
+  data-tour='[
+    {"sel":"header.hero","say":"Quick tour, seven stops. This is the <b>business side</b>: Cody builds custom software for real shops, solo, with AI as the power tool."},
+    {"sel":"#pricing","say":"Real numbers, right out in the open. Three packages, plus an <b>anonymous poll</b> so you can tell him if a price feels off."},
+    {"sel":"#how-i-work","say":"The honest version of how it gets made. The AI writes fast, and Cody keeps it <b>clean enough to fix himself</b> when something breaks."},
+    {"sel":"#about","say":"Who&apos;s holding the hammer? A decade of <b>machining and welding</b> before any code. That&apos;s why he builds for the real world, not the demo."},
+    {"sel":"#work","say":"Not screenshots. <b>Summit</b> is a real store with real customers, and the senior center site is live too. Go click them after this."},
+    {"sel":"#case-studies","say":"Want to see the gears? These take two systems apart: <b>live inventory</b> and <b>photo-to-listing</b>."},
+    {"sel":"#start","say":"Last stop. Tell him roughly what you&apos;re after. <b>Not sure yet</b> is a fine answer. That&apos;s the tour!"}
+  ]'>
 </div>
 
-<script src="../js/forge.js?v=4"></script>
+<script src="../js/forge.js?v=5"></script>
 <script>
 /* Repairs intake -> POSTs straight to the intake backend. Falls back to a
    pre-filled mailto if the request fails, so a submission never gets lost. */

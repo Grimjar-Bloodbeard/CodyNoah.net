@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/forge.css?v=2">
+<link rel="stylesheet" href="../css/forge.css?v=6">
 <style>
 .cs{max-width:820px;margin:0 auto;padding:0 clamp(1rem,4vw,2rem) 4rem}
 .cs-head{padding:clamp(2rem,7vh,3.5rem) 0 1.4rem}
@@ -96,12 +96,12 @@
     </div>
   </header>
 
-  <section>
+  <section id="problem">
     <h2>The problem</h2>
     <p>A shop that sells in two places has one recurring nightmare: the last copy of a game sells at the register and online in the same minute. Now it's <b>oversold</b> - someone gets a refund and an apology instead of their order. The common "fix" is manual: reconcile spreadsheets, refresh pages, hope. I didn't want two systems kept in sync by hand. I wanted <b>one truth</b> that updates every screen the instant it changes.</p>
   </section>
 
-  <section>
+  <section id="how">
     <h2>How it works</h2>
     <p>A stock change anywhere becomes one event that every screen hears at once - no refresh, no polling, no drift.</p>
     <div class="pipe reveal">
@@ -117,7 +117,7 @@
     <p style="font-size:.85rem"><span style="color:var(--gold)">■</span> the database is the single truth &nbsp; <span style="color:var(--teal)">■</span> the real-time layer that makes it feel instant</p>
   </section>
 
-  <section>
+  <section id="decisions">
     <h2>The engineering decisions</h2>
     <div class="dec"><b>1. One source of truth, broadcast on change.</b><p>The database is the only thing that's ever "right." Every stock change commits there first, then fires an event. No screen ever <i>guesses</i> a count or polls for one - it gets <b>told</b>. That's what kills the drift.</p></div>
     <div class="dec"><b>2. Real-time over WebSockets, not refresh.</b><p>Socket.IO pushes the change the moment it lands, to every open screen at once - the counter, the manager's phone, a customer mid-checkout. Sub-second, no F5. That instant feel is the whole product.</p></div>
@@ -125,7 +125,7 @@
     <div class="dec"><b>4. Thin client, heavy server.</b><p>Phone or desktop, the screen just listens. The real work stays server-side, so it runs great on a cheap tablet at the counter and an old laptop in the back office alike.</p></div>
   </section>
 
-  <section>
+  <section id="proof">
     <h2>Proof of range, not a pitch</h2>
     <p>Nobody asked me to go past a single store. I rebuilt the same engine so it could run several shops on <b>hard-isolated data</b> - one shop's numbers can never leak into another's - and stress-tested it against a thousand simultaneous buyers with zero oversells. That's not a product I'm selling. That's the standard I hold my own work to.</p>
   </section>
@@ -138,7 +138,7 @@
     </div>
   </section>
 
-  <section>
+  <section id="protected">
     <h2>What's protected</h2>
     <p class="protect">This is the <b>shape</b> of the system and the thinking behind it - not the source. The event schema, the reconciliation logic, and the tenant-isolation layer stay under the hood. If you're evaluating me and want to go deeper on the engineering, I'm glad to walk through it live.</p>
     <div class="cs-actions">
@@ -149,6 +149,19 @@
   </section>
 </main>
 
-<script src="../js/forge.js?v=3"></script>
+<!-- Meepo -->
+<div class="bubble" id="bubble"></div>
+<div id="meepo" title="Poke me!" data-tips='["This one runs a <b>real store</b> right now. The button at the bottom takes you there.","Lost in the tech words? Tap <b>Show me around</b> and I&apos;ll say it plain."]'
+  data-tour='[
+    {"sel":".cs-head","say":"<b>Live Inventory</b>: one item, two places to sell it. Sell it at the counter and the website knows in the same second."},
+    {"sel":"#problem","say":"The nightmare: the last copy sells in the shop and online <b>in the same minute</b>. Somebody gets an apology where their game should be."},
+    {"sel":"#how","say":"Follow the arrows. A sale lands in <b>one database</b>, then every open screen gets told. Nobody refreshes anything."},
+    {"sel":"#decisions","say":"Number 3 matters most. If a message gets lost, a <b>checking pass</b> catches it and fixes the count before it turns into an oversold order."},
+    {"sel":"#proof","say":"Nobody asked for this part. He rebuilt it for several shops and tested it against <b>a thousand buyers at once</b>. Zero oversells."},
+    {"sel":"#protected","say":"Shape, not source. Summit is a real store, so go <b>see it live</b> with the button down here. That&apos;s the tour!"}
+  ]'>
+</div>
+
+<script src="../js/forge.js?v=5"></script>
 </body>
 </html>

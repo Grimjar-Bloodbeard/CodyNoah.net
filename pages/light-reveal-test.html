@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrimForge Creations · carried light test</title>
+<!-- TEST PAGE (2026-10-12): second standalone prototype, built on hearth-reveal-test.html.
+     Adds a second object (the window), a light you carry, and choose-on-release for touch.
+     Unlisted on purpose: no links point here, not in the sitemap, and noindex below. -->
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#070a12">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../images/forge/forge-keep.webp?v=2">
+<style>
+/* ===== The concept: you carry the light. =====
+   The room is dim. A warm light follows your mouse, or your finger while it is down.
+   Whatever the light reaches wakes up a little. Let go (or click) on a thing and it opens.
+   Let go on bare stone and nothing happens. A plain tap still works, because a tap is just
+   touch-down and let-go on the same thing.
+
+   Each thing is one object with two states:
+     hearth  banked coals  ->  fire catches, the 3 steps are written in its light
+     window  dark glass    ->  the dark parts down the middle, teal light pours in, the live sites show
+
+   The picture is 1344x768 (ratio 1.75) and everything glued to it is placed in % of the picture.
+   On a phone the picture is wider than the screen, so the room follows the light: drag your
+   thumb a little and the room moves a lot, enough that one short drag reaches either end.
+
+   Simplification plan, decided up front:
+   - phone / coarse pointer: 5 sparks not 9, no blend modes, no blur on the text
+   - reduced motion: no carried light (the room is evenly dim), states swap with a short fade,
+     the room jumps to a chosen thing with no slide. Nothing loops. */
+:root{
+  --ember:#ff8a3c; --gold:#f6d785; --teal:#3fe0d0; --ink:#070a12; --text:#f3ead9; --muted:#c9bda6;
+  --W:max(100vw,175dvh);                         /* the script overwrites this in px so both agree */
+  --H:calc(var(--W) / 1.75);
+  --ease-catch:cubic-bezier(.16,1.28,.3,1);      /* fire catching: fast up, a little past, settle */
+  --ease-bank:cubic-bezier(.55,0,.75,.25);       /* dying back: reluctant, then gone */
+  --ease-light:cubic-bezier(.2,.7,.2,1);         /* light reaching something */
+  --ease-part:cubic-bezier(.7,0,.2,1);           /* the dark parting on the window: held, then quick */
+  --ease-breathe:cubic-bezier(.45,.05,.55,.95);  /* the quiet loops */
+  --ease-rise:cubic-bezier(.1,.6,.3,1);          /* sparks: quick off the fire, slowing as they cool */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--ink);color:var(--text);font-family:'Rajdhani',system-ui,sans-serif;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+
+/* Every touch in the room belongs to the light. Pinch-zoom is off in here on purpose: two thumbs
+   working the room at once kept zooming the page by accident, which wrecked the framing.
+   overflow:clip (not just hidden) means nothing can ever scroll the room sideways either. */
+.scene{position:fixed;inset:0;overflow:hidden;overflow:clip;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+/* two layers that slide together: the art (under the dark) and the signs + hit areas (over it) */
+.layer{position:absolute;left:0;top:calc((100dvh - var(--H)) / 2);width:var(--W);height:var(--H);
+  transform:translate3d(var(--pan,0px),0,0);will-change:transform}
+.pic{background:url(../images/forge/forge-keep.webp?v=2) center/100% 100% no-repeat}
+.labels{pointer-events:none}
+
+/* ---------- the carried light ---------- */
+/* a dark sheet with a soft hole in it. It is a small square scaled up 4.2x and moved with
+   transform only, so following the pointer never repaints the screen. */
+.dark{position:absolute;left:0;top:0;width:70vmax;height:70vmax;margin:-35vmax;pointer-events:none;will-change:transform;
+  background:radial-gradient(circle closest-side,rgba(5,6,12,0) 0,rgba(5,6,12,.16) 8%,rgba(5,6,12,.6) 20%,rgba(5,6,12,.7) 100%);
+  transition:opacity 700ms var(--ease-light)}
+.scene[data-lit] .dark{opacity:.42}
+.lamp{position:absolute;left:0;top:0;width:44vmax;height:44vmax;margin:-22vmax;border-radius:50%;pointer-events:none;will-change:transform;
+  background:radial-gradient(circle,rgba(255,196,128,.2),rgba(255,150,70,.07) 45%,transparent 70%);mix-blend-mode:screen}
+
+/* ---------- hearth ---------- */
+.fx{position:absolute;pointer-events:none}
+.hearth-fx{left:46.6%;top:40.8%;width:9%;height:18.8%}
+.wash{position:absolute;left:50.75%;top:50%;width:46%;aspect-ratio:1;border-radius:50%;translate:-50% -50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,172,84,.44),rgba(255,122,42,.15) 42%,transparent 68%);mix-blend-mode:screen;
+  opacity:0;scale:.5;transition:opacity 800ms var(--ease-bank),scale 800ms var(--ease-bank)}
+[data-lit=hearth] .wash{opacity:1;scale:1;transition:opacity 620ms var(--ease-light) 100ms,scale 900ms var(--ease-catch) 100ms;
+  animation:waver 2.7s var(--ease-breathe) 1s infinite}
+@keyframes waver{0%,100%{opacity:1}24%{opacity:.84}47%{opacity:.97}71%{opacity:.8}}
+/* a dark cover over the painted flame, so at rest the firebox reads as banked */
+.bank{position:absolute;inset:3%;
+  background:radial-gradient(ellipse 58% 52% at 50% 56%,rgba(10,5,3,.97),rgba(10,5,3,.9) 58%,transparent 100%);
+  transition:opacity 900ms var(--ease-bank)}
+[data-lit=hearth] .bank{opacity:0;transition:opacity 380ms var(--ease-light)}
+.coals{position:absolute;left:47.8%;top:71%;width:40%;height:9%;translate:-50% -50%;
+  background:radial-gradient(ellipse 22% 60% at 22% 55%,rgba(255,112,36,.95),transparent 100%),
+             radial-gradient(ellipse 26% 70% at 52% 45%,rgba(255,150,54,.95),transparent 100%),
+             radial-gradient(ellipse 20% 55% at 80% 60%,rgba(232,74,26,.9),transparent 100%);
+  filter:drop-shadow(0 0 6px rgba(255,110,40,.7));animation:coal 4.2s var(--ease-breathe) infinite}
+@keyframes coal{0%,100%{opacity:.5}38%{opacity:.95}62%{opacity:.68}}
+[data-lit=hearth] .coals{opacity:1;animation:none}
+.flame{position:absolute;left:47.8%;top:71%;width:42%;height:52%;translate:-50% -100%;mix-blend-mode:screen;filter:blur(2.5px);
+  transform-origin:50% 100%;transform:scale(.3,0);opacity:0;
+  transition:transform 800ms var(--ease-bank),opacity 600ms var(--ease-bank)}
+.flame i{position:absolute;left:50%;bottom:0;width:62%;height:100%;border-radius:50% 50% 42% 42%/86% 86% 14% 14%;transform-origin:50% 100%;
+  background:radial-gradient(ellipse 50% 60% at 50% 88%,rgba(255,240,196,.95),rgba(255,160,50,.7) 38%,rgba(255,84,20,.22) 66%,rgba(255,84,20,0) 88%)}
+.flame i:nth-child(1){margin-left:-31%;animation:tongue .92s var(--ease-breathe) infinite}
+.flame i:nth-child(2){margin-left:-58%;width:44%;height:70%;animation:tongue 1.27s var(--ease-breathe) -.4s infinite}
+.flame i:nth-child(3){margin-left:-4%;width:44%;height:62%;animation:tongue 1.06s var(--ease-breathe) -.7s infinite}
+@keyframes tongue{0%,100%{transform:scale(1,1) skewX(0)}30%{transform:scale(.86,1.2) skewX(5deg)}55%{transform:scale(1.08,.85) skewX(-6deg)}80%{transform:scale(.92,1.11) skewX(3deg)}}
+[data-lit=hearth] .flame{opacity:1;transform:none;transition:none;animation:catch 950ms var(--ease-catch) both}
+@keyframes catch{0%{transform:scale(.3,.05);opacity:.4}38%{transform:scale(1.2,1.42);opacity:1}100%{transform:none;opacity:1}}
+.sparks{position:absolute;left:47.8%;top:66%;width:0;height:0}
+.sparks i{position:absolute;width:4px;height:4px;margin:-2px;border-radius:50%;background:#ffd58a;box-shadow:0 0 6px 1px rgba(255,150,60,.9);opacity:0}
+[data-lit=hearth] .sparks i{animation:spark var(--t,1100ms) var(--ease-rise) var(--w,0ms) both}
+@keyframes spark{0%{translate:0 0;opacity:0}12%{opacity:1}100%{translate:var(--dx) var(--dy);opacity:0}}
+/* the light has reached it: the coals wake and a low flame stands up */
+[data-stir=hearth]:not([data-lit=hearth]) .flame{transform:scale(.62,.34);opacity:.9;transition:transform 420ms var(--ease-catch),opacity 260ms var(--ease-light)}
+[data-stir=hearth]:not([data-lit=hearth]) .coals{opacity:1;animation:none}
+[data-stir=hearth]:not([data-lit=hearth]) .bank{opacity:.7;transition:opacity 300ms var(--ease-light)}
+
+/* ---------- window ---------- */
+.window-fx{left:81.5%;top:37.5%;width:15%;height:25.5%}
+/* the dark on the glass is two halves that meet down the middle */
+.shut{position:absolute;top:2%;height:96%;width:47%;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(180deg,transparent,#000 14%,#000 86%,transparent);
+  transition:transform 700ms var(--ease-bank),opacity 700ms var(--ease-bank)}
+.shut.l{left:4%;transform-origin:0 50%;background:linear-gradient(90deg,transparent,rgba(4,7,12,.86) 26%,rgba(4,7,12,.93))}
+.shut.r{right:2%;transform-origin:100% 50%;background:linear-gradient(270deg,transparent,rgba(4,7,12,.86) 26%,rgba(4,7,12,.93))}
+[data-lit=window] .shut{transform:scaleX(0);transition:transform 760ms var(--ease-part) 300ms}
+/* same lock-letting-go line as the front door, so the two moments rhyme */
+.slit{position:absolute;left:51%;top:6%;width:3px;height:88%;margin-left:-1.5px;background:var(--teal);
+  box-shadow:0 0 10px var(--teal),0 0 26px rgba(63,224,208,.8);transform:scaleY(0);transform-origin:50% 100%;opacity:0}
+[data-lit=window] .slit{animation:slit 820ms var(--ease-light) both}
+@keyframes slit{0%{transform:scaleY(0);opacity:1}45%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);opacity:0}}
+.pour,.pool{position:absolute;aspect-ratio:1;border-radius:50%;translate:-50% -50%;pointer-events:none;mix-blend-mode:screen;opacity:0;scale:.6;
+  transition:opacity 800ms var(--ease-bank),scale 800ms var(--ease-bank)}
+.pour{left:89%;top:50%;width:42%;background:radial-gradient(circle,rgba(63,224,208,.4),rgba(63,224,208,.13) 42%,transparent 68%)}
+.pool{left:70%;top:87%;width:34%;background:radial-gradient(circle,rgba(63,224,208,.3),rgba(63,224,208,.09) 45%,transparent 70%)}
+[data-lit=window] .pour{opacity:1;scale:1;transition:opacity 700ms var(--ease-light) 520ms,scale 1000ms var(--ease-light) 520ms;
+  animation:tide 6.4s var(--ease-breathe) 1.6s infinite}
+[data-lit=window] .pool{opacity:1;scale:1;transition:opacity 900ms var(--ease-light) 760ms,scale 1200ms var(--ease-light) 760ms}
+@keyframes tide{0%,100%{opacity:1}50%{opacity:.78}}
+/* the light has reached it: the dark thins and a little teal leaks through */
+[data-stir=window]:not([data-lit=window]) .shut{opacity:.55;transition:opacity 320ms var(--ease-light)}
+[data-stir=window]:not([data-lit=window]) .pour{opacity:.4;scale:.7;transition:opacity 320ms var(--ease-light),scale 420ms var(--ease-light)}
+
+/* ---------- signs and hit areas (above the dark) ---------- */
+.obj{position:absolute;pointer-events:auto;border-radius:6px;-webkit-tap-highlight-color:transparent}
+.obj.hearth{left:46.6%;top:40.8%;width:9%;height:18.8%}
+.obj.window{left:81.5%;top:37.5%;width:15%;height:25.5%}
+.obj:focus-visible{outline:3px solid var(--teal);outline-offset:6px}
+/* each thing wears one plain plate: what opens, and one true fact */
+.plate{position:absolute;translate:-50% 0;text-align:left;white-space:nowrap;line-height:1.15;padding:.42rem .85rem .46rem;
+  background:rgba(6,9,16,.9);border:1px solid rgba(255,138,60,.45);border-left:3px solid var(--ember);
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%);
+  transition:opacity 420ms var(--ease-light) 400ms,border-color 240ms var(--ease-light),background-color 240ms var(--ease-light)}
+.plate b{display:block;font-weight:700;font-size:1.12rem;letter-spacing:.04em}
+.plate small{display:block;font-weight:500;font-size:.94rem;color:var(--gold)}
+.plate.p-hearth{left:51.1%;top:calc(59.6% + 12px)}
+.plate.p-window{left:89%;top:calc(63% + 12px);border-color:rgba(63,224,208,.45);border-left-color:var(--teal)}
+[data-stir=hearth] .plate.p-hearth{background:rgba(40,18,6,.95);border-color:var(--ember)}
+[data-stir=window] .plate.p-window{background:rgba(4,30,30,.95);border-color:var(--teal)}
+[data-lit=hearth] .plate.p-hearth,[data-lit=window] .plate.p-window{opacity:0;transition:opacity 180ms var(--ease-bank)}
+
+/* while a finger is down the finger hides the thing, so its name rides above the fingertip */
+.tip{position:absolute;left:0;top:0;translate:-50% -100%;white-space:nowrap;pointer-events:none;line-height:1.15;padding:.42rem .85rem .46rem;
+  background:rgba(6,9,16,.95);border:1px solid var(--gold);border-left:3px solid var(--gold);opacity:0;transition:opacity 140ms var(--ease-light)}
+.tip.show{opacity:1}
+.tip b{display:block;font-weight:700;font-size:1.12rem;letter-spacing:.04em}
+.tip em{display:block;font-style:normal;font-size:.84rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+
+/* ---------- the words (placed over the chosen thing by the script) ---------- */
+.words{position:absolute;left:50%;bottom:50%;translate:-50% 0;width:min(430px,calc(100vw - 28px));
+  list-style:none;display:grid;gap:.6rem;visibility:hidden;user-select:text;-webkit-user-select:text;transition:visibility 0s 300ms}
+.words.show{visibility:visible;transition:none}
+.words::before{content:'';position:absolute;inset:-28px -34px;z-index:-1;border-radius:40%;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse at 50% 55%,rgba(8,5,3,.6),rgba(8,5,3,.34) 55%,transparent 80%);transition:opacity 300ms var(--ease-bank)}
+.words.show::before{opacity:1;transition:opacity 600ms var(--ease-light) 200ms}
+.words li{display:grid;grid-template-columns:2rem 1fr;gap:0 .55rem;align-items:baseline;
+  opacity:0;translate:0 12px;filter:blur(5px);transition:opacity 220ms var(--ease-bank),translate 220ms var(--ease-bank),filter 220ms var(--ease-bank)}
+/* lowest line first: the light is below the words and reaches the nearest line before the farthest */
+.words.show li{opacity:1;translate:0 0;filter:none;
+  transition:opacity 520ms var(--ease-light) var(--at),translate 620ms var(--ease-light) var(--at),filter 520ms var(--ease-light) var(--at)}
+.words li:nth-last-child(1){--at:var(--t0)}.words li:nth-last-child(2){--at:calc(var(--t0) + 160ms)}.words li:nth-last-child(3){--at:calc(var(--t0) + 320ms)}
+.words{--t0:380ms}.words.k-window{--t0:820ms}
+.words .n{font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;color:var(--ember);text-shadow:0 0 14px rgba(255,138,60,.75);text-align:center}
+.words b{font-size:1.12rem;font-weight:700;color:var(--gold);letter-spacing:.02em;text-shadow:0 1px 10px #000,0 0 18px rgba(255,150,60,.35)}
+.words span.d{grid-column:2;font-size:1rem;line-height:1.3;color:var(--text);text-shadow:0 1px 8px #000}
+/* window lines have no number: name + a Live tag, the description, then the link out */
+.words.k-window li{grid-template-columns:1fr auto;gap:.1rem .6rem;padding:.5rem .7rem;background:rgba(4,12,16,.72);border-left:3px solid var(--teal)}
+.words.k-window b{color:var(--text);text-shadow:0 1px 10px #000}
+.words.k-window .tag{font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#04201d;background:var(--teal);padding:.05rem .45rem;align-self:center}
+.words.k-window span.d{grid-column:1 / -1}
+.words.k-window li a{grid-column:1 / -1;color:var(--teal);font-weight:700;font-size:1.02rem;padding:.35rem 0;justify-self:start}
+.words li a:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+
+.after{position:absolute;left:50%;top:50%;translate:-50% 8px;display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;justify-content:center;
+  width:min(430px,calc(100vw - 28px));opacity:0;visibility:hidden;transition:opacity 200ms var(--ease-bank),translate 200ms var(--ease-bank),visibility 0s 200ms}
+.after.show{opacity:1;translate:-50% 0;visibility:visible;transition:opacity 420ms var(--ease-light) 1000ms,translate 420ms var(--ease-light) 1000ms}
+.after .go{font-weight:700;font-size:1.05rem;text-decoration:none;color:#1a0e04;background:linear-gradient(180deg,#ffd58a,#ff9a3c);padding:.7rem 1.1rem;border-radius:2px;
+  clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+.after .back{font-size:1rem;color:var(--muted);text-decoration:underline;text-underline-offset:3px;min-height:44px;padding:0 .5rem}
+.after .go:focus-visible,.after .back:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+
+/* ---------- small helpers ---------- */
+.hint{position:absolute;left:50%;bottom:max(16px,3.5dvh);translate:-50% 0;text-align:center;font-size:1rem;letter-spacing:.04em;line-height:1.25;
+  padding:.45rem .95rem;background:rgba(6,9,16,.84);border:1px solid rgba(246,215,133,.35);color:var(--gold);pointer-events:none;
+  width:max-content;max-width:calc(100vw - 28px);transition:opacity 300ms var(--ease-light)}
+.scene[data-lit] .hint,.scene.held .hint{opacity:0}
+/* more room this way */
+.more{position:absolute;top:50%;translate:0 -50%;font-size:2.2rem;line-height:1;color:var(--gold);padding:.6rem .35rem;pointer-events:none;opacity:0;
+  text-shadow:0 0 12px rgba(0,0,0,.9);transition:opacity 300ms var(--ease-light)}
+.more.l{left:2px}.more.r{right:2px}
+.more.on{opacity:.75;animation:nudge 2.4s var(--ease-breathe) infinite}
+.more.l.on{--n:-4px}.more.r.on{--n:4px}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(var(--n))}}
+.tag{position:absolute;left:12px;top:10px;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  background:rgba(6,9,16,.7);padding:.25rem .55rem;pointer-events:none}
+.scene[data-lit] .tag{opacity:0}
+
+@media(max-height:700px){
+  .words{gap:.3rem}
+  .words .n{font-size:1.25rem}
+  .words b{font-size:1rem}.words span.d{font-size:.9rem;line-height:1.2}
+  .words.k-window li{padding:.35rem .6rem}
+}
+/* phone plan: fewer sparks, no blend, no text blur */
+@media(max-width:560px),(pointer:coarse){
+  .wash,.flame,.pour,.pool,.lamp{mix-blend-mode:normal}
+  .flame{filter:none}
+  .sparks i:nth-child(n+6){display:none}
+  .words li{filter:none}
+  .words b{font-size:1.06rem}.words span.d{font-size:.96rem}
+}
+@media(max-width:560px) and (max-height:700px){.words b{font-size:1rem}.words span.d{font-size:.9rem}}
+/* reduced motion: no carried light, the two states swap with a short fade, nothing loops */
+@media(prefers-reduced-motion:reduce){
+  .dark{left:0;top:0;width:100%;height:100%;margin:0;transform:none !important;background:rgba(5,6,12,.4)}
+  .lamp,.sparks,.slit{display:none}
+  .coals,.flame i,.more.on,[data-lit=hearth] .wash,[data-lit=hearth] .flame,[data-lit=window] .pour{animation:none}
+  .wash,.bank,.flame,.shut,.pour,.pool,.plate,.after,.words li,.words::before,.dark,
+  [data-lit] .wash,[data-lit] .bank,[data-lit] .flame,[data-lit] .shut,[data-lit] .pour,[data-lit] .pool,
+  .after.show,.words.show li,.words.show::before{transition:opacity 200ms linear}
+  .wash,.pour,.pool{scale:1}
+  .shut,[data-lit=window] .shut{transform:none}
+  [data-lit=window] .shut{opacity:0}
+  .words li,.words.show li{translate:none;filter:none}
+  .after,.after.show{translate:-50% 0}
+  [data-stir=hearth]:not([data-lit=hearth]) .flame{transform:scale(.3,0);opacity:0}
+}
+</style>
+</head>
+<body>
+
+<div class="scene" id="scene">
+  <!-- the art, and everything painted onto it -->
+  <div class="layer pic">
+    <span class="wash"></span>
+    <span class="pour"></span><span class="pool"></span>
+    <div class="fx hearth-fx">
+      <span class="bank"></span>
+      <span class="coals"></span>
+      <span class="flame"><i></i><i></i><i></i></span>
+      <span class="sparks" aria-hidden="true">
+        <i style="--dx:-34px;--dy:-120px;--t:1050ms"></i>
+        <i style="--dx:22px;--dy:-150px;--t:1250ms;--w:60ms"></i>
+        <i style="--dx:-8px;--dy:-176px;--t:1400ms;--w:120ms"></i>
+        <i style="--dx:46px;--dy:-98px;--t:950ms;--w:40ms"></i>
+        <i style="--dx:-52px;--dy:-84px;--t:900ms;--w:150ms"></i>
+        <i style="--dx:12px;--dy:-112px;--t:1100ms;--w:220ms"></i>
+        <i style="--dx:-24px;--dy:-158px;--t:1300ms;--w:260ms"></i>
+        <i style="--dx:36px;--dy:-134px;--t:1200ms;--w:320ms"></i>
+        <i style="--dx:-4px;--dy:-92px;--t:1000ms;--w:380ms"></i>
+      </span>
+    </div>
+    <div class="fx window-fx">
+      <span class="shut l"></span><span class="shut r"></span><span class="slit"></span>
+    </div>
+  </div>
+
+  <span class="dark" id="dark"></span>
+  <span class="lamp" id="lamp"></span>
+
+  <!-- the things you can open. Each is one real button; its plate is its name tag, not a second control. -->
+  <div class="layer labels">
+    <button class="obj hearth" data-id="hearth" aria-expanded="false" aria-controls="words" aria-label="How it works: 3 steps, price in writing first"></button>
+    <div class="plate p-hearth" aria-hidden="true"><b>How it works</b><small>3 steps, price in writing first</small></div>
+    <button class="obj window" data-id="window" aria-expanded="false" aria-controls="words" aria-label="Live work: 2 sites running right now"></button>
+    <div class="plate p-window" aria-hidden="true"><b>Live work</b><small>2 sites running right now</small></div>
+  </div>
+
+  <ol class="words" id="words" aria-live="polite"></ol>
+  <div class="after" id="after">
+    <a class="go" id="go" href="#"></a>
+    <button class="back" id="back"></button>
+  </div>
+
+  <div class="tip" id="tip" aria-hidden="true"><b></b><em></em></div>
+  <span class="more l" id="moreL" aria-hidden="true">‹</span>
+  <span class="more r" id="moreR" aria-hidden="true">›</span>
+  <div class="hint" id="hint">Move the light around. Click what it finds.</div>
+  <span class="tag">Reveal test · carried light</span>
+</div>
+
+<script>
+/* Four jobs:
+   1. know where each thing is on screen (plain arithmetic from the picture size, no page measuring),
+   2. carry the light to the mouse, or to a finger while it is down,
+   3. wake whatever the light is over, and open it on click or on let-go,
+   4. slide the room: toward a chosen thing, or following the light as it is carried. */
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var scene = $('scene'), dark = $('dark'), lamp = $('lamp'), words = $('words'), after = $('after'),
+      go = $('go'), back = $('back'), tip = $('tip'), hint = $('hint'), moreL = $('moreL'), moreR = $('moreR');
+  var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* The things. l/t/w/h are % of the picture. Wording is copied from pages/hire.html (same as the
+     room's signs). If that page changes, change it here too. html is fixed text, never visitor input. */
+  var THINGS = {
+    hearth: { l:46.6, t:40.8, w:9, h:18.8, label:'How it works', closeWord:'Bank the fire',
+      html:'<li><span class="n">1</span><b>You tell me what you\'re after</b><span class="d">Plain English is fine, and "not sure yet" is a fine answer.</span></li>' +
+           '<li><span class="n">2</span><b>I send honest recommendations and a real price</b><span class="d">For custom work, a written scope before a dime moves.</span></li>' +
+           '<li><span class="n">3</span><b>I build it, launch it, and hand you the keys</b><span class="d">You talk to me the whole way. No account manager, no phone tree.</span></li>',
+      go:'Read how I actually work', href:'hire-keep-test.html#how-i-work' },
+    window: { l:81.5, t:37.5, w:15, h:25.5, label:'Live work', closeWord:'Close it up',
+      html:'<li><b>Summit Gaming of Wilkes</b><span class="tag">Live</span><span class="d">A full online store: retro games, trading cards, real card checkout. I built it end to end and I keep it running.</span><a href="https://summitgamingofwilkes.com" target="_blank" rel="noopener">Visit the live store ↗</a></li>' +
+           '<li><b>Wilkes Senior Resources</b><span class="tag">Live</span><span class="d">A site for a local senior center. The director updates pages, hours and announcements herself, with no code.</span><a href="https://wilkesseniorresources.org" target="_blank" rel="noopener">See the live site ↗</a></li>',
+      go:'See all work and case studies', href:'hire-keep-test.html#work' }
+  };
+  var IDS = Object.keys(THINGS), btn = {};
+  IDS.forEach(function(id){ btn[id] = scene.querySelector('.obj[data-id="' + id + '"]'); });
+
+  /* 1. where things are */
+  var vw, vh, W, H, top0, panMax, pan = 0, panGoal = null;
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function measure(){
+    vw = innerWidth; vh = innerHeight; W = Math.max(vw, vh * 1.75); H = W / 1.75; top0 = (vh - H) / 2;
+    panMax = Math.max(0, W - vw); pan = clamp(pan, 0, panMax);
+    scene.style.setProperty('--W', W + 'px');
+  }
+  function box(id){ var o = THINGS[id]; return { x: W * o.l / 100 - pan, y: top0 + H * o.t / 100, w: W * o.w / 100, h: H * o.h / 100 }; }
+  function centerPan(id){ var o = THINGS[id]; return clamp(W * (o.l + o.w / 2) / 100 - vw / 2, 0, panMax); }
+  function under(x, y){            // which thing is at this point, with a little forgiveness around the edges
+    for (var i = 0; i < IDS.length; i++) { var b = box(IDS[i]);
+      if (x > b.x - 12 && x < b.x + b.w + 12 && y > b.y - 12 && y < b.y + b.h + 12) return IDS[i]; }
+    return null;
+  }
+
+  /* 3. open and close */
+  var lit = null, stir = null;
+  function setStir(id){ if (id === stir) return; stir = id; if (id) scene.dataset.stir = id; else delete scene.dataset.stir; }
+  function open(id){
+    var o = THINGS[id];
+    words.classList.remove('show'); after.classList.remove('show');
+    delete scene.dataset.lit; void scene.offsetWidth;                    // so the catch plays again even when switching straight across
+    lit = id; scene.dataset.lit = id;
+    IDS.forEach(function(k){ btn[k].setAttribute('aria-expanded', k === id ? 'true' : 'false'); });
+    words.className = 'words k-' + id; words.innerHTML = o.html;
+    go.textContent = o.go + ' →'; go.href = o.href; back.textContent = o.closeWord;
+    place(); void words.offsetWidth;
+    words.classList.add('show'); after.classList.add('show');
+    panGoal = centerPan(id);
+    var b = box(id); L.tx = b.x + b.w / 2 + (pan - panGoal); L.ty = b.y + b.h / 2;   // the light settles on what you chose
+  }
+  function close(){
+    if (!lit) return;
+    btn[lit].setAttribute('aria-expanded', 'false');
+    lit = null; delete scene.dataset.lit;
+    words.classList.remove('show'); after.classList.remove('show');
+  }
+  function toggle(id){ if (lit === id) close(); else open(id); }
+  function place(){                // keep the words above the chosen thing and the buttons below it
+    if (!lit) return;
+    var b = box(lit), half = Math.min(430, vw - 28) / 2, cx = clamp(b.x + b.w / 2, half + 14, vw - half - 14);
+    words.style.left = cx + 'px'; words.style.bottom = (vh - b.y + (vh < 700 ? 6 : 14)) + 'px';
+    after.style.left = cx + 'px'; after.style.top = (b.y + b.h + 12) + 'px';
+  }
+
+  /* 2 + 3. the pointer: mouse carries the light all the time, a finger carries it while it is down */
+  var P = { id: null, x: 0, y: 0, x0: 0, pan0: 0, down: false, touch: false, live: false, roam: false };
+  var TOUCH_HINT = 'Hold and drag. The room follows your thumb. Let go on something to open it.';
+  var L = { x: 0, y: 0, tx: 0, ty: 0 };
+  function isUi(t){ return t.closest && t.closest('.after, .words a'); }   // real links and buttons keep their normal taps
+  scene.addEventListener('pointerdown', function(e){
+    if (isUi(e.target)) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;      // only the main mouse button carries
+    if (P.down && !e.isPrimary) return;                          // one finger carries the light; extra fingers are ignored
+    P.id = e.pointerId;                                          // (a new first finger always takes over, so it can never get stuck)
+    P.down = true; P.live = true; P.touch = e.pointerType !== 'mouse'; P.x = P.x0 = e.clientX; P.y = e.clientY; P.pan0 = pan;
+    if (P.touch) { hint.textContent = TOUCH_HINT; scene.classList.add('held'); }
+    try { scene.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  scene.addEventListener('pointermove', function(e){
+    if (e.pointerType !== 'mouse' && (!P.down || e.pointerId !== P.id)) return;
+    P.live = true; P.touch = e.pointerType !== 'mouse'; P.x = e.clientX; P.y = e.clientY;
+    if (!P.touch) P.roam = true;
+  });
+  function lift(e, chosen){
+    if (!P.down || (e && e.pointerId !== P.id)) return;
+    P.down = false; scene.classList.remove('held');
+    if (chosen) { var id = under(e.clientX, e.clientY); if (id) toggle(id); }   // let go on bare stone: nothing happens
+    if (P.touch) P.live = false;
+  }
+  scene.addEventListener('pointerup', function(e){ lift(e, true); });
+  scene.addEventListener('pointercancel', function(e){ lift(e, false); });
+  // if the browser takes the finger away from us (app switch, a system gesture), drop the light cleanly
+  addEventListener('blur', function(){ lift(null, false); });
+  document.addEventListener('visibilitychange', function(){ if (document.hidden) lift(null, false); });
+  scene.addEventListener('contextmenu', function(e){ if (P.touch) e.preventDefault(); });   // a long hold is not a right-click here
+  scene.addEventListener('wheel', function(e){ if (panMax) { pan = clamp(pan + (e.deltaX || e.deltaY), 0, panMax); panGoal = null; } }, { passive: true });
+
+  // keyboard: Tab to a thing slides the room to it, Enter or Space opens it. (Pointer taps are handled above;
+  // a click with detail 0 is one that came from the keyboard.)
+  IDS.forEach(function(id){
+    btn[id].addEventListener('click', function(e){ if (e.detail === 0) toggle(id); });
+    btn[id].addEventListener('focus', function(){ if (btn[id].matches(':focus-visible')) { panGoal = centerPan(id); var o = THINGS[id]; L.tx = W * (o.l + o.w / 2) / 100 - panGoal; L.ty = top0 + H * (o.t + o.h / 2) / 100; } });
+  });
+  back.addEventListener('click', function(){ var id = lit; close(); if (id) btn[id].focus(); });
+  addEventListener('keydown', function(e){ if (e.key === 'Escape' && lit) { var id = lit; close(); btn[id].focus(); } });
+
+  /* 4 + the frame loop: everything that moves is written here, as transforms only */
+  var wrote = {};
+  function put(key, el, val){ if (wrote[key] !== val) { wrote[key] = val; el.style.transform = val; } }
+  function frame(){
+    requestAnimationFrame(frame);
+    if (document.hidden) return;
+    // belt and braces: if anything ever nudges the page or the room off its marks, put it straight back
+    if (scene.scrollLeft || scene.scrollTop) { scene.scrollLeft = 0; scene.scrollTop = 0; }
+    if (scrollX || scrollY) scrollTo(0, 0);
+    // slide the room
+    // The room follows the light. The whole room is squeezed into one screen-width of travel, so a
+    // short drag reaches either end with no waiting. A finger steers from where it landed (so a plain
+    // tap never moves anything); a mouse steers by where it is on the screen.
+    if (P.down && P.touch && panMax) {
+      var want = P.pan0 + (P.x - P.x0) * (panMax / vw);
+      if (want < 0 || want > panMax) { want = clamp(want, 0, panMax); P.pan0 = want; P.x0 = P.x; }   // at a wall: turning back answers at once
+      pan = reduce ? want : pan + (want - pan) * .3; panGoal = null;
+    } else if (panGoal != null) {
+      pan = reduce ? panGoal : pan + (panGoal - pan) * .12; P.roam = false;
+      if (Math.abs(panGoal - pan) < .5) { pan = panGoal; panGoal = null; }
+    } else if (P.roam && !lit && panMax) {
+      var to = panMax * clamp((P.x / vw - .1) / .8, 0, 1);
+      pan = reduce ? to : pan + (to - pan) * .1;
+    }
+    var pv = (-pan).toFixed(1) + 'px';
+    if (wrote.pan !== pv) { wrote.pan = pv; scene.style.setProperty('--pan', pv); }
+    moreL.classList.toggle('on', panMax > 0 && pan > 2 && !lit); moreR.classList.toggle('on', panMax > 0 && pan < panMax - 2 && !lit);
+    // wake what the light is over
+    var carrying = P.live && (P.down || !P.touch);
+    setStir(carrying ? under(P.x, P.y) : null);
+    // carry the light
+    if (carrying) { L.tx = P.x; L.ty = P.y; }
+    if (!reduce) {
+      L.x += (L.tx - L.x) * .2; L.y += (L.ty - L.y) * .2;
+      var at = 'translate3d(' + L.x.toFixed(1) + 'px,' + L.y.toFixed(1) + 'px,0)';
+      put('dark', dark, at + ' scale(4.2)'); put('lamp', lamp, at);
+    }
+    // the name above the fingertip
+    var tipOn = P.down && P.touch && stir;
+    if (tipOn) {
+      tip.firstChild.textContent = THINGS[stir].label; tip.lastChild.textContent = lit === stir ? 'Let go to close' : 'Let go to open';
+      put('tip', tip, 'translate3d(' + clamp(P.x, 110, vw - 110).toFixed(0) + 'px,' + Math.max(70, P.y - 64).toFixed(0) + 'px,0)');
+    }
+    tip.classList.toggle('show', !!tipOn);
+    place();
+  }
+
+  measure();
+  addEventListener('resize', measure);
+  pan = centerPan('hearth');
+  (function(){ var b = box('hearth'); L.x = L.tx = b.x + b.w / 2; L.y = L.ty = b.y - b.h * .25; })();
+  if (matchMedia('(hover:none)').matches) hint.textContent = TOUCH_HINT;
+  requestAnimationFrame(frame);
+
+  // ?lit=hearth or ?lit=window opens it that way, handy while tuning
+  var m = /(?:^|[?&])lit=(\w+)/.exec(location.search);
+  if (m && THINGS[m[1]]) open(m[1]);
+})();
+</script>
+</body>
+</html>

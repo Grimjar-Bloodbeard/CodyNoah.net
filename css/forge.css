@@ -195,6 +195,31 @@ h2.sec{font-size:clamp(1.7rem,5vw,2.6rem);margin-bottom:.4rem;
 .bubble.bbelow.bleft{border-radius:14px 2px 14px 14px}
 .bubble b{color:var(--teal)}
 
+/* ===== Meepo's guided tour (shared) ===== */
+/* A page opts in with data-tour on #meepo (see forge.js). The launcher sits just
+   left of Meepo; during a tour the bubble turns into a small panel with real
+   buttons, and the stop he is talking about gets a teal ring. */
+.tourbtn{position:fixed;right:124px;bottom:16px;z-index:70;display:inline-flex;align-items:center;gap:.4rem;
+  padding:.62rem 1.05rem;border-radius:999px;background:var(--glass);border:1px solid rgba(79,240,224,.45);
+  color:var(--text);font-family:var(--ui);font-weight:700;font-size:.88rem;cursor:pointer;
+  backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);
+  box-shadow:0 6px 20px rgba(0,0,0,.35);transition:transform .15s,box-shadow .2s,border-color .2s}
+.tourbtn:hover,.tourbtn:focus-visible{transform:translateY(-2px);border-color:var(--teal);box-shadow:0 10px 28px rgba(0,0,0,.45)}
+.tourbtn[hidden]{display:none}
+.bubble.tour{pointer-events:auto;cursor:default;max-width:min(300px,78vw);background:rgba(12,17,32,.97);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.bubble .t-say{display:block}
+.bubble .t-row{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin-top:.65rem}
+.bubble .t-count{margin-right:auto;color:var(--muted);font-size:.8rem;font-weight:600}
+.bubble .t-row button{font-family:var(--ui);font-weight:700;font-size:.88rem;min-height:40px;padding:.3rem .75rem;
+  border-radius:9px;cursor:pointer;background:transparent;color:var(--muted);border:1px solid var(--line)}
+.bubble .t-row button:hover{color:var(--text);border-color:rgba(79,240,224,.5)}
+.bubble .t-row button.t-next{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#120d05;border-color:transparent}
+.bubble .t-row button:focus-visible,.tourbtn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.tour-spot{scroll-margin-top:84px;border-radius:18px;
+  box-shadow:0 0 0 2px rgba(79,240,224,.5),0 0 46px rgba(79,240,224,.12);transition:box-shadow var(--t-base) var(--ease-smooth)}
+/* case-study pages: their sections have no side padding, so the ring sits 10px out instead of hugging the text */
+.cs .tour-spot{box-shadow:none;outline:2px solid rgba(79,240,224,.5);outline-offset:10px;border-top-color:transparent}
+
 @media (max-width:560px){
   .nav{gap:.5rem;padding:.5rem .8rem}
   .brand{font-size:.95rem}
@@ -202,6 +227,7 @@ h2.sec{font-size:clamp(1.7rem,5vw,2.6rem);margin-bottom:.4rem;
   .nl{gap:.1rem;width:100%;justify-content:flex-start;margin-left:0}
   .nl a{padding:.4rem .65rem;font-size:.92rem;min-height:44px;display:inline-flex;align-items:center}
   #meepo{width:74px;right:10px}
+  .tourbtn{right:92px;bottom:12px;padding:.55rem .85rem;font-size:.84rem;min-height:44px}
   .bubble{max-width:min(210px,74vw);font-size:.92rem}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}

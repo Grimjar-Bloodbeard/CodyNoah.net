@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrimForge Creations · entrance test</title>
+<!-- TEST PAGE (2026-10-12): prototype of the new entrance. Unlisted on purpose:
+     no links point here, not in the sitemap, and noindex below. -->
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#070a12">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../images/forge/forge-door.webp?v=2">
+<link rel="preload" as="image" href="../images/forge/forge-keep.webp?v=2">
+<style>
+/* ===== The concept: the site is a place. You arrive at the door, it opens,
+   you walk into the keep, and the things in the room are the pages. =====
+   Both pictures are 1344x768 (ratio 1.75). Everything on top of them is
+   positioned in % of the picture, so it stays glued to the art at any size. */
+:root{
+  --ember:#ff8a3c; --gold:#f6d785; --teal:#3fe0d0; --ink:#070a12; --text:#f3ead9; --muted:#c9bda6;
+  --W:max(100vw,175dvh);            /* picture width that always covers the screen */
+  --ease-door:cubic-bezier(.5,.05,.2,1);
+  --ease-walk:cubic-bezier(.7,0,.3,1);
+  --ease-settle:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--ink);color:var(--text);font-family:'Rajdhani',system-ui,sans-serif;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+
+/* ---------- outside: the door ---------- */
+.outside{position:fixed;inset:0;overflow:hidden;z-index:2}
+.outside.gone{display:none}
+.outside.fade{opacity:0;transition:opacity 650ms ease-out}   /* dissolves into the room as you step through */
+/* the door sits a little left of the picture's middle (45.76%), so on a phone
+   the picture is slid over until the door is centered */
+.stage{position:absolute;width:var(--W);height:calc(var(--W) / 1.75);
+  left:clamp(calc(100vw - var(--W)),calc(50vw - var(--W) * .4576),0px);
+  top:calc((100dvh - var(--W) / 1.75) / 2);
+  background:url(../images/forge/forge-door.webp?v=2) center/100% 100% no-repeat;
+  transform-origin:45.76% 55.3%;will-change:transform;
+  scale:1.04;translate:calc(var(--px,0) * -16px) calc(var(--py,0) * -10px)}
+.outside.open .stage{transform:scale(4.2);transition:transform 1300ms var(--ease-walk) 650ms}
+
+/* lantern glow that breathes, so the still picture feels alive */
+.glow{position:absolute;width:22%;aspect-ratio:1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,170,80,.34),rgba(255,140,50,.10) 45%,transparent 70%);
+  transform:translate(-50%,-50%);animation:flicker 3.1s ease-in-out infinite}
+.glow.l{left:29.9%;top:45.5%}
+.glow.r{left:61%;top:45.5%;animation-duration:2.6s;animation-delay:-1.2s}
+@keyframes flicker{0%,100%{opacity:.75}22%{opacity:1}41%{opacity:.62}63%{opacity:.95}80%{opacity:.7}}
+
+/* the doorway: what you glimpse behind the doors as they swing */
+.doorway{position:absolute;left:35.86%;top:36.46%;width:19.79%;height:37.76%;perspective:900px}
+.glimpse{position:absolute;inset:0;background:#120a05 url(../images/forge/forge-keep.webp?v=2) 51% 46%/330% auto no-repeat;opacity:.0}
+.glimpse::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 60%,rgba(255,190,110,.55),rgba(255,140,60,.15) 55%,rgba(0,0,0,.35))}
+.outside.open .glimpse{opacity:1;transition:opacity 500ms ease-out 420ms}
+/* the two leaves are cut from the same picture (script lines them up) and swing on their hinges */
+.leaf{position:absolute;top:0;height:100%;background-image:url(../images/forge/forge-door.webp?v=2);background-repeat:no-repeat;
+  backface-visibility:hidden;will-change:transform}
+.leaf.l{left:0;width:52.63%;transform-origin:0 50%}
+.leaf.r{right:0;width:47.37%;transform-origin:100% 50%}
+.outside.open .leaf{transition:transform 1000ms var(--ease-door) 420ms}
+/* before the doors move, the rune fires a line of teal light down the seam, like a lock letting go */
+.seam{position:absolute;left:52.63%;top:0;width:3px;height:100%;margin-left:-1.5px;background:var(--teal);
+  box-shadow:0 0 10px var(--teal),0 0 26px rgba(63,224,208,.8);transform:scaleY(0);transform-origin:50% 0;opacity:0;pointer-events:none}
+.outside.open .seam{animation:seam 900ms ease-out both}
+@keyframes seam{0%{transform:scaleY(0);opacity:1}45%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);opacity:0}}
+.outside.open .rune{animation:runeFire 520ms ease-out both}
+@keyframes runeFire{0%{opacity:1;scale:1}40%{opacity:1;scale:1.9}100%{opacity:0;scale:1.2}}
+.outside.open .leaf.l{transform:rotateY(-104deg)}
+.outside.open .leaf.r{transform:rotateY(104deg)}
+/* warm light spilling out onto the step as the doors part */
+.spill{position:absolute;left:45.76%;top:62%;width:46%;aspect-ratio:1.3;transform:translate(-50%,-50%);pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse,rgba(255,180,90,.5),rgba(255,130,50,.14) 45%,transparent 70%)}
+.outside.open .spill{opacity:1;transition:opacity 700ms ease-out 560ms}
+
+/* the one bit of tech on the outside: a rune over the door that shows it can be tapped */
+.rune{position:absolute;left:45.76%;top:33.6%;width:2.3%;min-width:22px;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;
+  filter:drop-shadow(0 0 6px var(--teal)) drop-shadow(0 0 16px rgba(63,224,208,.6));animation:runePulse 2.8s ease-in-out infinite}
+.rune svg{width:100%;height:100%;display:block}
+@keyframes runePulse{0%,100%{opacity:.55}50%{opacity:1}}
+
+/* the door itself is the big button */
+.door-hit{position:absolute;left:34.9%;top:35.1%;width:21.7%;height:40%;border-radius:4px}
+.door-hit:focus-visible{outline:3px solid var(--teal);outline-offset:4px}
+
+/* words over the picture */
+.scrim{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(4,6,12,.86) 0,rgba(4,6,12,.35) 24%,transparent 40%,transparent 66%,rgba(4,6,12,.9) 100%)}
+.hello{position:absolute;left:0;right:0;top:max(22px,5dvh);text-align:center;padding:0 16px;pointer-events:none}
+.hello .crest{font-size:.82rem;letter-spacing:.34em;text-transform:uppercase;color:var(--muted)}
+.hello h1{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(2rem,7vw,3.8rem);letter-spacing:.04em;color:var(--gold);
+  text-shadow:0 2px 22px rgba(0,0,0,.85);line-height:1.05;margin-top:.25rem}
+.hello .by{font-size:1.05rem;letter-spacing:.2em;color:var(--text);margin-top:.35rem}
+.invite{position:absolute;left:0;right:0;bottom:max(26px,6dvh);text-align:center;padding:0 16px}
+.invite p{font-size:1.12rem;max-width:34ch;margin:0 auto .9rem;text-shadow:0 2px 12px #000}
+.invite p b{color:var(--gold)}
+.come-in{display:inline-flex;align-items:center;gap:.55rem;padding:.8rem 1.7rem;font-weight:700;font-size:1.12rem;letter-spacing:.08em;
+  color:#1a0e04;background:linear-gradient(180deg,#ffd58a,#ff9a3c);border-radius:3px;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+  box-shadow:0 10px 30px rgba(255,120,40,.35);transition:transform 180ms var(--ease-settle),filter 180ms}
+.come-in:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.come-in:focus-visible{outline:3px solid var(--teal);outline-offset:4px}
+.skip{display:block;margin-top:.8rem;font-size:.95rem;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.outside.open .hello,.outside.open .invite,.outside.open .scrim{opacity:0;transition:opacity 300ms ease-out}
+/* mist low on the ground outside, drifting sideways and sitting closer to you than the wall */
+.mist{position:absolute;left:-20%;right:-20%;bottom:-6%;height:42%;pointer-events:none;opacity:.5;
+  background:radial-gradient(ellipse 38% 60% at 22% 70%,rgba(150,175,190,.30),transparent 70%),
+             radial-gradient(ellipse 34% 52% at 68% 78%,rgba(150,175,190,.24),transparent 70%),
+             radial-gradient(ellipse 30% 46% at 96% 66%,rgba(150,175,190,.20),transparent 70%);
+  translate:calc(var(--px,0) * -34px) calc(var(--py,0) * -14px);animation:mist 26s ease-in-out infinite alternate}
+@keyframes mist{from{transform:translateX(-4%)}to{transform:translateX(6%)}}
+.outside.open .mist{opacity:0;transition:opacity 400ms}
+
+/* ---------- inside: the keep ---------- */
+.inside{position:fixed;inset:0;z-index:1;opacity:0;visibility:hidden}
+.inside.in{opacity:1;visibility:visible;transition:opacity 650ms ease-out}
+.look{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.look::-webkit-scrollbar{display:none}
+.room{position:relative;width:var(--W);height:calc(var(--W) / 1.75);top:calc((100dvh - var(--W) / 1.75) / 2);
+  background:url(../images/forge/forge-keep.webp?v=2) center/100% 100% no-repeat;transform:scale(1.14);transform-origin:51% 52%;
+  scale:1.04;translate:calc(var(--px,0) * -18px) calc(var(--py,0) * -11px);will-change:transform}
+.inside.in .room{transform:none;transition:transform 1500ms var(--ease-settle)}
+/* tapping a spot walks the camera toward it (script sets the origin to that spot) */
+.inside.ready .room{transition:transform 750ms var(--ease-settle)}
+.inside.ready .room.near{transform:translateY(var(--lift,0%)) scale(1.42)}
+/* a wash of firelight as you step through, fading as your eyes adjust */
+.bloom{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse at 50% 55%,rgba(255,200,130,.9),rgba(255,140,60,.5) 40%,rgba(20,8,2,.2) 80%)}
+.inside.in .bloom{animation:bloom 1300ms ease-out both}
+@keyframes bloom{0%{opacity:.95}100%{opacity:0}}
+/* dark edges that sit nearer than the room and slide the other way: this is what sells the depth */
+.near-frame{position:absolute;inset:-6%;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse 62% 70% at 50% 52%,transparent 58%,rgba(3,4,8,.55) 82%,rgba(3,4,8,.92) 100%);
+  translate:calc(var(--px,0) * 26px) calc(var(--py,0) * 16px)}
+#motes{position:fixed;inset:0;z-index:5;pointer-events:none;width:100%;height:100%}
+/* firelight breathing over the hearth */
+.fire{position:absolute;left:51.2%;top:52%;width:30%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;
+  background:radial-gradient(circle,rgba(255,160,70,.30),rgba(255,120,40,.08) 45%,transparent 70%);animation:flicker 2.4s ease-in-out infinite}
+/* living flame: three soft tongues over the painted fire, each on its own rhythm */
+.flame{position:absolute;left:51%;top:53.2%;width:3.2%;height:7.5%;transform:translate(-50%,-100%);pointer-events:none;mix-blend-mode:screen}
+.flame i{position:absolute;left:50%;bottom:0;width:70%;height:100%;border-radius:50% 50% 45% 45%/70% 70% 30% 30%;transform-origin:50% 100%;
+  background:radial-gradient(ellipse at 50% 85%,rgba(255,240,190,.95),rgba(255,160,50,.75) 45%,rgba(255,80,20,0) 75%)}
+.flame i:nth-child(1){margin-left:-35%;animation:tongue 0.9s ease-in-out infinite}
+.flame i:nth-child(2){margin-left:-62%;width:50%;height:72%;animation:tongue 1.25s ease-in-out -0.4s infinite}
+.flame i:nth-child(3){margin-left:-8%;width:50%;height:64%;animation:tongue 1.05s ease-in-out -0.7s infinite}
+@keyframes tongue{0%,100%{transform:scale(1,1) skewX(0)}30%{transform:scale(.86,1.22) skewX(5deg)}55%{transform:scale(1.08,.84) skewX(-6deg)}80%{transform:scale(.92,1.12) skewX(3deg)}}
+/* small lights: candles and lamps each breathe by themselves */
+.lit{position:absolute;width:var(--s,7%);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;mix-blend-mode:screen;
+  background:radial-gradient(circle,rgba(255,200,120,.42),rgba(255,150,60,.12) 45%,transparent 70%);
+  animation:flicker var(--d,2.2s) ease-in-out var(--o,0s) infinite}
+.lit.teal{background:radial-gradient(circle,rgba(63,224,208,.34),rgba(63,224,208,.10) 45%,transparent 72%);animation:breathe 6s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.45;scale:1}50%{opacity:1;scale:1.12}}
+
+/* a sign you can tap: a teal dot pinned to the thing, and a plate that says in plain words
+   what opens (top line) plus one real fact about it (bottom line). No guessing. */
+.spot{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:.5rem;padding:.3rem;
+  opacity:0;white-space:nowrap}
+.inside.ready .spot{opacity:1;transition:opacity 400ms ease-out;transition-delay:calc(var(--i) * 110ms)}
+.spot .dot{position:relative;width:20px;height:20px;border-radius:50%;flex:none;background:var(--teal);
+  box-shadow:0 0 0 4px rgba(63,224,208,.22),0 0 18px var(--teal)}
+.spot .dot::after{content:'';position:absolute;inset:-7px;border-radius:50%;border:2px solid var(--teal);opacity:0;animation:ping 2.6s ease-out infinite;
+  animation-delay:calc(var(--i) * -430ms)}
+@keyframes ping{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+.spot .name{text-align:left;line-height:1.15;padding:.34rem .7rem .38rem;background:rgba(6,9,16,.88);
+  border:1px solid rgba(63,224,208,.5);border-left:3px solid var(--teal);color:var(--text);
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%)}
+.spot .name b{display:block;font-weight:700;font-size:1.08rem;letter-spacing:.04em}
+.spot .name small{display:block;font-weight:500;font-size:.9rem;color:var(--gold);letter-spacing:.02em}
+.spot:hover .name small,.spot:focus-visible .name small,.spot.on .name small{color:#04201d}
+.spot.flip{flex-direction:row-reverse}
+.inside.card-open .spot:not(.on){opacity:.22;transition:opacity 250ms}   /* the one you picked stays lit, the rest step back */
+.spot:hover .name,.spot:focus-visible .name,.spot.on .name{background:var(--teal);color:#04201d}
+.spot:focus-visible{outline:none}
+.spot:focus-visible .dot{box-shadow:0 0 0 4px #fff,0 0 18px var(--teal)}
+
+/* plain menu, always there, so nobody has to hunt through a picture */
+.bar{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:.4rem 1rem;flex-wrap:wrap;padding:.7rem 1rem;
+  background:linear-gradient(180deg,rgba(4,6,12,.92),rgba(4,6,12,0));z-index:3}
+.bar .brand{font-family:'Cinzel',serif;font-weight:700;color:var(--gold);letter-spacing:.06em;margin-right:auto;text-decoration:none}
+.bar a.nav{font-weight:600;font-size:1rem;letter-spacing:.04em;text-decoration:none;padding:.3rem .2rem;border-bottom:2px solid transparent}
+.bar a.nav:hover,.bar a.nav:focus-visible{border-color:var(--teal);outline:none}
+.bar a.cta{color:#1a0e04;background:linear-gradient(180deg,#ffd58a,#ff9a3c);padding:.35rem .9rem;font-weight:700;border-radius:2px}
+
+.hint{position:absolute;left:50%;bottom:max(18px,4dvh);transform:translateX(-50%);z-index:3;font-size:1rem;letter-spacing:.05em;
+  padding:.45rem .95rem;background:rgba(6,9,16,.82);border:1px solid rgba(246,215,133,.35);color:var(--gold);
+  opacity:0;pointer-events:none;white-space:nowrap}
+.inside.ready .hint{opacity:1;transition:opacity 400ms ease-out 800ms}
+.inside.card-open .hint{opacity:0}
+
+/* the panel: the real answer, right here in the room (prices, the live sites, the steps),
+   with one button to the full page for anyone who wants more */
+.card{position:absolute;left:50%;bottom:max(14px,3dvh);width:min(560px,calc(100vw - 24px));z-index:4;display:flex;gap:.9rem;align-items:flex-start;
+  padding:1rem 1.1rem;background:rgba(8,11,19,.96);border:1px solid rgba(246,215,133,.4);border-top:3px solid var(--ember);
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));
+  transform:translate(-50%,24px);opacity:0;visibility:hidden;transition:transform 260ms var(--ease-settle),opacity 200ms,visibility 0s 260ms}
+.card.show{transform:translate(-50%,0);opacity:1;visibility:visible;transition:transform 260ms var(--ease-settle),opacity 200ms}
+.card{max-height:min(74dvh,560px);overflow-y:auto}
+.card > div{flex:1;min-width:0}
+.card img{width:58px;height:58px;object-fit:contain;flex:none}
+.card img[hidden]{display:none}
+.card .lead{font-size:1.05rem;line-height:1.35;margin:.3rem 0 .6rem;color:var(--text)}
+.card ul{list-style:none;margin:.5rem 0 .8rem;display:grid;gap:.45rem}
+.card li{display:grid;grid-template-columns:auto 1fr;gap:.1rem .8rem;align-items:baseline;padding:.5rem .7rem;
+  background:rgba(255,255,255,.04);border-left:3px solid var(--teal)}
+.card li b{font-size:1.05rem;color:var(--text)}
+.card li .amt{font-family:'Cinzel',serif;font-weight:700;color:var(--gold);font-size:1.1rem;justify-self:end}
+.card li .tag{justify-self:end;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#04201d;background:var(--teal);padding:.05rem .45rem}
+.card li span.d{grid-column:1 / -1;color:var(--muted);font-size:.98rem;line-height:1.3}
+.card li a{grid-column:1 / -1;color:var(--teal);font-weight:700;font-size:.98rem}
+.card li .n{font-family:'Cinzel',serif;font-weight:700;color:var(--gold);font-size:1.15rem}
+.card .note{font-size:.95rem;color:var(--muted);line-height:1.3;margin-bottom:.8rem}
+.card h2{font-family:'Cinzel',serif;font-size:1.15rem;color:var(--gold);letter-spacing:.04em}
+.card p{font-size:1.05rem;line-height:1.35;margin:.25rem 0 .7rem;color:var(--text)}
+.card .go{display:inline-block;font-weight:700;text-decoration:none;color:#1a0e04;background:linear-gradient(180deg,#ffd58a,#ff9a3c);padding:.45rem 1rem;border-radius:2px}
+.card .go:focus-visible,.card .x:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+.card .x{position:absolute;right:16px;top:8px;font-size:1.5rem;line-height:1;color:var(--muted);padding:.2rem .4rem}
+
+.replay{position:absolute;right:10px;bottom:8px;z-index:3;font-size:.85rem;color:var(--muted);text-decoration:underline}
+
+/* people who ask for less motion get a plain fade: no swing, no walk, no flicker */
+@media(prefers-reduced-motion:reduce){
+  .glow,.fire,.rune,.spot .dot::after,.flame i,.lit,.mist,.outside.open .seam,.inside.in .bloom{animation:none}
+  .stage,.room,.mist,.near-frame{translate:none}
+  .inside.ready .room.near{transform:none}
+  #motes{display:none}
+  .outside.open .stage,.outside.open .leaf{transition:none;transform:none}
+  .room,.inside.in .room{transform:none;transition:none}
+}
+@media(max-width:560px){
+  .bar a.nav:not(.cta){display:none}
+  .spot .name b{font-size:.98rem}
+  .spot .name small{font-size:.84rem}
+}
+</style>
+</head>
+<body>
+
+<!-- OUTSIDE -->
+<div class="outside" id="outside">
+  <div class="stage" id="stage">
+    <span class="glow l"></span><span class="glow r"></span>
+    <span class="mist"></span>
+    <span class="spill"></span>
+    <div class="doorway">
+      <div class="glimpse"></div>
+      <span class="leaf l" id="leafL"></span><span class="leaf r" id="leafR"></span>
+      <span class="seam"></span>
+    </div>
+    <span class="rune" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#3fe0d0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v20M12 6l6 5M12 6l-6 5M12 13l5 5M12 13l-5 5"/>
+      </svg>
+    </span>
+    <button class="door-hit" id="doorHit" aria-label="Open the door and come in"></button>
+  </div>
+  <div class="scrim"></div>
+  <div class="hello">
+    <p class="crest">The one-smith workshop of</p>
+    <h1>GrimForge Creations</h1>
+    <p class="by">by Cody Noah</p>
+  </div>
+  <div class="invite">
+    <p>If you can picture it for your business, <b>I can probably build it.</b></p>
+    <button class="come-in" id="comeIn">Come in <span aria-hidden="true">→</span></button>
+    <a class="skip" href="hire-keep-test.html">Skip the walk, take me straight to the details</a>
+  </div>
+</div>
+
+<!-- INSIDE -->
+<div class="inside" id="inside" aria-hidden="true">
+  <nav class="bar" aria-label="Main">
+    <a class="brand" href="../index.html">GrimForge</a>
+    <a class="nav" href="hire-keep-test.html#work">Work</a>
+    <a class="nav" href="hire-keep-test.html#pricing">Pricing</a>
+    <a class="nav" href="hire-keep-test.html#about">About</a>
+    <a class="nav cta" href="hire-keep-test.html#start">Start a project</a>
+  </nav>
+  <div class="look" id="look">
+    <div class="room" id="room">
+      <span class="fire"></span>
+      <span class="flame"><i></i><i></i><i></i></span>
+      <span class="lit" style="left:47.3%;top:18.5%;--s:11%;--d:3.3s"></span>
+      <span class="lit" style="left:37%;top:52.6%;--s:9%;--d:4.1s;--o:-1s"></span>
+      <span class="lit" style="left:67.9%;top:52.3%;--s:9%;--d:3.7s;--o:-2s"></span>
+      <span class="lit" style="left:46.2%;top:64%;--s:4%;--d:1.7s"></span>
+      <span class="lit" style="left:49.6%;top:60.5%;--s:4%;--d:2.1s;--o:-.6s"></span>
+      <span class="lit" style="left:51.7%;top:64.3%;--s:4%;--d:1.5s;--o:-.9s"></span>
+      <span class="lit" style="left:86.3%;top:60.5%;--s:6%;--d:1.9s;--o:-.3s"></span>
+      <span class="lit teal" style="left:90%;top:50%;--s:26%"></span>
+      <span class="lit teal" style="left:60%;top:88%;--s:30%"></span>
+      <!-- spots are filled in by the script from the SPOTS list below -->
+    </div>
+  </div>
+  <div class="near-frame"></div>
+  <div class="bloom"></div>
+  <div class="hint" id="hint">Tap a sign to open it</div>
+  <div class="card" id="card" role="dialog" aria-live="polite" aria-label="About this spot">
+    <img src="../images/meepo.webp" alt="Meepo the kobold" id="cardMeepo" hidden>
+    <div>
+      <h2 id="cardTitle"></h2>
+      <div id="cardText"></div>
+      <a class="go" id="cardGo" href="#"></a>
+    </div>
+    <button class="x" id="cardX" aria-label="Close">×</button>
+  </div>
+  <a class="replay" href="?" id="replay">Replay the entrance</a>
+</div>
+
+<canvas id="motes" aria-hidden="true"></canvas>
+
+<script>
+/* Entrance test. Three jobs:
+   1. cut the two door leaves out of the door picture so they can swing,
+   2. play the walk-in when the door or the button is tapped,
+   3. put the tappable spots on the room and run Meepo's card. */
+(function(){
+  var IMG_W = 1344, IMG_H = 768;
+  var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* 1. door leaves, measured on the picture in pixels: [left, top, width, height] */
+  var LEAVES = { leafL: [482, 280, 140, 290], leafR: [622, 280, 126, 290] };
+  Object.keys(LEAVES).forEach(function(id){
+    var r = LEAVES[id], el = document.getElementById(id);
+    // show the whole picture at leaf scale, slid so this leaf's own patch lines up
+    el.style.backgroundSize = (IMG_W / r[2] * 100) + '% ' + (IMG_H / r[3] * 100) + '%';
+    el.style.backgroundPosition = (r[0] / (IMG_W - r[2]) * 100) + '% ' + (r[1] / (IMG_H - r[3]) * 100) + '%';
+  });
+
+  /* 2. the walk-in */
+  var outside = document.getElementById('outside'), inside = document.getElementById('inside');
+  var look = document.getElementById('look'), room = document.getElementById('room');
+  var going = false;
+  function centerOn(xPct){            // on a phone the room is wider than the screen: start looking at the hearth
+    look.scrollLeft = room.offsetWidth * xPct / 100 - look.clientWidth / 2;
+  }
+  function comeIn(){
+    if (going) return; going = true;
+    outside.classList.add('open');
+    var walk = reduce ? 0 : 1450, done = reduce ? 500 : 2150;   // rune + seam first (420ms), then swing, then walk
+    setTimeout(function(){ inside.classList.add('in'); inside.removeAttribute('aria-hidden'); centerOn(51); outside.classList.add('fade'); }, walk);
+    setTimeout(function(){
+      outside.classList.add('gone'); inside.classList.add('ready'); scene = 'inside';
+      if (room.offsetWidth > look.clientWidth + 8) hint.textContent = 'Swipe to look around, tap a sign to open it';
+    }, done);
+  }
+  document.getElementById('doorHit').addEventListener('click', comeIn);
+  document.getElementById('comeIn').addEventListener('click', comeIn);
+
+  /* 3. the signs. x/y are % of the room picture; flip puts the plate on the left of the dot.
+        Wording rule: the top line is the plain name of what opens, the bottom line is one true,
+        specific fact. Every fact and price here is copied from pages/hire.html, so if that page
+        changes, change it here too. */
+  var SPOTS = [
+    { x:89.5, y:47, flip:true, label:'Live work', sub:'2 sites running right now', title:'Real sites, with real customers on them',
+      html:'<ul>' +
+        '<li><b>Summit Gaming of Wilkes</b><span class="tag">Live</span><span class="d">A full online store: retro games, trading cards, real card checkout. I built it end to end and I keep it running.</span><a href="https://summitgamingofwilkes.com" target="_blank" rel="noopener">Visit the live store ↗</a></li>' +
+        '<li><b>Wilkes Senior Resources</b><span class="tag">Live</span><span class="d">A site for a local senior center. The director updates pages, hours and announcements herself, with no code.</span><a href="https://wilkesseniorresources.org" target="_blank" rel="noopener">See the live site ↗</a></li>' +
+        '</ul>',
+      go:'See all work and case studies', href:'hire-keep-test.html#work' },
+    { x:86.5, y:80, flip:true, label:'Pricing', sub:'websites from $349', title:'What it actually costs',
+      html:'<ul>' +
+        '<li><b>Starter Site</b><span class="amt">$349</span><span class="d">3 pages, mobile-friendly, contact form, 30 days of small fixes.</span></li>' +
+        '<li><b>Local Business Site</b><span class="amt">$699</span><span class="d">Up to 5 pages, basic SEO, Google Business guidance, 60 days of support.</span></li>' +
+        '<li><b>Custom Project</b><span class="amt">From $1,200+</span><span class="d">Booking systems, light e-commerce, integrations. Written scope before a dime moves.</span></li>' +
+        '</ul><p class="note">You get the keys at hand-off. I don\'t lock you into paying me monthly for hosting.</p>',
+      go:'See full pricing', href:'hire-keep-test.html#pricing' },
+    { x:51.2, y:55, label:'How it works', sub:'3 steps, price in writing first', title:'How a project goes',
+      html:'<ul>' +
+        '<li><span class="n">1</span><b>You tell me what you\'re after</b><span class="d">Plain English is fine, and "not sure yet" is a fine answer.</span></li>' +
+        '<li><span class="n">2</span><b>I send honest recommendations and a real price</b><span class="d">For custom work, a written scope before a dime moves.</span></li>' +
+        '<li><span class="n">3</span><b>I build it, launch it, and hand you the keys</b><span class="d">You talk to me the whole way. No account manager, no phone tree.</span></li>' +
+        '</ul>',
+      go:'Read how I actually work', href:'hire-keep-test.html#how-i-work' },
+    { x:48.7, y:68.5, label:'Start here', sub:'free demo before you decide', title:'Want to see it before you decide?',
+      html:'<p class="lead">Describe what you want and I\'ll take a real swing at a quick demo, free. Keep it specific and I can usually turn one around in a couple of hours.</p>' +
+        '<p class="note">Sometimes it comes out exactly right. Sometimes it doesn\'t land, and you\'ll see that too. I\'d rather show you an honest attempt than promise a guaranteed one.</p>',
+      go:'Send me your idea', href:'hire-keep-test.html#start' },
+    { x:23.6, y:47, label:'About Cody', sub:'10 years in the trades, then code', title:'Who you\'d be hiring',
+      html:'<p class="lead">Independent developer in Wilkes County, NC. A decade in manufacturing, precision machining and welding before I ever shipped a line of code.</p>' +
+        '<p class="note">I build with modern power tools, AI included, and I\'m not shy about it. The craft is knowing what to build, wiring it together clean, and making it survive real users.</p>',
+      go:'Read the full story', href:'hire-keep-test.html#about' },
+    { x:47.3, y:17, label:'The Lab', sub:'games and experiments', title:'You found the Lab', meepo:true,
+      html:'<p class="lead">Oi, sharp eyes. This is where the fun hides: a pixel world, an arcade, and whatever Cody is tinkering with this week.</p>',
+      go:'Enter the Lab', href:'world.html' }
+  ];
+  var card = document.getElementById('card'), hint = document.getElementById('hint');
+  var cardTitle = document.getElementById('cardTitle'), cardText = document.getElementById('cardText'), cardGo = document.getElementById('cardGo');
+  var cardMeepo = document.getElementById('cardMeepo');
+  var current = null;
+  function closeCard(){
+    card.classList.remove('show'); inside.classList.remove('card-open'); room.classList.remove('near');
+    if (current) { current.classList.remove('on'); current.focus(); current = null; }
+  }
+  SPOTS.forEach(function(s, i){
+    var b = document.createElement('button');
+    b.className = 'spot' + (s.flip ? ' flip' : '');
+    b.style.left = s.x + '%'; b.style.top = s.y + '%'; b.style.setProperty('--i', i);
+    b.setAttribute('aria-label', s.label + ': ' + s.sub);
+    b.innerHTML = '<span class="dot"></span><span class="name"><b></b><small></small></span>';
+    b.querySelector('b').textContent = s.label; b.querySelector('small').textContent = s.sub;
+    b.addEventListener('click', function(){
+      if (current) current.classList.remove('on');
+      current = b; b.classList.add('on');
+      room.style.transformOrigin = s.x + '% ' + s.y + '%'; room.style.setProperty('--lift', s.y > 40 ? '-16%' : '0%'); room.classList.add('near');   // walk the camera toward it
+      cardTitle.textContent = s.title; cardText.innerHTML = s.html;   // html is the fixed text above, never visitor input
+      cardMeepo.hidden = !s.meepo; card.scrollTop = 0;
+      cardGo.textContent = s.go + ' →'; cardGo.href = s.href;
+      card.classList.add('show'); inside.classList.add('card-open');
+      cardGo.focus({ preventScroll:true });
+    });
+    room.appendChild(b);
+  });
+  document.getElementById('cardX').addEventListener('click', closeCard);
+  addEventListener('keydown', function(e){ if (e.key === 'Escape' && current) closeCard(); });
+
+  /* 4. depth: the picture, the mist and the dark near-edge each slide a different amount as you
+        move the mouse or tilt the phone, so the flat picture reads as a room with distance in it.
+        --px / --py run from -1 to 1 and the CSS turns them into pixels per layer. */
+  var scene = 'outside', tx = 0, ty = 0, px = 0, py = 0, root = document.documentElement;
+  if (!reduce) {
+    addEventListener('pointermove', function(e){
+      if (e.pointerType === 'touch') return;                 // on phones the tilt drives it, not the finger
+      tx = e.clientX / innerWidth * 2 - 1; ty = e.clientY / innerHeight * 2 - 1;
+    });
+    // Android gives tilt freely. iPhones want a permission pop-up first, which is not worth it for a flourish.
+    if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission !== 'function') {
+      var base = null;
+      addEventListener('deviceorientation', function(e){
+        if (e.gamma == null) return;
+        if (!base) base = { g: e.gamma, b: e.beta };           // however they are holding it counts as "level"
+        tx = Math.max(-1, Math.min(1, (e.gamma - base.g) / 18));
+        ty = Math.max(-1, Math.min(1, (e.beta - base.b) / 18));
+      });
+    }
+  }
+
+  /* 5. things drifting in the air, drawn on one small canvas:
+        outside = fireflies wandering and blinking; inside = embers rising off the hearth + dust in the lamplight */
+  var cv = document.getElementById('motes'), ctx = cv.getContext('2d'), bits = [], dpr = Math.min(devicePixelRatio || 1, 2);
+  function size(){ cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; }
+  size(); addEventListener('resize', size);
+  function rnd(a, b){ return a + Math.random() * (b - a); }
+  function hearth(){                                           // where the fire is on screen right now
+    var r = room.getBoundingClientRect();
+    return { x: r.left + r.width * .51, y: r.top + r.height * .53, w: r.width };
+  }
+  function spawn(kind){
+    if (kind === 'fly')  return { k:kind, x:rnd(0,innerWidth), y:rnd(innerHeight*.25,innerHeight*.95), a:rnd(0,6.28), sp:rnd(.15,.45), ph:rnd(0,6.28), r:rnd(1.2,2.4) };
+    if (kind === 'dust') return { k:kind, x:rnd(0,innerWidth), y:rnd(0,innerHeight), vx:rnd(-.12,.12), vy:rnd(-.1,.05), ph:rnd(0,6.28), r:rnd(.6,1.6) };
+    var h = hearth();    /* ember */
+    return { k:kind, x:h.x + rnd(-.012,.012)*h.w, y:h.y, vx:rnd(-.25,.25), vy:rnd(-1.1,-.45), life:1, fade:rnd(.004,.009), r:rnd(.8,2) };
+  }
+  var last = 0;
+  function frame(t){
+    requestAnimationFrame(frame);
+    if (document.hidden) return;
+    px += (tx - px) * .06; py += (ty - py) * .06;              // ease toward the target so it glides
+    root.style.setProperty('--px', px.toFixed(3)); root.style.setProperty('--py', py.toFixed(3));
+    if (reduce) return;
+    var want = scene === 'outside' ? { fly: 22 } : { dust: 34, ember: 16 };
+    bits = bits.filter(function(b){ return want[b.k] != null && !(b.k === 'ember' && b.life <= 0); });
+    Object.keys(want).forEach(function(k){
+      var have = bits.filter(function(b){ return b.k === k; }).length;
+      if (have < want[k] && (k !== 'ember' || t - last > 140)) { bits.push(spawn(k)); if (k === 'ember') last = t; }
+    });
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, innerWidth, innerHeight);
+    ctx.globalCompositeOperation = 'lighter';
+    bits.forEach(function(b){
+      var al, col, ox = -px * 30, oy = -py * 18;                // air sits nearer than the wall, so it slides more
+      if (b.k === 'fly') {
+        b.a += rnd(-.08,.08); b.x += Math.cos(b.a) * b.sp; b.y += Math.sin(b.a) * b.sp * .6;
+        if (b.x < -10) b.x = innerWidth + 10; if (b.x > innerWidth + 10) b.x = -10;
+        b.y = Math.max(innerHeight*.2, Math.min(innerHeight, b.y));
+        al = Math.max(0, Math.sin(t / 700 + b.ph)) * .9; col = '200,255,150';
+      } else if (b.k === 'dust') {
+        b.x += b.vx; b.y += b.vy;
+        if (b.x < 0) b.x = innerWidth; if (b.x > innerWidth) b.x = 0; if (b.y < 0) b.y = innerHeight; if (b.y > innerHeight) b.y = 0;
+        al = .12 + .16 * Math.sin(t / 1400 + b.ph) * Math.sin(t / 1400 + b.ph); col = '255,220,170';
+      } else {
+        b.x += b.vx + Math.sin(t / 300 + b.y / 40) * .25; b.y += b.vy; b.life -= b.fade;
+        al = Math.max(0, b.life) * .9; col = '255,' + Math.round(120 + 100 * b.life) + ',60';
+      }
+      var g = ctx.createRadialGradient(b.x + ox, b.y + oy, 0, b.x + ox, b.y + oy, b.r * 4);
+      g.addColorStop(0, 'rgba(' + col + ',' + al + ')'); g.addColorStop(1, 'rgba(' + col + ',0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x + ox, b.y + oy, b.r * 4, 0, 6.2832); ctx.fill();
+    });
+  }
+  requestAnimationFrame(frame);
+
+  // ?room=1 jumps straight inside, handy while tuning the spots
+  if (/(?:^|[?&])room=/.test(location.search)) { reduce = true; comeIn(); }
+})();
+</script>
+</body>
+</html>

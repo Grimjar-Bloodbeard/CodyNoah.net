@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/forge.css?v=2">
+<link rel="stylesheet" href="../css/forge.css?v=6">
 <style>
 .cs{max-width:820px;margin:0 auto;padding:0 clamp(1rem,4vw,2rem) 4rem}
 .cs-head{padding:clamp(2rem,7vh,3.5rem) 0 1.4rem}
@@ -92,12 +92,12 @@
     </div>
   </header>
 
-  <section>
+  <section id="problem">
     <h2>The problem</h2>
     <p>Summit's real-time inventory engine (see the <a href="live-inventory.html" style="color:var(--rune)">Live Inventory case study</a>) is real client work, running on a real store's real data - not something I can just hand someone a login to. But "trust me, it's good" isn't proof of anything. I wanted a way to let someone actually <b>use the real engine</b> - scan an item, watch the stock sync live - without it ever being able to touch Summit's actual database. The honest answer was to rebuild it as its own system, on its own fake shops, isolated hard enough that "fake" and "real" data structurally cannot mix.</p>
   </section>
 
-  <section>
+  <section id="isolation">
     <h2>How tenant isolation actually works</h2>
     <p>The danger of any shared-database system is always the same shape: one forgotten tenant filter, buried in one route, leaking one shop's numbers into another's screen - or in this case, letting a demo visitor's poking-around ever reach real data. The fix isn't "remember to add the filter everywhere" - people forget. It's making the filter <b>impossible to skip</b>.</p>
     <div class="pipe reveal">
@@ -110,7 +110,7 @@
     <p class="loop reveal" style="text-align:center;font-size:.85rem;color:var(--rune)">Every read, write, and stock change funnels through the ONE class that forces the tenant filter - a route literally cannot query another shop's data by accident.</p>
   </section>
 
-  <section>
+  <section id="decisions">
     <h2>The engineering decisions</h2>
     <div class="dec"><b>1. One choke point, not a convention.</b><p>Every tenant table read/write runs through a single repo class scoped to the caller's shop at construction time. There is no code path that skips it - "don't forget the filter" became "there's nothing to forget."</p></div>
     <div class="dec"><b>2. Real-time stays per-shop.</b><p>Summit broadcasts stock changes to everyone connected - correct for one store, a data leak for many. Here, every socket joins a room named for its tenant on connect; a stock change only ever reaches that one room.</p></div>
@@ -132,7 +132,7 @@
     </div>
   </section>
 
-  <section>
+  <section id="next">
     <h2>What's actually next</h2>
     <div class="status glass reveal">
       <h3>⚒ On the anvil</h3>
@@ -140,7 +140,7 @@
     </div>
   </section>
 
-  <section>
+  <section id="protected">
     <h2>What's protected</h2>
     <p class="protect">Same policy as everything else here: this is the <b>shape</b> of the system and the decisions behind it, not the source. The isolation layer and the offline-sync protocol stay private - it's the reusable core I carry into every future build, not something I hand out. Happy to walk through the real thing live if you're evaluating me.</p>
     <div class="cs-actions">
@@ -151,6 +151,19 @@
   </section>
 </main>
 
-<script src="../js/forge.js?v=3"></script>
+<!-- Meepo -->
+<div class="bubble" id="bubble"></div>
+<div id="meepo" title="Poke me!" data-tips='["This one&apos;s a <b>twin</b>. Same engine as the real store, pretend shops, nothing real to break.","Lost in the tech words? Tap <b>Show me around</b> and I&apos;ll say it plain."]'
+  data-tour='[
+    {"sel":".cs-head","say":"This is <b>StockForge</b>: a copy of a real store&apos;s stock system, running on pretend shops. You can poke at it and no real customer&apos;s data is anywhere near."},
+    {"sel":"#problem","say":"The real one runs a real store, so Cody can&apos;t hand out logins to it. He built a twin where breaking things is <b>allowed</b>."},
+    {"sel":"#isolation","say":"In plain English: each shop&apos;s data sits behind <b>one locked door</b>. Nothing reaches a shelf without going through it, so one shop can never see another&apos;s."},
+    {"sel":"#decisions","say":"Number 4 is my favorite. Shop wifi drops mid-sale? The counter <b>keeps selling</b> and catches up when the signal comes back."},
+    {"sel":"#next","say":"New features get hammered out here first, on fake data. Only the <b>boring, reliable</b> stuff moves over to the real store."},
+    {"sel":"#protected","say":"You get the shape, not the source. Want to see the real thing? Cody will <b>walk you through it live</b>. That&apos;s the tour!"}
+  ]'>
+</div>
+
+<script src="../js/forge.js?v=5"></script>
 </body>
 </html>
