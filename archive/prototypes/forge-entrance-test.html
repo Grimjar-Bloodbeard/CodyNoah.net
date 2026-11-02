@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="../images/forge/forge-door.webp?v=2">
-<link rel="preload" as="image" href="../images/forge/forge-keep.webp?v=2">
+<link rel="preload" as="image" href="../../images/forge/forge-door.webp?v=2">
+<link rel="preload" as="image" href="../../images/forge/forge-keep.webp?v=2">
 <style>
 /* ===== The concept: the site is a place. You arrive at the door, it opens,
    you walk into the keep, and the things in the room are the pages. =====
@@ -39,7 +39,7 @@ a{color:inherit}
 .stage{position:absolute;width:var(--W);height:calc(var(--W) / 1.75);
   left:clamp(calc(100vw - var(--W)),calc(50vw - var(--W) * .4576),0px);
   top:calc((100dvh - var(--W) / 1.75) / 2);
-  background:url(../images/forge/forge-door.webp?v=2) center/100% 100% no-repeat;
+  background:url(../../images/forge/forge-door.webp?v=2) center/100% 100% no-repeat;
   transform-origin:45.76% 55.3%;will-change:transform;
   scale:1.04;translate:calc(var(--px,0) * -16px) calc(var(--py,0) * -10px)}
 .outside.open .stage{transform:scale(4.2);transition:transform 1300ms var(--ease-walk) 650ms}
@@ -54,12 +54,12 @@ a{color:inherit}
 
 /* the doorway: what you glimpse behind the doors as they swing */
 .doorway{position:absolute;left:35.86%;top:36.46%;width:19.79%;height:37.76%;perspective:900px}
-.glimpse{position:absolute;inset:0;background:#120a05 url(../images/forge/forge-keep.webp?v=2) 51% 46%/330% auto no-repeat;opacity:.0}
+.glimpse{position:absolute;inset:0;background:#120a05 url(../../images/forge/forge-keep.webp?v=2) 51% 46%/330% auto no-repeat;opacity:.0}
 .glimpse::after{content:'';position:absolute;inset:0;
   background:radial-gradient(ellipse at 50% 60%,rgba(255,190,110,.55),rgba(255,140,60,.15) 55%,rgba(0,0,0,.35))}
 .outside.open .glimpse{opacity:1;transition:opacity 500ms ease-out 420ms}
 /* the two leaves are cut from the same picture (script lines them up) and swing on their hinges */
-.leaf{position:absolute;top:0;height:100%;background-image:url(../images/forge/forge-door.webp?v=2);background-repeat:no-repeat;
+.leaf{position:absolute;top:0;height:100%;background-image:url(../../images/forge/forge-door.webp?v=2);background-repeat:no-repeat;
   backface-visibility:hidden;will-change:transform}
 .leaf.l{left:0;width:52.63%;transform-origin:0 50%}
 .leaf.r{right:0;width:47.37%;transform-origin:100% 50%}
@@ -122,7 +122,7 @@ a{color:inherit}
 .look{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .look::-webkit-scrollbar{display:none}
 .room{position:relative;width:var(--W);height:calc(var(--W) / 1.75);top:calc((100dvh - var(--W) / 1.75) / 2);
-  background:url(../images/forge/forge-keep.webp?v=2) center/100% 100% no-repeat;transform:scale(1.14);transform-origin:51% 52%;
+  background:url(../../images/forge/forge-keep.webp?v=2) center/100% 100% no-repeat;transform:scale(1.14);transform-origin:51% 52%;
   scale:1.04;translate:calc(var(--px,0) * -18px) calc(var(--py,0) * -11px);will-change:transform}
 .inside.in .room{transform:none;transition:transform 1500ms var(--ease-settle)}
 /* tapping a spot walks the camera toward it (script sets the origin to that spot) */
@@ -274,7 +274,7 @@ a{color:inherit}
 <!-- INSIDE -->
 <div class="inside" id="inside" aria-hidden="true">
   <nav class="bar" aria-label="Main">
-    <a class="brand" href="../index.html">GrimForge</a>
+    <a class="brand" href="../../index.html">GrimForge</a>
     <a class="nav" href="hire-keep-test.html#work">Work</a>
     <a class="nav" href="hire-keep-test.html#pricing">Pricing</a>
     <a class="nav" href="hire-keep-test.html#about">About</a>
@@ -300,7 +300,7 @@ a{color:inherit}
   <div class="bloom"></div>
   <div class="hint" id="hint">Tap a sign to open it</div>
   <div class="card" id="card" role="dialog" aria-live="polite" aria-label="About this spot">
-    <img src="../images/meepo.webp" alt="Meepo the kobold" id="cardMeepo" hidden>
+    <img src="../../images/meepo.webp" alt="Meepo the kobold" id="cardMeepo" hidden>
     <div>
       <h2 id="cardTitle"></h2>
       <div id="cardText"></div>

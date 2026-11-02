@@ -13,7 +13,7 @@
 </script>
 <title>GrimForge Creations · by Cody Noah</title>
 <meta name="description" content="GrimForge Creations - the one-smith workshop of Cody Noah. If you can picture it for your business, I can probably build it. Real, live software from Wilkes County, NC.">
-<meta name="keywords" content="Cody Noah, GrimForge Creations, Wilkes County NC software developer, independent developer, custom software, AI-driven development, PC repair, console repair, Wilkesboro NC">
+<meta name="keywords" content="Cody Noah, GrimForge Creations, Wilkes County NC software developer, independent developer, custom software, AI-driven development, Wilkesboro NC">
 <meta name="author" content="Cody Noah">
 <meta name="theme-color" content="#070a12">
 <link rel="canonical" href="https://codynoah.net/">
@@ -42,7 +42,7 @@
   "url": "https://codynoah.net",
   "image": "https://codynoah.net/images/demo_portrait.webp",
   "jobTitle": "Independent Software Developer",
-  "description": "Independent developer in Wilkes County, NC. AI-driven custom software, live e-commerce and accessible sites, plus PC/console repair and builds.",
+  "description": "Independent developer in Wilkes County, NC. AI-driven custom software, live e-commerce and accessible sites.",
   "address": {
     "@type": "PostalAddress",
     "addressRegion": "NC",
@@ -316,7 +316,7 @@
 }
 
 /* ===== tap-to-enter: the door opens onto a scene, then into the page ===== */
-.enter{position:fixed;inset:0;z-index:200;background:#05070d;opacity:0;visibility:hidden;transition:opacity .3s ease;pointer-events:none}
+.enter{position:fixed;inset:0;z-index:200;background:#05070d;opacity:0;visibility:hidden;transition:opacity .15s ease-out;pointer-events:none}
 .enter.show{opacity:1;visibility:visible;pointer-events:auto}
 .enter .scene{position:absolute;inset:0;opacity:0;overflow:hidden}
 .enter.hire .scene-hire{opacity:1}
@@ -325,10 +325,11 @@
 .enter .dp::after{content:'';position:absolute;top:0;bottom:0;width:3px;box-shadow:0 0 26px 7px rgba(255,150,60,.6)}
 .enter .dp.left{left:0;border-right:1px solid #2a2f3a}.enter .dp.left::after{right:0}
 .enter .dp.right{right:0;border-left:1px solid #2a2f3a}.enter .dp.right::after{left:0}
-.enter.show .dp.left{animation:doorL .7s cubic-bezier(.6,.02,.3,1) forwards}
-.enter.show .dp.right{animation:doorR .7s cubic-bezier(.6,.02,.3,1) forwards}
-@keyframes doorL{0%,16%{transform:translateX(0)}100%{transform:translateX(-102%)}}
-@keyframes doorR{0%,16%{transform:translateX(0)}100%{transform:translateX(102%)}}
+/* Door click answers the user: starts fast (ease-out), whole cutscene under 500ms (Animation Standards) */
+.enter.show .dp.left{animation:doorL .4s cubic-bezier(.2,.8,.2,1) forwards}
+.enter.show .dp.right{animation:doorR .4s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes doorL{0%{transform:translateX(0)}100%{transform:translateX(-102%)}}
+@keyframes doorR{0%{transform:translateX(0)}100%{transform:translateX(102%)}}
 @keyframes approach{0%{transform:translateX(-50%) scale(.16);filter:brightness(.55)}100%{transform:translateX(-50%) scale(1);filter:brightness(1.15)}}
 @keyframes flick{from{opacity:.78;transform:translateX(-50%) scale(.98)}to{opacity:1;transform:translateX(-50%) scale(1.05)}}
 /* Hire: the forge lights up - stone workshop wall, hanging tools, a hammer that strikes the anvil */
@@ -338,29 +339,29 @@
     linear-gradient(180deg,transparent 55%,rgba(0,0,0,.4) 100%),
     repeating-linear-gradient(0deg,#1c150f 0 38px,#171008 38px 40px),
     repeating-linear-gradient(90deg,transparent 0 78px,rgba(0,0,0,.25) 78px 80px);
-  animation:wallin 1.2s ease-out forwards}
+  animation:wallin .4s ease-out forwards}
 @keyframes wallin{to{opacity:.55}}
 .scene-hire .tool{position:absolute;bottom:56%;width:5px;background:#332920;opacity:0;transform-origin:top center;
-  animation:toolin .6s ease-out forwards}
+  animation:toolin .3s ease-out forwards}
 .scene-hire .tool::after{content:'';position:absolute;left:50%;bottom:-13px;transform:translateX(-50%)}
-.scene-hire .tool.t1{left:16%;height:64px;transform:rotate(-7deg);animation-delay:.15s}
+.scene-hire .tool.t1{left:16%;height:64px;transform:rotate(-7deg);animation-delay:.05s}
 .scene-hire .tool.t1::after{width:22px;height:13px;background:#3d3022;border-radius:3px}
-.scene-hire .tool.t2{left:80%;height:52px;transform:rotate(9deg);animation-delay:.3s}
+.scene-hire .tool.t2{left:80%;height:52px;transform:rotate(9deg);animation-delay:.1s}
 .scene-hire .tool.t2::after{width:17px;height:17px;background:#3d3022;border-radius:50%}
-.scene-hire .tool.t3{left:90%;height:74px;transform:rotate(-4deg);animation-delay:.45s}
+.scene-hire .tool.t3{left:90%;height:74px;transform:rotate(-4deg);animation-delay:.15s}
 .scene-hire .tool.t3::after{width:19px;height:9px;background:#3d3022;border-radius:2px}
 @keyframes toolin{to{opacity:.8}}
 .scene-hire .fg{position:absolute;left:50%;bottom:22%;width:340px;height:340px;transform:translateX(-50%) scale(.28);transform-origin:center bottom}
-.enter.hire.show .fg{animation:approach .7s ease-out forwards}
+.enter.hire.show .fg{animation:approach .4s ease-out forwards}
 .scene-hire .fg::before{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(255,150,50,.6),rgba(255,60,20,.15) 45%,transparent 70%);animation:flick .18s infinite alternate}
 .scene-hire .anvil{position:absolute;left:50%;bottom:20%;width:120px;height:56px;transform:translateX(-50%);background:#140f0a;opacity:0;
-  clip-path:polygon(0 42%,22% 42%,28% 0,72% 0,78% 42%,100% 42%,84% 58%,60% 58%,60% 100%,40% 100%,40% 58%,16% 58%);animation:anvilin 1s .35s forwards}
+  clip-path:polygon(0 42%,22% 42%,28% 0,72% 0,78% 42%,100% 42%,84% 58%,60% 58%,60% 100%,40% 100%,40% 58%,16% 58%);animation:anvilin .3s .1s forwards}
 @keyframes anvilin{to{opacity:.92}}
 .scene-hire .hammer{position:absolute;left:57%;bottom:46%;width:50px;height:18px;z-index:4;opacity:0;
   background:linear-gradient(90deg,#4a3a26,#2c2115);border-radius:4px;box-shadow:0 0 0 2px #1a1108 inset;
   transform-origin:2px 9px}
 .scene-hire .hammer::after{content:'';position:absolute;right:-4px;top:-13px;width:5px;height:24px;background:#5a4a34;border-radius:2px}
-.enter.hire.show .hammer{animation:hammerstrike .65s .05s cubic-bezier(.5,0,.4,1) forwards}
+.enter.hire.show .hammer{animation:hammerstrike .38s ease-out forwards}
 @keyframes hammerstrike{
   0%{opacity:0;transform:rotate(-62deg) translate(-6px,-30px)}
   18%{opacity:1}
@@ -380,7 +381,13 @@
 }
 .enter-label{position:absolute;left:0;right:0;bottom:13%;z-index:6;text-align:center;font-family:var(--disp);letter-spacing:3px;
   color:var(--gold2);font-size:clamp(1rem,3vw,1.5rem);opacity:0;text-shadow:0 2px 20px rgba(255,120,40,.55)}
-.enter.show .enter-label{animation:fadein .4s .3s forwards}
+.enter.show .enter-label{animation:fadein .2s .1s forwards}
+/* reduced motion: same message, no moving parts - a quick fade to the label, then the page */
+@media(prefers-reduced-motion:reduce){
+  .enter .dp,.enter .scene-hire .fg,.enter .scene-hire .hammer,.enter .scene-hire .tool,.enter .scene-hire .spark{display:none}
+  .enter.show .scene-hire .wall,.enter.show .scene-hire .anvil,.enter.show .enter-label{animation:none;opacity:1}
+  .enter.show .scene-hire .wall{opacity:.55}
+}
 
 /* currently forging ticker */
 .forging{margin:1.6rem auto 0;display:inline-flex;align-items:center;gap:.6rem;padding:.5rem 1rem;border-radius:999px;
@@ -769,7 +776,7 @@
       }
 
       var scH=enter.querySelector('.scene-hire');           // spark shower timed to the hammer strike
-      for(var j=0;j<10;j++){
+      for(var j=0;j<(reduce?0:10);j++){
         var sp=document.createElement('span'); sp.className='spark';
         var ang=(Math.random()*130-65)*Math.PI/180;
         var path=wander(ang,35+Math.random()*75);
@@ -777,12 +784,12 @@
         sp.style.setProperty('--s1x',path[0].x+'px'); sp.style.setProperty('--s1y',path[0].y+'px');
         sp.style.setProperty('--s2x',path[1].x+'px'); sp.style.setProperty('--s2y',path[1].y+'px');
         sp.style.setProperty('--s3x',path[2].x+'px'); sp.style.setProperty('--s3y',path[2].y+'px');
-        sp.style.animationDelay=(.48+Math.random()*.1)+'s';   // syncs with the hammer strike
-        sp.style.animationDuration=(.4+Math.random()*.3)+'s';
+        sp.style.animationDelay=(.26+Math.random()*.05)+'s';   // syncs with the hammer strike (74% of .38s)
+        sp.style.animationDuration=(.2+Math.random()*.15)+'s';
         scH.appendChild(sp);
       }
 
-      setTimeout(function(){ location.href=href; }, reduce?350:850);
+      setTimeout(function(){ location.href=href; }, reduce?200:450);
     });
   });
 })();
